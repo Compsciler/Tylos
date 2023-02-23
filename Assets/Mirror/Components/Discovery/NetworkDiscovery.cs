@@ -6,10 +6,10 @@ using UnityEngine.Events;
 namespace Mirror.Discovery
 {
     [Serializable]
-    public class ServerFoundUnityEvent : UnityEvent<ServerResponse> { };
+    public class ServerFoundUnityEvent : UnityEvent<ServerResponse> {};
 
     [DisallowMultipleComponent]
-    [AddComponentMenu("Network/NetworkDiscovery")]
+    [AddComponentMenu("Network/Network Discovery")]
     public class NetworkDiscovery : NetworkDiscoveryBase<ServerRequest, ServerResponse>
     {
         #region Server
@@ -30,7 +30,7 @@ namespace Mirror.Discovery
             // so make sure we set it here in Start()  (after awakes)
             // Or just let the user assign it in the inspector
             if (transport == null)
-                transport = Transport.activeTransport;
+                transport = Transport.active;
 
             base.Start();
         }
@@ -42,7 +42,7 @@ namespace Mirror.Discovery
         /// Override if you wish to provide more information to the clients
         /// such as the name of the host player
         /// </remarks>
-        /// <param name="request">Request comming from client</param>
+        /// <param name="request">Request coming from client</param>
         /// <param name="endpoint">Address of the client that sent the request</param>
         /// <returns>The message to be sent back to the client or null</returns>
         protected override ServerResponse ProcessRequest(ServerRequest request, IPEndPoint endpoint)
@@ -68,11 +68,9 @@ namespace Mirror.Discovery
                 throw;
             }
         }
-
         #endregion
 
         #region Client
-
         /// <summary>
         /// Create a message that will be broadcasted on the network to discover servers
         /// </summary>
@@ -108,7 +106,6 @@ namespace Mirror.Discovery
 
             OnServerFound.Invoke(response);
         }
-
         #endregion
     }
 }
