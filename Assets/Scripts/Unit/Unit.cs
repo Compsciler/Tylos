@@ -1,15 +1,17 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 using UnityEngine.Events;
 
+[RequireComponent(typeof(UnitMovement))]
 public class Unit : NetworkBehaviour
 {
-    [SerializeField] UnitMovement unitMovement;
     [SerializeField] UnityEvent onSelected;
     [SerializeField] UnityEvent onDeselected;
+
+    UnitMovement unitMovement;
 
     public static event Action<Unit> ServerOnUnitSpawned;
     public static event Action<Unit> ServerOnUnitDespawned;
@@ -37,6 +39,11 @@ public class Unit : NetworkBehaviour
     #endregion
 
     #region Client
+
+    void Awake()
+    {
+        unitMovement = GetComponent<UnitMovement>();
+    }
 
     public override void OnStartClient()
     {
