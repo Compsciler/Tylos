@@ -24,7 +24,7 @@ public class UnitSelectionHandler : MonoBehaviour
 
     void Update()
     {
-        if (player == null)
+        if (player == null && NetworkClient.connection != null && NetworkClient.connection.identity != null)
         {
             player = NetworkClient.connection.identity.GetComponent<MyPlayer>();
         }
@@ -45,7 +45,7 @@ public class UnitSelectionHandler : MonoBehaviour
 
     private void StartSelectionArea()
     {
-        if (!Keyboard.current.leftShiftKey.isPressed)
+        if (!Keyboard.current.shiftKey.isPressed)
         {
             foreach (Unit selectedUnit in SelectedUnits)
             {
