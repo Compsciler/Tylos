@@ -6,6 +6,7 @@ using UnityEngine;
 public class MyPlayer : NetworkBehaviour
 {
     List<Unit> myUnits = new List<Unit>();
+    public List<Unit> MyUnits => myUnits;
 
     #region Server
 

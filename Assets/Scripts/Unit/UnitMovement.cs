@@ -1,7 +1,6 @@
 using Mirror;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class UnitMovement : NetworkBehaviour
@@ -15,8 +14,13 @@ public class UnitMovement : NetworkBehaviour
     {
         if (!NavMesh.SamplePosition(position, out NavMeshHit hit, 1f, NavMesh.AllAreas)) { return; }
 
-        GetComponent<NavMeshAgent>().SetDestination(hit.position);
+        agent.SetDestination(hit.position);
     }
 
     #endregion
+
+    void Awake()
+    {
+        agent = GetComponent<NavMeshAgent>();
+    }
 }
