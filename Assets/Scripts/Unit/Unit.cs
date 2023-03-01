@@ -62,7 +62,7 @@ public class Unit : NetworkBehaviour
     [Client]
     public void Select()
     {
-        if (!isOwned) { return; }
+        if (!isOwned) { return; }  // Change for dev mode, check may also be redundant from UnitSelectionHandler
 
         onSelected?.Invoke();
     }

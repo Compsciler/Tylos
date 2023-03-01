@@ -86,7 +86,7 @@ public class UnitSelectionHandler : MonoBehaviour
 
             if (!hit.collider.TryGetComponent<Unit>(out Unit unit)) { return; }
 
-            if (!unit.isOwned) { return; }
+            if (!unit.isOwned) { return; }  // Change for dev mode
 
             SelectedUnits.Add(unit);
 
@@ -101,7 +101,7 @@ public class UnitSelectionHandler : MonoBehaviour
         Vector2 min = unitSelectionArea.anchoredPosition - (unitSelectionArea.sizeDelta / 2);
         Vector2 max = unitSelectionArea.anchoredPosition + (unitSelectionArea.sizeDelta / 2);
 
-        foreach (Unit unit in player.MyUnits)
+        foreach (Unit unit in player.MyUnits)  // Change for dev mode
         {
             if (SelectedUnits.Contains(unit)) { continue; }
 
