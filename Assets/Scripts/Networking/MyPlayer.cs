@@ -3,10 +3,18 @@ using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 
+[RequireComponent(typeof(MyPlayerArmies))]
 public class MyPlayer : NetworkBehaviour
 {
     List<Unit> myUnits = new List<Unit>();
     public List<Unit> MyUnits => myUnits;
+
+    MyPlayerArmies myPlayerArmies;
+
+    void Awake()
+    {
+        myPlayerArmies = GetComponent<MyPlayerArmies>();
+    }
 
     #region Server
 
@@ -27,6 +35,7 @@ public class MyPlayer : NetworkBehaviour
         if (unit.connectionToClient.connectionId != connectionToClient.connectionId) { return; }
 
         myUnits.Add(unit);
+        myPlayerArmies.AddUnitToNewArmy(unit);
     }
 
     private void ServerHandleUnitDespawned(Unit unit)
@@ -34,6 +43,7 @@ public class MyPlayer : NetworkBehaviour
         if (unit.connectionToClient.connectionId != connectionToClient.connectionId) { return; }
 
         myUnits.Remove(unit);
+        myPlayerArmies.RemoveUnitFromArmy(unit);
     }
 
     #endregion
@@ -56,18 +66,20 @@ public class MyPlayer : NetworkBehaviour
         Unit.AuthorityOnUnitDespawned -= AuthorityHandleUnitDespawned;
     }
 
-    private void AuthorityHandleUnitSpawned(Unit unit)
+    private void AuthorityHandleUnitSpawned(Unit unit)  // Necessary?
     {
         if (!isOwned) { return; }
 
         myUnits.Add(unit);
+        // TODO: Add here too?
     }
 
-    private void AuthorityHandleUnitDespawned(Unit unit)
+    private void AuthorityHandleUnitDespawned(Unit unit)  // Necessary?
     {
         if (!isOwned) { return; }
 
         myUnits.Remove(unit);
+        // TODO: Add here too?
     }
 
     #endregion
