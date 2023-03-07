@@ -9,6 +9,7 @@ public class UnitSelectionHandler : MonoBehaviour
 {
     [SerializeField] RectTransform unitSelectionArea;
     [SerializeField] LayerMask layerMask;
+    [SerializeField] bool camera_auto_follow = false;
 
     MyPlayer player;
     Camera mainCamera;
@@ -117,6 +118,9 @@ public class UnitSelectionHandler : MonoBehaviour
                 unit.Select();
             }
         }
-        cameraController.follow(selectedUnits);
+
+        if(camera_auto_follow){
+            cameraController.follow(selectedUnits);
+        }
     }
 }

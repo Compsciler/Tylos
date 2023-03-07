@@ -11,7 +11,9 @@ public class CameraController : MonoBehaviour
     }
 
     private List<Unit> following;
-    private float max_speed = 1;
+    [SerializeField] float max_track_speed = 1;
+    [SerializeField] float keyboard_scroll_speed = 0.1f;
+    [SerializeField] float edge_drag_speed = 1;
 
     public void follow(List<Unit> to_follow){
         following = to_follow;
@@ -38,7 +40,7 @@ public class CameraController : MonoBehaviour
         if(relative_mouse_position.y < -threashold){
             delta.y = relative_mouse_position.y + threashold;
         }
-        return delta * 2;
+        return delta / (1 - threashold) * edge_drag_speed;
     }
 
     Vector3 avg_position(List<Unit> units){
@@ -50,11 +52,20 @@ public class CameraController : MonoBehaviour
     }
 
     Vector2 clamp_max_speed(Vector2 camera_translation){
-        if(camera_translation.magnitude > max_speed){
-            return camera_translation / camera_translation.magnitude * max_speed;
+        if(camera_translation.magnitude > max_track_speed){
+            return camera_translation / camera_translation.magnitude * max_track_speed;
         } else {
             return camera_translation;
         }
+    }
+
+    Vector2 keyboard_movement(bool forward, bool backward, bool left, bool right){
+        Vector2 movement = new Vector2();
+        if(forward) movement.y += 1;
+        if(backward) movement.y -= 1;
+        if(left) movement.x -= 1;
+        if(right) movement.x += 1;
+        return movement * keyboard_scroll_speed;
     }
 
     // Update is called once per frame
@@ -67,10 +78,16 @@ public class CameraController : MonoBehaviour
             Vector3 diff = Camera.main.transform.position - avg;
             Vector2 delta = clamp_max_speed(new Vector2(diff.x, diff.z));
             Camera.main.transform.Translate(delta);
-            // Camera.main.transform.SetPositionAndRotation(new Vector3(pos.x, 20, pos.z), Camera.main.transform.rotation);
         } else {
             Vector2 delta = camera_delta(rel_mouse_pos()) / 10f;
             Camera.main.transform.Translate(new Vector3(delta.x, delta.y));
+            bool forward = Input.GetKey(KeyCode.W);
+            bool backward = Input.GetKey(KeyCode.S);
+            bool left = Input.GetKey(KeyCode.A);
+            bool right = Input.GetKey(KeyCode.D);
+            Vector2 keyboard_delta = keyboard_movement(forward, backward, left, right);
+            Camera.main.transform.Translate(new Vector3(keyboard_delta.x, keyboard_delta.y));
+
         }
         // Input.mousePosition
     }
