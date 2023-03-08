@@ -9,9 +9,11 @@ public class UnitSelectionHandler : MonoBehaviour
 {
     [SerializeField] RectTransform unitSelectionArea;
     [SerializeField] LayerMask layerMask;
+    [SerializeField] bool camera_auto_follow = false;
 
     MyPlayer player;
     Camera mainCamera;
+    CameraController cameraController;
 
     Vector2 startPosition;
     List<Unit> selectedUnits = new List<Unit>();
@@ -20,6 +22,7 @@ public class UnitSelectionHandler : MonoBehaviour
     void Start()
     {
         mainCamera = Camera.main;
+        cameraController = mainCamera.GetComponent<CameraController>();
     }
 
     void Update()
@@ -77,7 +80,6 @@ public class UnitSelectionHandler : MonoBehaviour
     private void ClearSelectionArea()
     {
         unitSelectionArea.gameObject.SetActive(false);
-
         if (unitSelectionArea.sizeDelta.magnitude == 0)
         {
             Ray ray = mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
@@ -115,6 +117,10 @@ public class UnitSelectionHandler : MonoBehaviour
                 SelectedUnits.Add(unit);
                 unit.Select();
             }
+        }
+
+        if(camera_auto_follow){
+            cameraController.follow(selectedUnits);
         }
     }
 }
