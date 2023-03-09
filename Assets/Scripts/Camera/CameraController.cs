@@ -14,6 +14,8 @@ public class CameraController : MonoBehaviour
     [SerializeField] float max_track_speed = 1;
     [SerializeField] float keyboard_scroll_speed = 0.1f;
     [SerializeField] float edge_drag_speed = 1;
+    [SerializeField] Vector2 board_min_extent = new Vector2(-5, -5);
+    [SerializeField] Vector2 board_max_extent = new Vector2(5,5);
 
     public void follow(List<Unit> to_follow){
         following = to_follow;
@@ -68,6 +70,13 @@ public class CameraController : MonoBehaviour
         return movement * keyboard_scroll_speed;
     }
 
+    void constrain_to_board(){
+        Vector3 pos = Camera.main.transform.position;
+        pos.x = Mathf.Clamp(pos.x, board_min_extent.x, board_max_extent.x);
+        pos.z = Mathf.Clamp(pos.z, board_min_extent.y, board_max_extent.y);
+        Camera.main.transform.SetPositionAndRotation(pos, Camera.main.transform.rotation);
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -87,8 +96,7 @@ public class CameraController : MonoBehaviour
             bool right = Input.GetKey(KeyCode.D);
             Vector2 keyboard_delta = keyboard_movement(forward, backward, left, right);
             Camera.main.transform.Translate(new Vector3(keyboard_delta.x, keyboard_delta.y));
-
         }
-        // Input.mousePosition
+        constrain_to_board();
     }
 }
