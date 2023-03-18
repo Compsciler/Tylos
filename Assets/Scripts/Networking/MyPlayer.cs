@@ -3,25 +3,29 @@ using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 
-[RequireComponent(typeof(MyPlayerArmies))]
+[RequireComponent(typeof(PlayerArmies))]
 public class MyPlayer : NetworkBehaviour
 {
+    int playerId = -1;
+
     List<Unit> myUnits = new List<Unit>();
     public List<Unit> MyUnits => myUnits;
     List<Base> myBases = new List<Base>();
     public List<Base> MyBases => myBases;
 
-    MyPlayerArmies myPlayerArmies;
+    PlayerArmies myPlayerArmies;
 
     void Awake()
     {
-        myPlayerArmies = GetComponent<MyPlayerArmies>();
+        myPlayerArmies = GetComponent<PlayerArmies>();
     }
 
     #region Server
 
     public override void OnStartServer()
     {
+        playerId = connectionToClient.connectionId;
+
         Unit.ServerOnUnitSpawned += ServerHandleUnitSpawned;
         Unit.ServerOnUnitDespawned += ServerHandleUnitDespawned;
         Base.ServerOnBaseSpawned += ServerHandleBaseSpawned;

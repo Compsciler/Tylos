@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MyPlayerArmies : MonoBehaviour
+public class PlayerArmies : MonoBehaviour
 {
     public List<Army> myArmies = new List<Army>();
     public List<Army> MyArmies => myArmies;
