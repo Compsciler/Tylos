@@ -962,7 +962,7 @@ MonoBehaviour:
   unitSelectionArea: {fileID: 237819094}
   layerMask:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 1024
   camera_auto_follow: 0
 --- !u!4 &1702044573
 Transform:
@@ -995,7 +995,7 @@ MonoBehaviour:
   unitSelectionHandler: {fileID: 1702044572}
   layerMask:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 1281
 --- !u!1001 &1971477743430025661
 PrefabInstance:
   m_ObjectHideFlags: 0
