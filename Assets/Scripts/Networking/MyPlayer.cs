@@ -50,17 +50,17 @@ public class MyPlayer : NetworkBehaviour
 
     #region Client
 
-    public override void OnStartClient()
+    public override void OnStartAuthority()  // Start() for objects the client owns (equivalent to OnStartClient() with !isOwned guard)
     {
-        if (!isClientOnly) { return; }
+        if (NetworkServer.active) { return; }  // Return if this is running as the server (before isClientOnly is set)
 
         Unit.AuthorityOnUnitSpawned += AuthorityHandleUnitSpawned;
         Unit.AuthorityOnUnitDespawned += AuthorityHandleUnitDespawned;
     }
 
-    public override void OnStopClient()
+    public override void OnStopClient()  // OnStopAuthority() is only called when authority is removed, which can happen even if the object is not destroyed
     {
-        if (!isClientOnly) { return; }
+        if (!isOwned || !isClientOnly) { return; }  // Return if not owned by this client or this is the server
 
         Unit.AuthorityOnUnitSpawned -= AuthorityHandleUnitSpawned;
         Unit.AuthorityOnUnitDespawned -= AuthorityHandleUnitDespawned;
@@ -68,16 +68,12 @@ public class MyPlayer : NetworkBehaviour
 
     private void AuthorityHandleUnitSpawned(Unit unit)  // Necessary?
     {
-        if (!isOwned) { return; }
-
         myUnits.Add(unit);
         // TODO: Add here too?
     }
 
     private void AuthorityHandleUnitDespawned(Unit unit)  // Necessary?
     {
-        if (!isOwned) { return; }
-
         myUnits.Remove(unit);
         // TODO: Add here too?
     }

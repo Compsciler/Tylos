@@ -405,6 +405,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ebb349129de9fa4d8e04db272be6f2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  max_track_speed: 1
+  keyboard_scroll_speed: 0.1
+  edge_drag_speed: 0
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -960,6 +963,7 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 1
+  camera_auto_follow: 0
 --- !u!4 &1702044573
 Transform:
   m_ObjectHideFlags: 0
