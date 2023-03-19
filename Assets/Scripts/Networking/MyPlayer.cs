@@ -15,6 +15,9 @@ public class MyPlayer : NetworkBehaviour
 
     PlayerArmies myPlayerArmies;
 
+    Color teamColor = new Color();
+    public Color TeamColor => teamColor;
+
     void Awake()
     {
         myPlayerArmies = GetComponent<PlayerArmies>();
@@ -38,6 +41,12 @@ public class MyPlayer : NetworkBehaviour
         Unit.ServerOnUnitDespawned -= ServerHandleUnitDespawned;
         Base.ServerOnBaseSpawned -= ServerHandleBaseSpawned;
         Base.ServerOnBaseDespawned -= ServerHandleBaseDespawned;
+    }
+
+    [Server]
+    public void SetTeamColor(Color color)
+    {
+        teamColor = color;
     }
 
     private void ServerHandleUnitSpawned(Unit unit)
