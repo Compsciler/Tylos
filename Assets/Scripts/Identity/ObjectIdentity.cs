@@ -7,38 +7,51 @@ using UnityEngine;
 // Resisted the urge to name this EntityIdentity
 public class ObjectIdentity : NetworkBehaviour
 {
-    // TODO: Make this a struct?
-    float r;
-    float g;
-    float b;
-
-    public float R => r;
-    public float G => g;
-    public float B => b;
-
-    // public float R { get => r; set => r = value; }
-    // public float G { get => g; set => g = value; }
-    // public float B { get => b; set => b = value; }
+    IdentityInfo identity;
+    public IdentityInfo Identity => identity;
 
     public static event Action<ObjectIdentity> ServerOnIdentityUpdated;
 
-    [Server]
-    public void SetIdentity(float r, float g, float b)
+
+    public Color GetColorFromIdentity()
     {
-        this.r = r;
-        this.g = g;
-        this.b = b;
+        return new Color(identity.r, identity.g, identity.b);
+    }
+
+    #region Server
+
+    [Server]
+    public void SetIdentity(IdentityInfo identity)
+    {
+        this.identity = identity;
 
         ServerOnIdentityUpdated?.Invoke(this);
     }
     [Server]
-    public void SetIdentity(Color color)
+    public void SetIdentity(float r, float g, float b)
     {
-        SetIdentity(color.r, color.g, color.b);
+        SetIdentity(new IdentityInfo(r, g, b));
     }
 
-    public Color GetColorFromIdentity()
+    #endregion
+}
+
+public struct IdentityInfo
+{
+    public float r;
+    public float g;
+    public float b;
+
+    public IdentityInfo(float r, float g, float b)
     {
-        return new Color(r, g, b);
+        this.r = r;
+        this.g = g;
+        this.b = b;
+    }
+    public IdentityInfo(Color color)
+    {
+        r = color.r;
+        g = color.g;
+        b = color.b;
     }
 }

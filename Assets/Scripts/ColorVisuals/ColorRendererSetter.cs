@@ -23,7 +23,7 @@ public abstract class ColorRendererSetter : NetworkBehaviour
 
     // In case the variable that determines the color is updated before this derived OnStartServer is called, which the appropriate event will not be handled
     // [Server]
-    public abstract Color GetColorToSet();
+    protected abstract Color GetColorToSet();
 
     #endregion
 
@@ -38,7 +38,6 @@ public abstract class ColorRendererSetter : NetworkBehaviour
                 spriteRenderer.color = newColor;
                 continue;
             }
-            Debug.Log("Setting color to: " + newColor);
             renderer.material.SetColor("_BaseColor", newColor);
         }
     }

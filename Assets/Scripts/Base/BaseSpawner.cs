@@ -4,7 +4,7 @@ using Mirror;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-[RequireComponent(typeof(Base))]
+[RequireComponent(typeof(ObjectIdentity))]
 public class BaseSpawner : NetworkBehaviour
 {
     [SerializeField] float spawnRate = 4f;
@@ -12,41 +12,54 @@ public class BaseSpawner : NetworkBehaviour
     [SerializeField] private GameObject unitPrefab;
     [SerializeField] private Transform unitSpawnPoint;
 
+    ObjectIdentity baseObjectIdentity;
+
+
+    void Awake()
+    {
+        baseObjectIdentity = GetComponent<ObjectIdentity>();
+    }
+
     #region Server
 
-    [Command]
-    private void CmdSpawnUnit()
+    public override void OnStartServer()
+    {
+        StartCoroutine(SpawnUnits());
+    }
+
+    [Server]
+    private void SpawnUnit()
     {
         GameObject unitInstance = Instantiate(
             unitPrefab,
             unitSpawnPoint.position,
             unitSpawnPoint.rotation);
-        ObjectIdentity baseIdentity = GetComponent<ObjectIdentity>();  // TODO: move to start and hope race condition doesn't happen
-        unitInstance.GetComponent<ObjectIdentity>().SetIdentity(baseIdentity.GetColorFromIdentity());
+        IdentityInfo baseIdentity = GetComponent<ObjectIdentity>().Identity;  // TODO: move to OnServerStart() if base identity doesn't change and hope race condition doesn't happen
+        unitInstance.GetComponent<ObjectIdentity>().SetIdentity(baseIdentity);
         NetworkServer.Spawn(unitInstance, connectionToClient);
     }
 
-    #endregion
-
-    #region Client
-
-    void Awake()
+    [Command]
+    private void CmdSpawnUnit()
     {
-        // Debug.Log("Awake: " + isServer + " " + isClient);
-        
-        StartCoroutine(SpawnUnits());
+        SpawnUnit();
     }
 
+    [Server]
     private IEnumerator SpawnUnits()
     {
         while (true)
         {
-            CmdSpawnUnit();
+            SpawnUnit();
             
             yield return new WaitForSeconds(spawnRate);
         }
     }
 
+    #endregion
+
+    #region Client
+    
     /*
     public void OnPointerClick(PointerEventData eventData)
     {

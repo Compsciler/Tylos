@@ -5,19 +5,22 @@ using UnityEngine;
 
 public class TeamColorRendererSetter : ColorRendererSetter
 {
+    #region Server
+
     public override void OnStartServer()
     {
         base.OnStartServer();
-        MyNetworkManager.ServerOnPlayerIdentityUpdated += HandlePlayerIdentityUpdated;
+        MyNetworkManager.ServerOnPlayerIdentityUpdated += ServerHandlePlayerIdentityUpdated;
     }
 
     public override void OnStopServer()
     {
         base.OnStopServer();
-        MyNetworkManager.ServerOnPlayerIdentityUpdated -= HandlePlayerIdentityUpdated;
+        MyNetworkManager.ServerOnPlayerIdentityUpdated -= ServerHandlePlayerIdentityUpdated;
     }
 
-    private void HandlePlayerIdentityUpdated(ObjectIdentity identity)
+    [Server]
+    private void ServerHandlePlayerIdentityUpdated(ObjectIdentity identity)
     {
         if (identity.connectionToClient != connectionToClient) { return; }
         
@@ -25,10 +28,12 @@ public class TeamColorRendererSetter : ColorRendererSetter
     }
     
     [Server]
-    public override Color GetColorToSet()
+    protected override Color GetColorToSet()
     {
         MyPlayer player = connectionToClient.identity.GetComponent<MyPlayer>();
 
         return player.TeamColor;
     }
+
+    #endregion
 }
