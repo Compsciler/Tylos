@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Mirror;
@@ -11,7 +12,7 @@ public abstract class ColorRendererSetter : NetworkBehaviour
     // Prefer SyncVar over RPC call because the RPC will happen when it is called and later joining clients (such as spectators) will not know of the color
     // Syncs at time of update or when late joining
     [SyncVar(hook = nameof(HandleColorUpdated))]
-    Color color;
+    protected Color color;
 
     #region Server
 
@@ -20,6 +21,7 @@ public abstract class ColorRendererSetter : NetworkBehaviour
         color = GetColorToSet();
     }
 
+    // In case the variable that determines the color is updated before this derived OnStartServer is called, which the appropriate event will not be handled
     // [Server]
     public abstract Color GetColorToSet();
 

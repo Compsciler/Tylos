@@ -5,8 +5,25 @@ using UnityEngine;
 
 public class TeamColorRendererSetter : ColorRendererSetter
 {
-    #region Server
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+        MyNetworkManager.ServerOnPlayerIdentityUpdated += HandlePlayerIdentityUpdated;
+    }
 
+    public override void OnStopServer()
+    {
+        base.OnStopServer();
+        MyNetworkManager.ServerOnPlayerIdentityUpdated -= HandlePlayerIdentityUpdated;
+    }
+
+    private void HandlePlayerIdentityUpdated(ObjectIdentity identity)
+    {
+        if (identity.connectionToClient != connectionToClient) { return; }
+        
+        color = identity.GetColorFromIdentity();
+    }
+    
     [Server]
     public override Color GetColorToSet()
     {
@@ -14,6 +31,4 @@ public class TeamColorRendererSetter : ColorRendererSetter
 
         return player.TeamColor;
     }
-
-    #endregion
 }

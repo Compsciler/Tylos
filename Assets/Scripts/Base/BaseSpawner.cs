@@ -4,6 +4,7 @@ using Mirror;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+[RequireComponent(typeof(Base))]
 public class BaseSpawner : NetworkBehaviour
 {
     [SerializeField] float spawnRate = 4f;
@@ -20,7 +21,8 @@ public class BaseSpawner : NetworkBehaviour
             unitPrefab,
             unitSpawnPoint.position,
             unitSpawnPoint.rotation);
-
+        ObjectIdentity baseIdentity = GetComponent<ObjectIdentity>();  // TODO: move to start and hope race condition doesn't happen
+        unitInstance.GetComponent<ObjectIdentity>().SetIdentity(baseIdentity.GetColorFromIdentity());
         NetworkServer.Spawn(unitInstance, connectionToClient);
     }
 
