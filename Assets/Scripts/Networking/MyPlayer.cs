@@ -15,6 +15,7 @@ public class MyPlayer : NetworkBehaviour
 
     PlayerArmies myPlayerArmies;
 
+    ObjectIdentity playerIdentity;
     Color teamColor = new Color();
     public Color TeamColor => teamColor;
 

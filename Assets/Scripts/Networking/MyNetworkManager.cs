@@ -20,10 +20,17 @@ public class MyNetworkManager : NetworkManager
             hostConnection = conn;
         }
 
-        MyPlayer player = conn.identity.GetComponent<MyPlayer>();
-        player.SetTeamColor(TeamColorAssigner.Instance.GetAndRemoveRandomColor());
+        SetPlayerIdentity(conn);
 
         GameObject unitSpawnerInstance = Instantiate(unitSpawnerPrefab, conn.identity.transform.position, conn.identity.transform.rotation);
         NetworkServer.Spawn(unitSpawnerInstance, conn);
+    }
+
+    private void SetPlayerIdentity(NetworkConnectionToClient conn)
+    {
+        MyPlayer player = conn.identity.GetComponent<MyPlayer>();
+        Color randomColor = TeamColorAssigner.Instance.GetAndRemoveRandomColor();
+        player.SetTeamColor(randomColor);
+        player.GetComponent<ObjectIdentity>().SetIdentity(randomColor);
     }
 }
