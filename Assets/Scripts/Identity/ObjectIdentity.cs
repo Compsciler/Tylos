@@ -28,8 +28,8 @@ public class ObjectIdentity : MonoBehaviour
         SetIdentity(color.r, color.g, color.b);
     }
 
-    public static Color GetColorFromIdentity(ObjectIdentity identity)
+    public Color GetColorFromIdentity()
     {
-        return new Color(identity.r, identity.g, identity.b);
+        return new Color(r, g, b);
     }
 }

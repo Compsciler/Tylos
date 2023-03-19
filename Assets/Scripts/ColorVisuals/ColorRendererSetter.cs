@@ -3,30 +3,31 @@ using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 
-public class TeamColorSetter : NetworkBehaviour
+public abstract class ColorRendererSetter : NetworkBehaviour
 {
     [SerializeField] List<Renderer> colorRenderers;
 
     // Server needs to grab color from player and tell all clients to render GameObject with that color
     // Prefer SyncVar over RPC call because the RPC will happen when it is called and later joining clients (such as spectators) will not know of the color
     // Syncs at time of update or when late joining
-    [SyncVar(hook = nameof(HandleTeamColorUpdated))]
-    Color teamColor;
+    [SyncVar(hook = nameof(HandleColorUpdated))]
+    Color color;
 
     #region Server
 
     public override void OnStartServer()
     {
-        MyPlayer player = connectionToClient.identity.GetComponent<MyPlayer>();
-
-        teamColor = player.TeamColor;
+        color = GetColorToSet();
     }
+
+    // [Server]
+    public abstract Color GetColorToSet();
 
     #endregion
 
     #region Client
 
-    private void HandleTeamColorUpdated(Color oldColor, Color newColor)
+    private void HandleColorUpdated(Color oldColor, Color newColor)
     {
         foreach (Renderer renderer in colorRenderers)
         {
@@ -35,6 +36,7 @@ public class TeamColorSetter : NetworkBehaviour
                 spriteRenderer.color = newColor;
                 continue;
             }
+            Debug.Log("Setting color to: " + newColor);
             renderer.material.SetColor("_BaseColor", newColor);
         }
     }
