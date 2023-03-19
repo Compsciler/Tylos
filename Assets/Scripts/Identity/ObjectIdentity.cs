@@ -7,6 +7,7 @@ using UnityEngine;
 // Resisted the urge to name this EntityIdentity
 public class ObjectIdentity : NetworkBehaviour
 {
+    [SyncVar(hook = nameof(HandleIdentityUpdated))]
     IdentityInfo identity;
     public IdentityInfo Identity => identity;
 
@@ -24,13 +25,20 @@ public class ObjectIdentity : NetworkBehaviour
     public void SetIdentity(IdentityInfo identity)
     {
         this.identity = identity;
-
-        ServerOnIdentityUpdated?.Invoke(this);
     }
     [Server]
     public void SetIdentity(float r, float g, float b)
     {
         SetIdentity(new IdentityInfo(r, g, b));
+    }
+
+    #endregion
+
+    #region Client
+
+    private void HandleIdentityUpdated(IdentityInfo oldIdentity, IdentityInfo newIdentity)
+    {
+        ServerOnIdentityUpdated?.Invoke(this);
     }
 
     #endregion
