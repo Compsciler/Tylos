@@ -12,14 +12,6 @@ public class BaseSpawner : NetworkBehaviour
     [SerializeField] private GameObject unitPrefab;
     [SerializeField] private Transform unitSpawnPoint;
 
-    ObjectIdentity baseObjectIdentity;
-
-
-    void Awake()
-    {
-        baseObjectIdentity = GetComponent<ObjectIdentity>();
-    }
-
     #region Server
 
     public override void OnStartServer()

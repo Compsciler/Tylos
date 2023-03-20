@@ -14,8 +14,6 @@ public class Base : NetworkBehaviour
     public static event Action<Base> AuthorityOnBaseSpawned;
     public static event Action<Base> AuthorityOnBaseDespawned;
 
-    ObjectIdentity baseIdentity;
-
 
     #region Server
 

@@ -30,7 +30,7 @@ public class UnitCommandGiver : MonoBehaviour
     {
         foreach (Unit unit in unitSelectionHandler.SelectedUnits)
         {
-            unit.GetUnitMovement().CmdMove(point);
+            unit.UnitMovement_.CmdMove(point);
         }
     }
 }
