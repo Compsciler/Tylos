@@ -12,6 +12,7 @@ public class Unit : NetworkBehaviour
     [SerializeField] UnityEvent onDeselected;
 
     UnitMovement unitMovement;
+    public UnitMovement UnitMovement_ => unitMovement;
 
     public static event Action<Unit> ServerOnUnitSpawned;
     public static event Action<Unit> ServerOnUnitDespawned;
@@ -19,9 +20,9 @@ public class Unit : NetworkBehaviour
     public static event Action<Unit> AuthorityOnUnitSpawned;
     public static event Action<Unit> AuthorityOnUnitDespawned;
 
-    public UnitMovement GetUnitMovement()
+    void Awake()
     {
-        return unitMovement;
+        unitMovement = GetComponent<UnitMovement>();
     }
 
     #region Server
@@ -40,21 +41,14 @@ public class Unit : NetworkBehaviour
 
     #region Client
 
-    void Awake()
+    public override void OnStartAuthority()
     {
-        unitMovement = GetComponent<UnitMovement>();
-    }
-
-    public override void OnStartClient()
-    {
-        if (!isClientOnly || !isOwned) { return; }
-
         AuthorityOnUnitSpawned?.Invoke(this);
     }
 
     public override void OnStopClient()
     {
-        if (!isClientOnly || !isOwned) { return; }
+        if (!isOwned) { return; }
 
         AuthorityOnUnitDespawned?.Invoke(this);
     }

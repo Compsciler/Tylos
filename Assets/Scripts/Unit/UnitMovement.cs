@@ -7,6 +7,11 @@ public class UnitMovement : NetworkBehaviour
 {
     NavMeshAgent agent;
     
+    void Awake()
+    {
+        agent = GetComponent<NavMeshAgent>();
+    }
+
     #region Server
 
     [Command]
@@ -18,9 +23,4 @@ public class UnitMovement : NetworkBehaviour
     }
 
     #endregion
-
-    void Awake()
-    {
-        agent = GetComponent<NavMeshAgent>();
-    }
 }
