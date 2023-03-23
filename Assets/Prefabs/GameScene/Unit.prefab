@@ -97,10 +97,10 @@ GameObject:
   - component: {fileID: 6339527542047456647}
   - component: {fileID: 6339527542047456640}
   - component: {fileID: 7051876559114671635}
-  - component: {fileID: 8190758238487425786}
   - component: {fileID: -5273569327024120270}
   - component: {fileID: 487852467032575918}
   - component: {fileID: -4392427088023275341}
+  - component: {fileID: 3261407148654518945}
   m_Layer: 10
   m_Name: Unit
   m_TagString: Untagged
@@ -252,21 +252,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &8190758238487425786
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6339527542047456646}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d04814f4046d174885b299ff88cfa0c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0.1
 --- !u!114 &-5273569327024120270
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -279,6 +264,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4e0326b41740694f8843869bf8ea913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0.1
 --- !u!114 &487852467032575918
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -314,6 +302,21 @@ MonoBehaviour:
   syncInterval: 0.1
   colorRenderers:
   - {fileID: 6224673488736124910}
+--- !u!114 &3261407148654518945
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6339527542047456646}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abff5b9bcfb401a4ab9bac22fa4f9aa3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0.1
 --- !u!1 &7852609698321682917
 GameObject:
   m_ObjectHideFlags: 0

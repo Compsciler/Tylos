@@ -6,16 +6,16 @@ public class PlayerArmies : MonoBehaviour
 {
     public List<Army> myArmies = new List<Army>();
     public List<Army> MyArmies => myArmies;
-    public Dictionary<Unit, Army> unitToArmy = new Dictionary<Unit, Army>();
+    public Dictionary<Army, Army> unitToArmy = new Dictionary<Army, Army>();
 
-    public void AddUnitToNewArmy(Unit unit)
+    public void AddUnitToNewArmy(Army unit)
     {
         Army army = new Army();
         myArmies.Add(army);
         AddUnitToArmy(unit, army);
     }
     
-    public void AddUnitToArmy(Unit unit, Army army)
+    public void AddUnitToArmy(Army unit, Army army)
     {
         if (unitToArmy.ContainsKey(unit)) 
         {
@@ -28,7 +28,7 @@ public class PlayerArmies : MonoBehaviour
         unitToArmy[unit] = army;
     }
 
-    public void RemoveUnitFromArmy(Unit unit)
+    public void RemoveUnitFromArmy(Army unit)
     {
         if (!unitToArmy.ContainsKey(unit)) { return; }
 

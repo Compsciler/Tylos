@@ -16,8 +16,8 @@ public class UnitSelectionHandler : MonoBehaviour
     CameraController cameraController;
 
     Vector2 startPosition;
-    List<Unit> selectedUnits = new List<Unit>();
-    public List<Unit> SelectedUnits => selectedUnits;
+    List<Army> selectedUnits = new List<Army>();
+    public List<Army> SelectedUnits => selectedUnits;
 
     void Awake()
     {
@@ -50,7 +50,7 @@ public class UnitSelectionHandler : MonoBehaviour
     {
         if (!Keyboard.current.shiftKey.isPressed)
         {
-            foreach (Unit selectedUnit in SelectedUnits)
+            foreach (Army selectedUnit in SelectedUnits)
             {
                 selectedUnit.Deselect();
             }
@@ -86,13 +86,13 @@ public class UnitSelectionHandler : MonoBehaviour
 
             if (!Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, layerMask)) { return; }
 
-            if (!hit.collider.TryGetComponent<Unit>(out Unit unit)) { return; }
+            if (!hit.collider.TryGetComponent<Army>(out Army unit)) { return; }
 
             if (!unit.isOwned) { return; }  // Change for dev mode
 
             SelectedUnits.Add(unit);
 
-            foreach (Unit selectedUnit in SelectedUnits)
+            foreach (Army selectedUnit in SelectedUnits)
             {
                 selectedUnit.Select();
             }
@@ -103,7 +103,7 @@ public class UnitSelectionHandler : MonoBehaviour
         Vector2 min = unitSelectionArea.anchoredPosition - (unitSelectionArea.sizeDelta / 2);
         Vector2 max = unitSelectionArea.anchoredPosition + (unitSelectionArea.sizeDelta / 2);
 
-        foreach (Unit unit in player.MyUnits)  // Change for dev mode
+        foreach (Army unit in player.MyUnits)  // Change for dev mode
         {
             if (SelectedUnits.Contains(unit)) { continue; }
 

@@ -8,8 +8,8 @@ public class MyPlayer : NetworkBehaviour
 {
     int playerId = -1;
 
-    List<Unit> myUnits = new List<Unit>();
-    public List<Unit> MyUnits => myUnits;
+    List<Army> myUnits = new List<Army>();
+    public List<Army> MyUnits => myUnits;
     List<Base> myBases = new List<Base>();
     public List<Base> MyBases => myBases;
 
@@ -30,16 +30,16 @@ public class MyPlayer : NetworkBehaviour
     {
         playerId = connectionToClient.connectionId;
 
-        Unit.ServerOnUnitSpawned += ServerHandleUnitSpawned;
-        Unit.ServerOnUnitDespawned += ServerHandleUnitDespawned;
+        Army.ServerOnArmySpawned += ServerHandleUnitSpawned;
+        Army.ServerOnArmyDespawned += ServerHandleUnitDespawned;
         Base.ServerOnBaseSpawned += ServerHandleBaseSpawned;
         Base.ServerOnBaseDespawned += ServerHandleBaseDespawned;
     }
 
     public override void OnStopServer()
     {
-        Unit.ServerOnUnitSpawned -= ServerHandleUnitSpawned;
-        Unit.ServerOnUnitDespawned -= ServerHandleUnitDespawned;
+        Army.ServerOnArmySpawned -= ServerHandleUnitSpawned;
+        Army.ServerOnArmyDespawned -= ServerHandleUnitDespawned;
         Base.ServerOnBaseSpawned -= ServerHandleBaseSpawned;
         Base.ServerOnBaseDespawned -= ServerHandleBaseDespawned;
     }
@@ -50,7 +50,7 @@ public class MyPlayer : NetworkBehaviour
         teamColor = color;
     }
 
-    private void ServerHandleUnitSpawned(Unit unit)
+    private void ServerHandleUnitSpawned(Army unit)
     {
         if (unit.connectionToClient.connectionId != connectionToClient.connectionId) { return; }
 
@@ -58,7 +58,7 @@ public class MyPlayer : NetworkBehaviour
         myPlayerArmies.AddUnitToNewArmy(unit);
     }
 
-    private void ServerHandleUnitDespawned(Unit unit)
+    private void ServerHandleUnitDespawned(Army unit)
     {
         if (unit.connectionToClient.connectionId != connectionToClient.connectionId) { return; }
 
@@ -88,8 +88,8 @@ public class MyPlayer : NetworkBehaviour
     {
         if (NetworkServer.active) { return; }  // Return if this is running as the server (before isClientOnly is set)
 
-        Unit.AuthorityOnUnitSpawned += AuthorityHandleUnitSpawned;
-        Unit.AuthorityOnUnitDespawned += AuthorityHandleUnitDespawned;
+        Army.AuthorityOnArmySpawned += AuthorityHandleUnitSpawned;
+        Army.AuthorityOnArmyDespawned += AuthorityHandleUnitDespawned;
         Base.AuthorityOnBaseSpawned += AuthorityHandleBaseSpawned;
         Base.AuthorityOnBaseDespawned += AuthorityHandleBaseDespawned;
     }
@@ -98,19 +98,19 @@ public class MyPlayer : NetworkBehaviour
     {
         if (!isOwned || !isClientOnly) { return; }  // Return if not owned by this client or this is the server
 
-        Unit.AuthorityOnUnitSpawned -= AuthorityHandleUnitSpawned;
-        Unit.AuthorityOnUnitDespawned -= AuthorityHandleUnitDespawned;
+        Army.AuthorityOnArmySpawned -= AuthorityHandleUnitSpawned;
+        Army.AuthorityOnArmyDespawned -= AuthorityHandleUnitDespawned;
         Base.AuthorityOnBaseSpawned -= AuthorityHandleBaseSpawned;
         Base.AuthorityOnBaseDespawned -= AuthorityHandleBaseDespawned;
     }
 
-    private void AuthorityHandleUnitSpawned(Unit unit)  // Necessary?
+    private void AuthorityHandleUnitSpawned(Army unit)  // Necessary?
     {
         myUnits.Add(unit);
         // TODO: Add here too?
     }
 
-    private void AuthorityHandleUnitDespawned(Unit unit)  // Necessary?
+    private void AuthorityHandleUnitDespawned(Army unit)  // Necessary?
     {
         myUnits.Remove(unit);
         // TODO: Add here too?

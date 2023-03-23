@@ -28,7 +28,7 @@ public class UnitCommandGiver : MonoBehaviour
 
     private void TryMove(Vector3 point)
     {
-        foreach (Unit unit in unitSelectionHandler.SelectedUnits)
+        foreach (Army unit in unitSelectionHandler.SelectedUnits)
         {
             unit.UnitMovement_.CmdMove(point);
         }
