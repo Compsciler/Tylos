@@ -3,12 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class UnitCommandGiver : MonoBehaviour
+[RequireComponent(typeof(ArmySelectionHandler))]
+public class ArmyCommandGiver : MonoBehaviour
 {
-    [SerializeField] private UnitSelectionHandler unitSelectionHandler = null;
+    private ArmySelectionHandler armySelectionHandler = null;
     [SerializeField] private LayerMask layerMask = new LayerMask();
 
     private Camera mainCamera;
+
+    private void Awake() {
+        armySelectionHandler = GetComponent<ArmySelectionHandler>();
+    }
 
     private void Start()
     {
@@ -28,7 +33,7 @@ public class UnitCommandGiver : MonoBehaviour
 
     private void TryMove(Vector3 point)
     {
-        foreach (Army unit in unitSelectionHandler.SelectedUnits)
+        foreach (Army unit in armySelectionHandler.SelectedUnits)
         {
             unit.UnitMovement_.CmdMove(point);
         }

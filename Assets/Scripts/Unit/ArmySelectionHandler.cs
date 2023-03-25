@@ -5,9 +5,9 @@ using Mirror;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class UnitSelectionHandler : MonoBehaviour
+public class ArmySelectionHandler : MonoBehaviour
 {
-    [SerializeField] RectTransform unitSelectionArea;
+    [SerializeField] RectTransform armySelectionArea;
     [SerializeField] LayerMask layerMask;
     [SerializeField] bool cameraAutoFollow = false;
 
@@ -58,7 +58,7 @@ public class UnitSelectionHandler : MonoBehaviour
             SelectedUnits.Clear();
         }
 
-        unitSelectionArea.gameObject.SetActive(true);
+        armySelectionArea.gameObject.SetActive(true);
 
         startPosition = Mouse.current.position.ReadValue();
 
@@ -72,15 +72,15 @@ public class UnitSelectionHandler : MonoBehaviour
         float areaWidth = mousePosition.x - startPosition.x;
         float areaHeight = mousePosition.y - startPosition.y;
 
-        unitSelectionArea.sizeDelta = new Vector2(Mathf.Abs(areaWidth), Mathf.Abs(areaHeight));
-        unitSelectionArea.anchoredPosition = startPosition +
+        armySelectionArea.sizeDelta = new Vector2(Mathf.Abs(areaWidth), Mathf.Abs(areaHeight));
+        armySelectionArea.anchoredPosition = startPosition +
             new Vector2(areaWidth / 2, areaHeight / 2);
     }
 
     private void ClearSelectionArea()
     {
-        unitSelectionArea.gameObject.SetActive(false);
-        if (unitSelectionArea.sizeDelta.magnitude == 0)
+        armySelectionArea.gameObject.SetActive(false);
+        if (armySelectionArea.sizeDelta.magnitude == 0)
         {
             Ray ray = mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
 
@@ -100,8 +100,8 @@ public class UnitSelectionHandler : MonoBehaviour
             return;
         }
 
-        Vector2 min = unitSelectionArea.anchoredPosition - (unitSelectionArea.sizeDelta / 2);
-        Vector2 max = unitSelectionArea.anchoredPosition + (unitSelectionArea.sizeDelta / 2);
+        Vector2 min = armySelectionArea.anchoredPosition - (armySelectionArea.sizeDelta / 2);
+        Vector2 max = armySelectionArea.anchoredPosition + (armySelectionArea.sizeDelta / 2);
 
         foreach (Army unit in player.MyUnits)  // Change for dev mode
         {

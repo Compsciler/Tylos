@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1925953160642069296}
   m_Layer: 0
-  m_Name: Unit Spawn Point
+  m_Name: Army Spawn Point
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -148,9 +148,9 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   spawnRate: 4
-  unitPrefab: {fileID: 6339527542047456646, guid: 08346fa7e0c7ced4bb94332fb3aeec9a,
+  armyPrefab: {fileID: 6339527542047456646, guid: 08346fa7e0c7ced4bb94332fb3aeec9a,
     type: 3}
-  unitSpawnPoint: {fileID: 1925953160642069296}
+  armySpawnPoint: {fileID: 1925953160642069296}
 --- !u!114 &-8116231659258365902
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -8,8 +8,8 @@ public class MyPlayer : NetworkBehaviour
 {
     int playerId = -1;
 
-    List<Army> myUnits = new List<Army>();
-    public List<Army> MyUnits => myUnits;
+    List<Army> myArmies = new List<Army>();
+    public List<Army> MyUnits => myArmies;
     List<Base> myBases = new List<Base>();
     public List<Base> MyBases => myBases;
 
@@ -38,7 +38,7 @@ public class MyPlayer : NetworkBehaviour
 
     public override void OnStopServer()
     {
-        Army.ServerOnArmySpawned -= ServerHandleUnitSpawned;
+        Army.ServerOnArmySpawned -= ServerHandleUnitSpawned;     
         Army.ServerOnArmyDespawned -= ServerHandleUnitDespawned;
         Base.ServerOnBaseSpawned -= ServerHandleBaseSpawned;
         Base.ServerOnBaseDespawned -= ServerHandleBaseDespawned;
@@ -47,23 +47,25 @@ public class MyPlayer : NetworkBehaviour
     [Server]
     public void SetTeamColor(Color color)
     {
-        teamColor = color;
+        teamColor = color;  
+    }
+ 
+    private void ServerHandleUnitSpawned(Army army)
+    {
+        if (army.connectionToClient.connectionId != connectionToClient.connectionId) { return; }
+
+        myArmies.Add(army);
+        // myPlayerArmies.AddUnitToNewArmy(unit);
+        // Adding and removing units from armies is done in the Army class
     }
 
-    private void ServerHandleUnitSpawned(Army unit)
+    private void ServerHandleUnitDespawned(Army army)
     {
-        if (unit.connectionToClient.connectionId != connectionToClient.connectionId) { return; }
+        if (army.connectionToClient.connectionId != connectionToClient.connectionId) { return; }
 
-        myUnits.Add(unit);
-        myPlayerArmies.AddUnitToNewArmy(unit);
-    }
-
-    private void ServerHandleUnitDespawned(Army unit)
-    {
-        if (unit.connectionToClient.connectionId != connectionToClient.connectionId) { return; }
-
-        myUnits.Remove(unit);
-        myPlayerArmies.RemoveUnitFromArmy(unit);
+        myArmies.Remove(army);
+        // myPlayerArmies.RemoveUnitFromArmy(unit);
+        // Adding and removing units from armies is done in the Army class
     }
 
     private void ServerHandleBaseSpawned(Base base_)
@@ -106,13 +108,13 @@ public class MyPlayer : NetworkBehaviour
 
     private void AuthorityHandleUnitSpawned(Army unit)  // Necessary?
     {
-        myUnits.Add(unit);
+        myArmies.Add(unit);
         // TODO: Add here too?
     }
 
     private void AuthorityHandleUnitDespawned(Army unit)  // Necessary?
     {
-        myUnits.Remove(unit);
+        myArmies.Remove(unit);
         // TODO: Add here too?
     }
 

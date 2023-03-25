@@ -96,13 +96,13 @@ GameObject:
   - component: {fileID: 2678173039565540168}
   - component: {fileID: 6339527542047456647}
   - component: {fileID: 6339527542047456640}
-  - component: {fileID: 7051876559114671635}
   - component: {fileID: -5273569327024120270}
+  - component: {fileID: 3300536225245654010}
   - component: {fileID: 487852467032575918}
   - component: {fileID: -4392427088023275341}
   - component: {fileID: 3261407148654518945}
   m_Layer: 10
-  m_Name: Unit
+  m_Name: Army
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -207,7 +207,7 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &7051876559114671635
+--- !u!114 &-5273569327024120270
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -216,7 +216,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 6339527542047456646}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 49eda7430d6b2514e8f7e6dbd17cb85b, type: 3}
+  m_Script: {fileID: 11500000, guid: f4e0326b41740694f8843869bf8ea913, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0.1
+--- !u!114 &3300536225245654010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6339527542047456646}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89fe76c05ee148449877652eacaacfa5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncDirection: 0
@@ -252,21 +267,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &-5273569327024120270
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6339527542047456646}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4e0326b41740694f8843869bf8ea913, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0.1
 --- !u!114 &487852467032575918
 MonoBehaviour:
   m_ObjectHideFlags: 0

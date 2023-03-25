@@ -9,40 +9,40 @@ public class BaseSpawner : NetworkBehaviour
 {
     [SerializeField] float spawnRate = 4f;
 
-    [SerializeField] private GameObject unitPrefab;
-    [SerializeField] private Transform unitSpawnPoint;
+    [SerializeField] private GameObject armyPrefab;
+    [SerializeField] private Transform armySpawnPoint;
 
     #region Server
 
     public override void OnStartServer()
     {
-        StartCoroutine(SpawnUnits());
+        StartCoroutine(SpawnArmies());
     }
 
     [Server]
-    private void SpawnUnit()
+    private void SpawnArmy()
     {
         GameObject unitInstance = Instantiate(
-            unitPrefab,
-            unitSpawnPoint.position,
-            unitSpawnPoint.rotation);
+            armyPrefab,
+            armySpawnPoint.position,
+            armySpawnPoint.rotation);
         IdentityInfo baseIdentity = GetComponent<ObjectIdentity>().Identity;  // TODO: move to OnServerStart() if base identity doesn't change and hope race condition doesn't happen
         unitInstance.GetComponent<ObjectIdentity>().SetIdentity(baseIdentity);
         NetworkServer.Spawn(unitInstance, connectionToClient);
     }
 
     [Command]
-    private void CmdSpawnUnit()
+    private void CmdSpawnArmy()
     {
-        SpawnUnit();
+        SpawnArmy();
     }
 
     [Server]
-    private IEnumerator SpawnUnits()
+    private IEnumerator SpawnArmies()
     {
         while (true)
         {
-            SpawnUnit();
+            SpawnArmy();
             
             yield return new WaitForSeconds(spawnRate);
         }
