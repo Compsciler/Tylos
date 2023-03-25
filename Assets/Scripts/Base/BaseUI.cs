@@ -36,4 +36,12 @@ public class BaseUI : MonoBehaviour
     {
         _unitCountUI.transform.position = Camera.main.WorldToScreenPoint(transform.position) + _offset; // World to screen point is used because the canvas is in screen space
     }
+
+    void OnDisable() {
+        _unitCountUI.SetActive(false);
+    }
+
+    void OnDestroy() {
+        Destroy(_unitCountUI); // Clean up
+    }
 }
