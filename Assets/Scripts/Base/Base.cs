@@ -7,12 +7,12 @@ using UnityEngine;
 public class Base : NetworkBehaviour
 {
     // [SerializeField] int unitCost = 25;
-
     public static event Action<Base> ServerOnBaseSpawned;
     public static event Action<Base> ServerOnBaseDespawned;
 
     public static event Action<Base> AuthorityOnBaseSpawned;
     public static event Action<Base> AuthorityOnBaseDespawned;
+    private List<Unit> baseUnits = new List<Unit>();
 
 
     #region Server

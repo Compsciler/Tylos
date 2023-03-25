@@ -1,21 +1,35 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
+using UnityEngine.Events;
+using Mirror;
+using System;
 
-public class Army
+public class Army : NetworkBehaviour
 {
     List<Unit> armyUnits = new List<Unit>();  // Change to set if necessary
     public ReadOnlyCollection<Unit> ArmyUnits => armyUnits.AsReadOnly();
-    public float GetDeviance() {
+
+    public Army() { }
+
+    public void AddUnit(Unit unit)
+    {
+        armyUnits.Add(unit);
+    }
+    public void RemoveUnit(Unit unit)
+    {
+        armyUnits.Add(unit);
+    }
+
+    public float GetDeviance()
+    {
         // complex sum to find centroid
         var sum = Vector2.zero;
         var armyComplex = new List<Vector2>();
         foreach (var u in armyUnits)
         {
-            var identity = u.GetComponent<ObjectIdentity>().Identity;
+            var identity = u.ObjectIdentity.Identity;
             var rgbIdentity = new Color(identity.r, identity.g, identity.b);
             float h;
             Color.RGBToHSV(rgbIdentity, out h, out _, out _);
@@ -31,14 +45,66 @@ public class Army
         stdev /= armyComplex.Count;
         return stdev;
     }
-    public Army() {}
 
-    public void AddUnit(Unit unit)
+    [SerializeField] UnityEvent onSelected;
+    [SerializeField] UnityEvent onDeselected;
+
+    ArmyMovement armyMovement;
+    public ArmyMovement UnitMovement_ => armyMovement;
+
+    public static event Action<Army> ServerOnArmySpawned;
+    public static event Action<Army> ServerOnArmyDespawned;
+
+    public static event Action<Army> AuthorityOnArmySpawned;
+    public static event Action<Army> AuthorityOnArmyDespawned;
+
+    void Awake()
     {
-        armyUnits.Add(unit);
+        armyMovement = GetComponent<ArmyMovement>();
     }
-    public void RemoveUnit(Unit unit)
+
+    #region Server
+
+    public override void OnStartServer()
     {
-        armyUnits.Add(unit);
+        ServerOnArmySpawned?.Invoke(this);
     }
+
+    public override void OnStopServer()
+    {
+        ServerOnArmyDespawned?.Invoke(this);
+    }
+
+    #endregion
+
+    #region Client
+
+    public override void OnStartAuthority()
+    {
+        AuthorityOnArmySpawned?.Invoke(this);
+    }
+
+    public override void OnStopClient()
+    {
+        if (!isOwned) { return; }
+
+        AuthorityOnArmyDespawned?.Invoke(this);
+    }
+
+    [Client]
+    public void Select()
+    {
+        if (!isOwned) { return; }  // Change for dev mode, check may also be redundant from UnitSelectionHandler
+
+        onSelected?.Invoke();
+    }
+
+    [Client]
+    public void Deselect()
+    {
+        if (!isOwned) { return; }
+
+        onDeselected?.Invoke();
+    }
+    #endregion
 }
