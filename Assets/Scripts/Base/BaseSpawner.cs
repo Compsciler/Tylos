@@ -7,18 +7,11 @@ using UnityEngine.EventSystems;
 [RequireComponent(typeof(ObjectIdentity))]
 public class BaseSpawner : NetworkBehaviour
 {
-    [SerializeField] float spawnRate = 4f;
 
     [SerializeField] private GameObject armyPrefab;
     [SerializeField] private Transform armySpawnPoint;
 
     #region Server
-
-    public override void OnStartServer()
-    {
-        StartCoroutine(SpawnArmies());
-    }
-
     [Server]
     private void SpawnArmy()
     {
@@ -37,16 +30,6 @@ public class BaseSpawner : NetworkBehaviour
         SpawnArmy();
     }
 
-    [Server]
-    private IEnumerator SpawnArmies()
-    {
-        while (true)
-        {
-            SpawnArmy();
-
-            yield return new WaitForSeconds(spawnRate);
-        }
-    }
 
     #endregion
 
