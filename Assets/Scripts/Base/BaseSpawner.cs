@@ -22,13 +22,13 @@ public class BaseSpawner : NetworkBehaviour
     [Server]
     private void SpawnArmy()
     {
-        GameObject unitInstance = Instantiate(
+        GameObject armyInstance = Instantiate(
             armyPrefab,
             armySpawnPoint.position,
             armySpawnPoint.rotation);
         IdentityInfo baseIdentity = GetComponent<ObjectIdentity>().Identity;  // TODO: move to OnServerStart() if base identity doesn't change and hope race condition doesn't happen
-        unitInstance.GetComponent<ObjectIdentity>().SetIdentity(baseIdentity);
-        NetworkServer.Spawn(unitInstance, connectionToClient);
+        armyInstance.GetComponent<ObjectIdentity>().SetIdentity(baseIdentity);
+        NetworkServer.Spawn(armyInstance, connectionToClient);
     }
 
     [Command]
@@ -43,7 +43,7 @@ public class BaseSpawner : NetworkBehaviour
         while (true)
         {
             SpawnArmy();
-            
+
             yield return new WaitForSeconds(spawnRate);
         }
     }
@@ -51,7 +51,7 @@ public class BaseSpawner : NetworkBehaviour
     #endregion
 
     #region Client
-    
+
     /*
     public void OnPointerClick(PointerEventData eventData)
     {

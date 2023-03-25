@@ -103,7 +103,7 @@ public class ArmySelectionHandler : MonoBehaviour
         Vector2 min = armySelectionArea.anchoredPosition - (armySelectionArea.sizeDelta / 2);
         Vector2 max = armySelectionArea.anchoredPosition + (armySelectionArea.sizeDelta / 2);
 
-        foreach (Army unit in player.MyUnits)  // Change for dev mode
+        foreach (Army unit in player.MyArmies)  // Change for dev mode
         {
             if (SelectedUnits.Contains(unit)) { continue; }
 

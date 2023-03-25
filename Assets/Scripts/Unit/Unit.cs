@@ -5,8 +5,7 @@ using Mirror;
 using UnityEngine;
 using UnityEngine.Events;
 
-[RequireComponent(typeof(ArmyMovement))]
-public class Unit 
+public class Unit
 {
     ObjectIdentity objectIdentity;
     public ObjectIdentity ObjectIdentity => objectIdentity;

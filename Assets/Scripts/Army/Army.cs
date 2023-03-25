@@ -10,7 +10,20 @@ public class Army : NetworkBehaviour
 {
     List<Unit> armyUnits = new List<Unit>();  // Change to set if necessary
     public ReadOnlyCollection<Unit> ArmyUnits => armyUnits.AsReadOnly();
-    public float GetDeviance() {
+
+    public Army() { }
+
+    public void AddUnit(Unit unit)
+    {
+        armyUnits.Add(unit);
+    }
+    public void RemoveUnit(Unit unit)
+    {
+        armyUnits.Add(unit);
+    }
+
+    public float GetDeviance()
+    {
         // complex sum to find centroid
         var sum = Vector2.zero;
         var armyComplex = new List<Vector2>();
@@ -31,16 +44,6 @@ public class Army : NetworkBehaviour
         var stdev = armyComplex.Sum(c => (c - mean).sqrMagnitude);
         stdev /= armyComplex.Count;
         return stdev;
-    }
-    public Army() {}
-
-    public void AddUnit(Unit unit)
-    {
-        armyUnits.Add(unit);
-    }
-    public void RemoveUnit(Unit unit)
-    {
-        armyUnits.Add(unit);
     }
 
     [SerializeField] UnityEvent onSelected;
