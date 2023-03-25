@@ -985,32 +985,15 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1702044573}
-  - component: {fileID: 1702044572}
+  - component: {fileID: 1702044575}
   - component: {fileID: 1702044574}
   m_Layer: 0
-  m_Name: UnitHandlers
+  m_Name: ArmyHandlers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1702044572
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1702044571}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c238874380d8fee4d9522ebde0f1129d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  unitSelectionArea: {fileID: 237819094}
-  layerMask:
-    serializedVersion: 2
-    m_Bits: 1024
-  cameraAutoFollow: 0
 --- !u!4 &1702044573
 Transform:
   m_ObjectHideFlags: 0
@@ -1036,13 +1019,29 @@ MonoBehaviour:
   m_GameObject: {fileID: 1702044571}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6353c984c6829b74a829ad3b343ec646, type: 3}
+  m_Script: {fileID: 11500000, guid: 835a781b5e488354e9c04b6c5823a75f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unitSelectionHandler: {fileID: 1702044572}
   layerMask:
     serializedVersion: 2
     m_Bits: 1281
+--- !u!114 &1702044575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1702044571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 352dd76410fbe5f4d92b4062cac7ada5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  armySelectionArea: {fileID: 237819094}
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 1024
+  cameraAutoFollow: 0
 --- !u!1001 &1971477743430025661
 PrefabInstance:
   m_ObjectHideFlags: 0

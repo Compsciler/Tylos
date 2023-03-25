@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class UnitMovement : NetworkBehaviour
+public class ArmyMovement : NetworkBehaviour
 {
     NavMeshAgent agent;
     
