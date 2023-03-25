@@ -1556,6 +1556,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   transitionAnimator: {fileID: 1077524252}
+  mainMenuScene: Assets/Scenes/MainMenuScene.unity
 --- !u!114 &1167554168
 MonoBehaviour:
   m_ObjectHideFlags: 0
