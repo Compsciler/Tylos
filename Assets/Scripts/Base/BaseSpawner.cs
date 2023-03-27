@@ -26,17 +26,22 @@ public class BaseSpawner : NetworkBehaviour
         army.SetUnits(units);
         NetworkServer.Spawn(armyInstance, connectionToClient);
         return armyInstance;
-    }
+    } 
 
     [Command]
     public void CmdSpawnMoveArmy(Unit[] units, Vector3 position)
     {
         GameObject armyObject = SpawnArmy(units);
         Army army = armyObject.GetComponent<Army>();
-        SelectionHandler.AddToSelection(army);
-        army.TryMove(position);
+        OnSpawnMoveArmy(army, position);
     }
 
+    [ClientRpc]
+    public void OnSpawnMoveArmy(Entity entity, Vector3 position)
+    {
+        SelectionHandler.AddToSelection(entity);
+        entity.TryMove(position); // This will call CmdMove() on the server, so I'm not sure if I should call it here, but calling it in CmdSpawnMoveArmy() doesn't work
+    }
     #endregion
 
     #region Client

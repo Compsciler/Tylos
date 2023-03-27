@@ -17,12 +17,6 @@ public class Base : Entity
     public static event Action<Base> AuthorityOnBaseSpawned;
     public static event Action<Base> AuthorityOnBaseDespawned;
 
-    [Header("Army Settings")]
-    [SerializeField] private GameObject armyPrefab = null;
-    [SerializeField] private Transform armySpawnPoint = null;
-
-    [Header("Base Settings")]
-    // Base settings
     [SerializeField] 
     [Tooltip("How many seconds between each unit spawn")]
     [Range(1f, 60f)]
@@ -37,7 +31,6 @@ public class Base : Entity
     public override void OnStartServer()
     {
         ServerOnBaseSpawned?.Invoke(this);
-        _baseIdentityInfo = GetComponent<ObjectIdentity>().Identity;
         _baseSpawner = GetComponent<BaseSpawner>();
         StartCoroutine(AddUnits());
     }
@@ -59,11 +52,17 @@ public class Base : Entity
         }
     }
 
+    [Command]
+    private void CmdClearBaseUnits()
+    {
+        _baseUnits.Clear();
+    }
     #endregion
 
     #region Client
     public override void OnStartAuthority()
     {
+        _baseSpawner = GetComponent<BaseSpawner>();
         AuthorityOnBaseSpawned?.Invoke(this);
     }
 
@@ -91,8 +90,9 @@ public class Base : Entity
 
         Unit[] units = new Unit[_baseUnits.Count]; // Convert to array since SyncList doesn't work with Mirror Command
         _baseUnits.CopyTo(units, 0);
+        if(!_baseSpawner.isOwned) { return; } 
         _baseSpawner.CmdSpawnMoveArmy(units, position);
-        _baseUnits.Clear();
+        CmdClearBaseUnits();
     }
     
 

@@ -1,9 +1,10 @@
 using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(SelectionHandler))]
-public class EntityCommandGiver : MonoBehaviour
+public class EntityCommandGiver : NetworkBehaviour
 {
     [SerializeField] private LayerMask layerMask = new LayerMask();
 

@@ -6,7 +6,7 @@ using Mirror;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class SelectionHandler : MonoBehaviour
+public class SelectionHandler : NetworkBehaviour
 {
     [SerializeField] RectTransform selectionArea;
     [SerializeField] LayerMask layerMask;
@@ -48,11 +48,12 @@ public class SelectionHandler : MonoBehaviour
         }
     }
 
+    [Client]
     public static void AddToSelection(Entity entity) 
     {
         if (SelectedEntities.Contains(entity)) { return; }
-
-        SelectedEntities.Add(entity);
+        
+        selectedEntities.Add(entity);
         entity.Select();
     }
 
@@ -116,7 +117,6 @@ public class SelectionHandler : MonoBehaviour
         foreach (Army unit in player.MyArmies)  // Change for dev mode
         {
             if (SelectedEntities.Contains((Entity)unit)) { continue; }
-            Debug.Log("Army is selected");
 
             Vector3 screenPosition = mainCamera.WorldToScreenPoint(unit.transform.position);
 

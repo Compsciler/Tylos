@@ -40,7 +40,6 @@ public abstract class Entity : NetworkBehaviour
     public virtual void TryMove(Vector3 position) {
         if (!isOwned) { return; }
 
-        Debug.Log("Entity TryMove");
         entityMovement.CmdMove(position);
     }
 }
