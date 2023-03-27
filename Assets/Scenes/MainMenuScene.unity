@@ -2553,6 +2553,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fadeOverlayAnimator: {fileID: 1034289224}
+  lobbyScene: Assets/Scenes/LobbyScene.unity
 --- !u!1 &1901300557
 GameObject:
   m_ObjectHideFlags: 0
