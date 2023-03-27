@@ -50,6 +50,9 @@ TagManager:
   - name: UIText
     uniqueID: 2161482107
     locked: 0
+  - name: PlayerCardSprite
+    uniqueID: 293715849
+    locked: 0
   - name: Transition
     uniqueID: 4043252589
     locked: 0
