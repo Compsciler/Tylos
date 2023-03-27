@@ -33,7 +33,7 @@ public class ArmyCommandGiver : MonoBehaviour
 
     private void TryMove(Vector3 point)
     {
-        foreach (Army unit in armySelectionHandler.SelectedUnits)
+        foreach (Army unit in armySelectionHandler.SelectedArmies)
         {
             unit.UnitMovement_.CmdMove(point);
         }

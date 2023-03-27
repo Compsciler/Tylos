@@ -16,8 +16,10 @@ public class ArmySelectionHandler : MonoBehaviour
     CameraController cameraController;
 
     Vector2 startPosition;
-    List<Army> selectedUnits = new List<Army>();
-    public List<Army> SelectedUnits => selectedUnits;
+    List<Army> selectedArmies = new List<Army>();
+    List<Base> selectedBases = new List<Base>();
+    public List<Army> SelectedArmies => selectedArmies;
+    public List<Base> SelectedBases => selectedBases;
 
     void Awake()
     {
@@ -50,12 +52,12 @@ public class ArmySelectionHandler : MonoBehaviour
     {
         if (!Keyboard.current.shiftKey.isPressed)
         {
-            foreach (Army selectedUnit in SelectedUnits)
+            foreach (Army selectedUnit in SelectedArmies)
             {
                 selectedUnit.Deselect();
             }
 
-            SelectedUnits.Clear();
+            SelectedArmies.Clear();
         }
 
         armySelectionArea.gameObject.SetActive(true);
@@ -90,11 +92,11 @@ public class ArmySelectionHandler : MonoBehaviour
 
             if (!unit.isOwned) { return; }  // Change for dev mode
 
-            SelectedUnits.Add(unit);
+            SelectedArmies.Add(unit);
 
-            foreach (Army selectedUnit in SelectedUnits)
+            foreach (Army selectedArmy in SelectedArmies)
             {
-                selectedUnit.Select();
+                selectedArmy.Select();
             }
 
             return;
@@ -105,7 +107,7 @@ public class ArmySelectionHandler : MonoBehaviour
 
         foreach (Army unit in player.MyArmies)  // Change for dev mode
         {
-            if (SelectedUnits.Contains(unit)) { continue; }
+            if (SelectedArmies.Contains(unit)) { continue; }
 
             Vector3 screenPosition = mainCamera.WorldToScreenPoint(unit.transform.position);
 
@@ -114,14 +116,14 @@ public class ArmySelectionHandler : MonoBehaviour
                 screenPosition.y > min.y &&
                 screenPosition.y < max.y)
             {
-                SelectedUnits.Add(unit);
+                SelectedArmies.Add(unit);
                 unit.Select();
             }
         }
 
         if (cameraAutoFollow)
         {
-            cameraController.follow(selectedUnits);
+            cameraController.follow(selectedArmies);
         }
     }
 }

@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1925953160642069296}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Army Spawn Point
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -48,7 +48,7 @@ GameObject:
   - component: {fileID: -8116231659258365902}
   - component: {fileID: -5753634966997559735}
   - component: {fileID: 5578589211416822790}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Base
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -135,6 +135,10 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   spawnRate: 1
+  _baseIdentityInfo:
+    r: 0
+    g: 0
+    b: 0
 --- !u!114 &1925953160895762784
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -168,6 +172,10 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0.1
+  identity:
+    r: 0
+    g: 0
+    b: 0
 --- !u!114 &-5753634966997559735
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -210,7 +218,7 @@ GameObject:
   - component: {fileID: 1925953161135397798}
   - component: {fileID: 1925953161135397793}
   - component: {fileID: 1925953161135397792}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -293,7 +301,7 @@ GameObject:
   - component: {fileID: 8647780725104275466}
   - component: {fileID: 6668065138206989043}
   - component: {fileID: 7866654516353440277}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Unit Count
   m_TagString: Untagged
   m_Icon: {fileID: 0}
