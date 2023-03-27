@@ -13,7 +13,7 @@ public class TitleController : MonoBehaviour
 
     private IEnumerator LoadSceneWithTransition(string sceneName)
     {
-        transitionAnimator.SetTrigger("PlayTransition");
+        transitionAnimator.SetTrigger("FadeOutTrigger");
         yield return new WaitForSeconds(1f);
         SceneManager.LoadScene(sceneName);
     }
