@@ -18,7 +18,7 @@ public abstract class Entity : NetworkBehaviour
     public EntityMovement EntityMovement => entityMovement;
 
     [Client]
-    public void Select()
+    public virtual void Select()
     {
         if (!isOwned) { return; }  // Change for dev mode, check may also be redundant from UnitSelectionHandler
 
@@ -26,10 +26,17 @@ public abstract class Entity : NetworkBehaviour
     }
 
     [Client]
-    public void Deselect()
+    public virtual void Deselect()
     {
         if (!isOwned) { return; }
 
         onDeselected?.Invoke();
+    }
+
+    [Client]
+    public virtual void TryMove(Vector3 position) {
+        if (!isOwned) { return; }
+
+        entityMovement.CmdMove(position);
     }
 }

@@ -33,7 +33,7 @@ public class EntityCommandGiver : MonoBehaviour
     {
         foreach (Entity entity in armySelectionHandler.SelectedEntities)
         {
-            entity.EntityMovement.CmdMove(point);
+            entity.TryMove(point);
         }
     }
 }

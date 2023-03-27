@@ -17,6 +17,11 @@ public class Base : Entity
     public static event Action<Base> AuthorityOnBaseSpawned;
     public static event Action<Base> AuthorityOnBaseDespawned;
 
+    [Header("Army Settings")]
+    [SerializeField] private GameObject armyPrefab = null;
+    [SerializeField] private Transform armySpawnPoint = null;
+
+    [Header("Base Settings")]
     // Base settings
     [SerializeField] 
     [Tooltip("How many seconds between each unit spawn")]
@@ -24,11 +29,7 @@ public class Base : Entity
     private float spawnRate = 5f;
 
     // Internal variables
-    [SerializeField]
     private readonly SyncList<Unit> _baseUnits = new SyncList<Unit>();
-
-    [SerializeField]
-    // private List
     private IdentityInfo _baseIdentityInfo; 
 
     #region Server
@@ -80,7 +81,21 @@ public class Base : Entity
     {
         _baseUnits.Add(unit);
     }
+
+    [Client]
+    public override void TryMove(Vector3 position)
+    {
+        if (!isOwned || _baseUnits.Count == 0) { return; } // If there are no units in the base, don't do anything
+
+        GameObject armyObject = Instantiate(armyPrefab, armySpawnPoint.position, Quaternion.identity);
+        Army army = armyObject.GetComponent<Army>();
+        army.SetUnits(_baseUnits);
+        army.TryMove(position);
+        // PlayerArmies.myArmies.Add(army);
+        _baseUnits.Clear();
+    }
     
 
     #endregion
 }
+    

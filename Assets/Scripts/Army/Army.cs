@@ -10,8 +10,8 @@ using Mirror;
 [RequireComponent(typeof(ArmyMovement))]
 public class Army : Entity
 {
-    List<Unit> armyUnits = new List<Unit>(); // Change to set if necessary
-    public ReadOnlyCollection<Unit> ArmyUnits => armyUnits.AsReadOnly();
+    readonly SyncList<Unit> armyUnits = new SyncList<Unit>(); // Change to set if necessary
+    public ReadOnlyCollection<Unit> ArmyUnits => new ReadOnlyCollection<Unit>(armyUnits);
     
     public Army() { }
 
@@ -22,6 +22,14 @@ public class Army : Entity
     public void RemoveUnit(Unit unit)
     {
         armyUnits.Add(unit);
+    }
+    public void SetUnits(SyncList<Unit> units)
+    {
+        armyUnits.Clear();
+        foreach(Unit unit in units)
+        {
+            armyUnits.Add(unit);
+        }
     }
     
     public float GetDeviance()

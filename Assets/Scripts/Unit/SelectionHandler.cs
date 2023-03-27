@@ -106,6 +106,7 @@ public class SelectionHandler : MonoBehaviour
         foreach (Army unit in player.MyArmies)  // Change for dev mode
         {
             if (SelectedEntities.Contains((Entity)unit)) { continue; }
+            Debug.Log("Army is selected");
 
             Vector3 screenPosition = mainCamera.WorldToScreenPoint(unit.transform.position);
 
