@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(ArmySelectionHandler))]
+[RequireComponent(typeof(SelectionHandler))]
 public class ArmyCommandGiver : MonoBehaviour
 {
-    private ArmySelectionHandler armySelectionHandler = null;
+    private SelectionHandler armySelectionHandler = null;
     [SerializeField] private LayerMask layerMask = new LayerMask();
 
     private Camera mainCamera;
 
     private void Awake() {
-        armySelectionHandler = GetComponent<ArmySelectionHandler>();
+        armySelectionHandler = GetComponent<SelectionHandler>();
     }
 
     private void Start()

@@ -5,9 +5,9 @@ using Mirror;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class ArmySelectionHandler : MonoBehaviour
+public class SelectionHandler : MonoBehaviour
 {
-    [SerializeField] RectTransform armySelectionArea;
+    [SerializeField] RectTransform selectionArea;
     [SerializeField] LayerMask layerMask;
     [SerializeField] bool cameraAutoFollow = false;
 
@@ -60,7 +60,7 @@ public class ArmySelectionHandler : MonoBehaviour
             SelectedArmies.Clear();
         }
 
-        armySelectionArea.gameObject.SetActive(true);
+        selectionArea.gameObject.SetActive(true);
 
         startPosition = Mouse.current.position.ReadValue();
 
@@ -74,36 +74,45 @@ public class ArmySelectionHandler : MonoBehaviour
         float areaWidth = mousePosition.x - startPosition.x;
         float areaHeight = mousePosition.y - startPosition.y;
 
-        armySelectionArea.sizeDelta = new Vector2(Mathf.Abs(areaWidth), Mathf.Abs(areaHeight));
-        armySelectionArea.anchoredPosition = startPosition +
+        selectionArea.sizeDelta = new Vector2(Mathf.Abs(areaWidth), Mathf.Abs(areaHeight));
+        selectionArea.anchoredPosition = startPosition +
             new Vector2(areaWidth / 2, areaHeight / 2);
     }
 
     private void ClearSelectionArea()
     {
-        armySelectionArea.gameObject.SetActive(false);
-        if (armySelectionArea.sizeDelta.magnitude == 0)
+        selectionArea.gameObject.SetActive(false);
+        if (selectionArea.sizeDelta.magnitude == 0) // Called when clicking on a unit
         {
             Ray ray = mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
 
             if (!Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, layerMask)) { return; }
 
-            if (!hit.collider.TryGetComponent<Army>(out Army unit)) { return; }
+            if (hit.collider.TryGetComponent<Army>(out Army army)) {  // Army is clicked
+                if (!army.isOwned) { return; }  // Change for dev mode
 
-            if (!unit.isOwned) { return; }  // Change for dev mode
+                SelectedArmies.Add(army);
 
-            SelectedArmies.Add(unit);
-
-            foreach (Army selectedArmy in SelectedArmies)
-            {
-                selectedArmy.Select();
+                foreach (Army selectedArmy in SelectedArmies)
+                {
+                    selectedArmy.Select();
+                }
             }
+            // } else if(hit.collider.TryGetComponent<Base>(out Base base_)) { // Base is clicked
+            //     if (!base_.isOwned) { return; }  // Change for dev mode
 
+            //     SelectedBases.Add(base_);
+
+            //     foreach (Base selectedBase in SelectedBases)
+            //     {
+            //         selectedBase.Select();
+            //     }
+            // }
             return;
         }
 
-        Vector2 min = armySelectionArea.anchoredPosition - (armySelectionArea.sizeDelta / 2);
-        Vector2 max = armySelectionArea.anchoredPosition + (armySelectionArea.sizeDelta / 2);
+        Vector2 min = selectionArea.anchoredPosition - (selectionArea.sizeDelta / 2);
+        Vector2 max = selectionArea.anchoredPosition + (selectionArea.sizeDelta / 2);
 
         foreach (Army unit in player.MyArmies)  // Change for dev mode
         {

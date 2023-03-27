@@ -985,8 +985,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1702044573}
-  - component: {fileID: 1702044575}
   - component: {fileID: 1702044574}
+  - component: {fileID: 1702044576}
   m_Layer: 0
   m_Name: ArmyHandlers
   m_TagString: Untagged
@@ -1025,7 +1025,7 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 1281
---- !u!114 &1702044575
+--- !u!114 &1702044576
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1034,13 +1034,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1702044571}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 352dd76410fbe5f4d92b4062cac7ada5, type: 3}
+  m_Script: {fileID: 11500000, guid: e943ff20a7a8c6d43ae9592fecee1793, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  armySelectionArea: {fileID: 237819094}
+  selectionArea: {fileID: 237819094}
   layerMask:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 1088
   cameraAutoFollow: 0
 --- !u!1001 &1971477743430025661
 PrefabInstance:

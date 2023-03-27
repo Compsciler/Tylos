@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using Mirror;
 
-public class Army : NetworkBehaviour
+public class Army : Entity
 {
     List<Unit> armyUnits = new List<Unit>(); // Change to set if necessary
     public ReadOnlyCollection<Unit> ArmyUnits => armyUnits.AsReadOnly();
@@ -144,8 +144,6 @@ public class Army : NetworkBehaviour
     }
     
 
-    [SerializeField] UnityEvent onSelected;
-    [SerializeField] UnityEvent onDeselected;
 
     ArmyMovement armyMovement;
     public ArmyMovement UnitMovement_ => armyMovement;
@@ -187,22 +185,6 @@ public class Army : NetworkBehaviour
         if (!isOwned) { return; }
 
         AuthorityOnArmyDespawned?.Invoke(this);
-    }
-
-    [Client]
-    public void Select()
-    {
-        if (!isOwned) { return; }  // Change for dev mode, check may also be redundant from UnitSelectionHandler
-
-        onSelected?.Invoke();
-    }
-
-    [Client]
-    public void Deselect()
-    {
-        if (!isOwned) { return; }
-
-        onDeselected?.Invoke();
     }
     #endregion
 }
