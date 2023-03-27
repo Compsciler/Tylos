@@ -5,7 +5,7 @@ using Mirror;
 using UnityEngine;
 
 [RequireComponent(typeof(ObjectIdentity))]
-public class Base : NetworkBehaviour
+public class Base : Entity
 {
     // Events 
     public static event Action<Base> ServerOnBaseSpawned;

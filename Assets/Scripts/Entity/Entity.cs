@@ -4,11 +4,16 @@ using UnityEngine;
 using Mirror;
 using UnityEngine.Events;
 
+/// <summary>
+/// Base class for all entities in the game.
+/// Entities are objects that can be selected and deselected.
+/// For example, an army or a base
+/// </summary>
 public abstract class Entity : NetworkBehaviour
 {
     public UnityEvent onSelected;
     public UnityEvent onDeselected;
-    
+
     [Client]
     public void Select()
     {
