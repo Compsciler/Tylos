@@ -1,10 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(SelectionHandler))]
-public class ArmyCommandGiver : MonoBehaviour
+public class EntityCommandGiver : MonoBehaviour
 {
     private SelectionHandler armySelectionHandler = null;
     [SerializeField] private LayerMask layerMask = new LayerMask();
@@ -33,9 +31,9 @@ public class ArmyCommandGiver : MonoBehaviour
 
     private void TryMove(Vector3 point)
     {
-        foreach (Army unit in armySelectionHandler.SelectedArmies)
+        foreach (Entity entity in armySelectionHandler.SelectedEntities)
         {
-            unit.UnitMovement_.CmdMove(point);
+            entity.EntityMovement.CmdMove(point);
         }
     }
 }

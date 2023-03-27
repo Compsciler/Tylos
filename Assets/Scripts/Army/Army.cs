@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using Mirror;
 
+[RequireComponent(typeof(ArmyMovement))]
 public class Army : Entity
 {
     List<Unit> armyUnits = new List<Unit>(); // Change to set if necessary
@@ -142,11 +143,6 @@ public class Army : Entity
         var eigenVector = new Vector2(bFactor, -aFactor).normalized;
         return (eigenVector, new Vector2(xMean, yMean));
     }
-    
-
-
-    ArmyMovement armyMovement;
-    public ArmyMovement UnitMovement_ => armyMovement;
 
     public static event Action<Army> ServerOnArmySpawned;
     public static event Action<Army> ServerOnArmyDespawned;
@@ -156,7 +152,7 @@ public class Army : Entity
 
     void Awake()
     {
-        armyMovement = GetComponent<ArmyMovement>();
+        entityMovement = GetComponent<ArmyMovement>();
     }
 
     #region Server

@@ -14,6 +14,9 @@ public abstract class Entity : NetworkBehaviour
     public UnityEvent onSelected;
     public UnityEvent onDeselected;
 
+    protected EntityMovement entityMovement;
+    public EntityMovement EntityMovement => entityMovement;
+
     [Client]
     public void Select()
     {

@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 
+/// <summary>
+/// 
+/// </summary>
 [RequireComponent(typeof(ObjectIdentity))]
 public class Base : Entity
 {

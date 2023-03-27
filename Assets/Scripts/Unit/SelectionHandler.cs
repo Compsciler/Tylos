@@ -16,10 +16,8 @@ public class SelectionHandler : MonoBehaviour
     CameraController cameraController;
 
     Vector2 startPosition;
-    List<Army> selectedArmies = new List<Army>();
-    List<Base> selectedBases = new List<Base>();
-    public List<Army> SelectedArmies => selectedArmies;
-    public List<Base> SelectedBases => selectedBases;
+    List<Entity> selectedEntities = new List<Entity>();
+    public List<Entity> SelectedEntities => selectedEntities;
 
     void Awake()
     {
@@ -52,12 +50,12 @@ public class SelectionHandler : MonoBehaviour
     {
         if (!Keyboard.current.shiftKey.isPressed)
         {
-            foreach (Army selectedUnit in SelectedArmies)
+            foreach (Entity selectedEntity in SelectedEntities)
             {
-                selectedUnit.Deselect();
+                selectedEntity.Deselect();
             }
 
-            SelectedArmies.Clear();
+            SelectedEntities.Clear();
         }
 
         selectionArea.gameObject.SetActive(true);
@@ -82,41 +80,32 @@ public class SelectionHandler : MonoBehaviour
     private void ClearSelectionArea()
     {
         selectionArea.gameObject.SetActive(false);
-        if (selectionArea.sizeDelta.magnitude == 0) // Called when clicking on a unit
+        if (selectionArea.sizeDelta.magnitude == 0) // User clicked instead of dragging a box
         {
             Ray ray = mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
 
             if (!Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, layerMask)) { return; }
 
-            if (hit.collider.TryGetComponent<Army>(out Army army)) {  // Army is clicked
-                if (!army.isOwned) { return; }  // Change for dev mode
+            if (hit.collider.TryGetComponent<Entity>(out Entity entity)){// Entity is clicked
+                if (!entity.isOwned) { return; }  // Change for dev mode
 
-                SelectedArmies.Add(army);
+                SelectedEntities.Add(entity);
 
-                foreach (Army selectedArmy in SelectedArmies)
+                foreach (Entity selectedEntity in SelectedEntities)
                 {
-                    selectedArmy.Select();
+                    selectedEntity.Select();
                 }
             }
-            // } else if(hit.collider.TryGetComponent<Base>(out Base base_)) { // Base is clicked
-            //     if (!base_.isOwned) { return; }  // Change for dev mode
-
-            //     SelectedBases.Add(base_);
-
-            //     foreach (Base selectedBase in SelectedBases)
-            //     {
-            //         selectedBase.Select();
-            //     }
-            // }
             return;
         }
 
         Vector2 min = selectionArea.anchoredPosition - (selectionArea.sizeDelta / 2);
         Vector2 max = selectionArea.anchoredPosition + (selectionArea.sizeDelta / 2);
 
+        // Selects all the armies in the selection area if it is player's armies
         foreach (Army unit in player.MyArmies)  // Change for dev mode
         {
-            if (SelectedArmies.Contains(unit)) { continue; }
+            if (SelectedEntities.Contains((Entity)unit)) { continue; }
 
             Vector3 screenPosition = mainCamera.WorldToScreenPoint(unit.transform.position);
 
@@ -125,14 +114,31 @@ public class SelectionHandler : MonoBehaviour
                 screenPosition.y > min.y &&
                 screenPosition.y < max.y)
             {
-                SelectedArmies.Add(unit);
+                SelectedEntities.Add(unit);
                 unit.Select();
+            }
+        }
+
+        // Selects all the bases in the selection area if it is player's base
+        foreach(Base myBase in player.MyBases)  // Change for dev mode
+        {
+            if (SelectedEntities.Contains((Entity)myBase)) { continue; }
+
+            Vector3 screenPosition = mainCamera.WorldToScreenPoint(myBase.transform.position);
+
+            if (screenPosition.x > min.x &&
+                screenPosition.x < max.x &&
+                screenPosition.y > min.y &&
+                screenPosition.y < max.y)
+            {
+                SelectedEntities.Add(myBase);
+                myBase.Select();
             }
         }
 
         if (cameraAutoFollow)
         {
-            cameraController.follow(selectedArmies);
+            cameraController.follow(selectedEntities);
         }
     }
 }
