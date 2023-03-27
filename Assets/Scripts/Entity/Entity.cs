@@ -9,11 +9,14 @@ using UnityEngine.Events;
 /// Entities are objects that can be selected and deselected.
 /// For example, an army or a base
 /// </summary>
+[RequireComponent(typeof(EntityMovement))]
 public abstract class Entity : NetworkBehaviour
 {
     public UnityEvent onSelected;
     public UnityEvent onDeselected;
 
+
+    [SerializeField]
     protected EntityMovement entityMovement;
     public EntityMovement EntityMovement => entityMovement;
 
@@ -37,6 +40,7 @@ public abstract class Entity : NetworkBehaviour
     public virtual void TryMove(Vector3 position) {
         if (!isOwned) { return; }
 
+        Debug.Log("Entity TryMove");
         entityMovement.CmdMove(position);
     }
 }

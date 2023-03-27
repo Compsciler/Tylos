@@ -23,7 +23,7 @@ public class Army : Entity
     {
         armyUnits.Add(unit);
     }
-    public void SetUnits(SyncList<Unit> units)
+    public void SetUnits(Unit[] units) // Use array because Mirror doesn't support lists in commands 
     {
         armyUnits.Clear();
         foreach(Unit unit in units)

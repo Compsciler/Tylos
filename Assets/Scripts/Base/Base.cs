@@ -1,6 +1,6 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Mirror;
 using UnityEngine;
 
@@ -38,6 +38,7 @@ public class Base : Entity
     {
         ServerOnBaseSpawned?.Invoke(this);
         _baseIdentityInfo = GetComponent<ObjectIdentity>().Identity;
+        _baseSpawner = GetComponent<BaseSpawner>();
         StartCoroutine(AddUnits());
     }
 
@@ -84,14 +85,13 @@ public class Base : Entity
     }
 
     [Client]
-    public override void TryMove(Vector3 position)
+    public override void TryMove(Vector3 position) // When move command is issued to the base, spawn an army and move it to the position
     {
         if (!isOwned || _baseUnits.Count == 0) { return; } // If there are no units in the base, don't do anything
-        
-        GameObject armyObject;
-        _baseSpawner.CmdSpawnArmy(_baseUnits, out armyObject);
-        Army army = armyObject.GetComponent<Army>();
-        army.TryMove(position);
+
+        Unit[] units = new Unit[_baseUnits.Count]; // Convert to array since SyncList doesn't work with Mirror Command
+        _baseUnits.CopyTo(units, 0);
+        _baseSpawner.CmdSpawnMoveArmy(units, position);
         _baseUnits.Clear();
     }
     

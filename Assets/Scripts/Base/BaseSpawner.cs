@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Mirror;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -13,7 +14,7 @@ public class BaseSpawner : NetworkBehaviour
 
     #region Server
     [Server]
-    private GameObject SpawnArmy(SyncList<Unit> units)
+    private GameObject SpawnArmy(Unit[] units)
     {
         GameObject armyInstance = Instantiate(
             armyPrefab,
@@ -21,16 +22,20 @@ public class BaseSpawner : NetworkBehaviour
             armySpawnPoint.rotation);
         IdentityInfo baseIdentity = GetComponent<ObjectIdentity>().Identity;  // TODO: move to OnServerStart() if base identity doesn't change and hope race condition doesn't happen
         armyInstance.GetComponent<ObjectIdentity>().SetIdentity(baseIdentity);
+        Army army = armyInstance.GetComponent<Army>();
+        army.SetUnits(units);
         NetworkServer.Spawn(armyInstance, connectionToClient);
         return armyInstance;
     }
 
     [Command]
-    public void CmdSpawnArmy(SyncList<Unit> units, out GameObject armyInstance) // TODO: FIX THIS, COMMAND CAN'T RETURN A VALUE
+    public void CmdSpawnMoveArmy(Unit[] units, Vector3 position)
     {
-        armyInstance = SpawnArmy(units);
+        GameObject armyObject = SpawnArmy(units);
+        Army army = armyObject.GetComponent<Army>();
+        SelectionHandler.AddToSelection(army);
+        army.TryMove(position);
     }
-
 
     #endregion
 

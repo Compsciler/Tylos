@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Mirror;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -16,8 +17,9 @@ public class SelectionHandler : MonoBehaviour
     CameraController cameraController;
 
     Vector2 startPosition;
-    List<Entity> selectedEntities = new List<Entity>();
-    public List<Entity> SelectedEntities => selectedEntities;
+    static List<Entity> selectedEntities = new List<Entity>();
+    public static List<Entity> SelectedEntities => selectedEntities;
+    public static List<Entity> SelectedEntitiesCopy => new List<Entity>(selectedEntities);
 
     void Awake()
     {
@@ -44,6 +46,14 @@ public class SelectionHandler : MonoBehaviour
         {
             UpdateSelectionArea();
         }
+    }
+
+    public static void AddToSelection(Entity entity) 
+    {
+        if (SelectedEntities.Contains(entity)) { return; }
+
+        SelectedEntities.Add(entity);
+        entity.Select();
     }
 
     private void StartSelectionArea()
