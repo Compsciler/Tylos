@@ -7,7 +7,7 @@ using UnityEngine;
 /// <summary>
 /// 
 /// </summary>
-[RequireComponent(typeof(ObjectIdentity))]
+[RequireComponent(typeof(ObjectIdentity), typeof(BaseSpawner))]
 public class Base : Entity
 {
     // Events 
@@ -31,6 +31,7 @@ public class Base : Entity
     // Internal variables
     private readonly SyncList<Unit> _baseUnits = new SyncList<Unit>();
     private IdentityInfo _baseIdentityInfo; 
+    private BaseSpawner _baseSpawner;
 
     #region Server
     public override void OnStartServer()
@@ -86,16 +87,14 @@ public class Base : Entity
     public override void TryMove(Vector3 position)
     {
         if (!isOwned || _baseUnits.Count == 0) { return; } // If there are no units in the base, don't do anything
-
-        GameObject armyObject = Instantiate(armyPrefab, armySpawnPoint.position, Quaternion.identity);
+        
+        GameObject armyObject;
+        _baseSpawner.CmdSpawnArmy(_baseUnits, out armyObject);
         Army army = armyObject.GetComponent<Army>();
-        army.SetUnits(_baseUnits);
         army.TryMove(position);
-        // PlayerArmies.myArmies.Add(army);
         _baseUnits.Clear();
     }
     
 
     #endregion
 }
-    

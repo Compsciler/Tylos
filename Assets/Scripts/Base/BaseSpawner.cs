@@ -13,7 +13,7 @@ public class BaseSpawner : NetworkBehaviour
 
     #region Server
     [Server]
-    private void SpawnArmy()
+    private GameObject SpawnArmy(SyncList<Unit> units)
     {
         GameObject armyInstance = Instantiate(
             armyPrefab,
@@ -22,12 +22,13 @@ public class BaseSpawner : NetworkBehaviour
         IdentityInfo baseIdentity = GetComponent<ObjectIdentity>().Identity;  // TODO: move to OnServerStart() if base identity doesn't change and hope race condition doesn't happen
         armyInstance.GetComponent<ObjectIdentity>().SetIdentity(baseIdentity);
         NetworkServer.Spawn(armyInstance, connectionToClient);
+        return armyInstance;
     }
 
     [Command]
-    private void CmdSpawnArmy()
+    public void CmdSpawnArmy(SyncList<Unit> units, out GameObject armyInstance) // TODO: FIX THIS, COMMAND CAN'T RETURN A VALUE
     {
-        SpawnArmy();
+        armyInstance = SpawnArmy(units);
     }
 
 
