@@ -22,7 +22,7 @@ public class Base : NetworkBehaviour
 
     // Internal variables
     [SerializeField]
-    private List<Unit> _baseUnits = new List<Unit>();
+    private readonly SyncList<Unit> _baseUnits = new SyncList<Unit>();
 
     [SerializeField]
     // private List
