@@ -2,14 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-
 using Unity.Mathematics;
-
-
 using UnityEngine;
 using UnityEngine.Events;
 using Mirror;
-using System;
 
 public class Army : NetworkBehaviour
 {
@@ -87,7 +83,7 @@ public class Army : NetworkBehaviour
         var armyComplex = new List<Vector2>();
         foreach (var u in armyUnits)
         {
-            var identity = u.ObjectIdentity.Identity;
+            var identity = u.IdentityInfo;
             var rgbIdentity = new Color(identity.r, identity.g, identity.b);
             float h;
             Color.RGBToHSV(rgbIdentity, out h, out _, out _);

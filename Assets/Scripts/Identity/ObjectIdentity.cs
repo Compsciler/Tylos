@@ -8,6 +8,7 @@ using UnityEngine;
 public class ObjectIdentity : NetworkBehaviour
 {
     [SyncVar(hook = nameof(HandleIdentityUpdated))]
+    [SerializeField]
     IdentityInfo identity;
     public IdentityInfo Identity => identity;
 
@@ -44,6 +45,7 @@ public class ObjectIdentity : NetworkBehaviour
     #endregion
 }
 
+[Serializable]
 public struct IdentityInfo
 {
     public float r;

@@ -21,13 +21,18 @@ public class Base : NetworkBehaviour
     private float spawnRate = 5f;
 
     // Internal variables
+    [SerializeField]
     private List<Unit> _baseUnits = new List<Unit>();
+
+    [SerializeField]
+    // private List
     private IdentityInfo _baseIdentityInfo; 
 
     #region Server
     public override void OnStartServer()
     {
         ServerOnBaseSpawned?.Invoke(this);
+        _baseIdentityInfo = GetComponent<ObjectIdentity>().Identity;
         StartCoroutine(AddUnits());
     }
 
@@ -41,8 +46,7 @@ public class Base : NetworkBehaviour
     {
         while (true)
         {
-            Unit unit = new Unit();
-            unit.ObjectIdentity.SetIdentity(_baseIdentityInfo);
+            Unit unit = new Unit(_baseIdentityInfo);
             _baseUnits.Add(unit);
 
             yield return new WaitForSeconds(spawnRate);
@@ -52,12 +56,6 @@ public class Base : NetworkBehaviour
     #endregion
 
     #region Client
-
-    private void Awake()
-    {
-        _baseIdentityInfo = GetComponent<ObjectIdentity>().Identity;
-    }
-
     public override void OnStartAuthority()
     {
         AuthorityOnBaseSpawned?.Invoke(this);
