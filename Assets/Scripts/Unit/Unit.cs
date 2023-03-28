@@ -5,9 +5,26 @@ using Mirror;
 using UnityEngine;
 using UnityEngine.Events;
 
+[Serializable]
 public class Unit
 {
-    ObjectIdentity objectIdentity;
-    public ObjectIdentity ObjectIdentity => objectIdentity;
-    // TODO: Add unit specific data here
-}
+    [SerializeField] IdentityInfo identityInfo;
+    
+    public IdentityInfo IdentityInfo => identityInfo;
+    // TODO: Add unit specific data her
+
+    public Unit()
+    {
+        identityInfo = new IdentityInfo();
+    }
+
+    public Unit(IdentityInfo identityInfo)
+    {
+        this.identityInfo = identityInfo;
+    }
+
+    public void SetIdentityInfo(IdentityInfo identityInfo)
+    {
+        this.identityInfo = identityInfo;
+    }
+}   

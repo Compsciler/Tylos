@@ -1,19 +1,15 @@
-using System.Collections;
 using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(ArmySelectionHandler))]
-public class ArmyCommandGiver : MonoBehaviour
+[RequireComponent(typeof(SelectionHandler))]
+public class EntityCommandGiver : NetworkBehaviour
 {
-    private ArmySelectionHandler armySelectionHandler = null;
     [SerializeField] private LayerMask layerMask = new LayerMask();
 
     private Camera mainCamera;
 
-    private void Awake() {
-        armySelectionHandler = GetComponent<ArmySelectionHandler>();
-    }
 
     private void Start()
     {
@@ -27,15 +23,14 @@ public class ArmyCommandGiver : MonoBehaviour
         Ray ray = mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
 
         if (!Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, layerMask)) { return; }
-
         TryMove(hit.point);
     }
-
+    
     private void TryMove(Vector3 point)
     {
-        foreach (Army unit in armySelectionHandler.SelectedUnits)
-        {
-            unit.UnitMovement_.CmdMove(point);
+        foreach (Entity entity in SelectionHandler.SelectedEntitiesCopy)
+        { 
+            entity.TryMove(point);
         }
     }
 }

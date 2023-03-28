@@ -10,12 +10,12 @@ public class CameraController : MonoBehaviour
         
     }
 
-    private List<Army> following;
+    private List<Entity> following;
     [SerializeField] float max_track_speed = 1;
     [SerializeField] float keyboard_scroll_speed = 0.1f;
     [SerializeField] float edge_drag_speed = 1;
 
-    public void follow(List<Army> to_follow){
+    public void follow(List<Entity> to_follow){
         following = to_follow;
     }
 
@@ -43,7 +43,7 @@ public class CameraController : MonoBehaviour
         return delta / (1 - threashold) * edge_drag_speed;
     }
 
-    Vector3 avg_position(List<Army> units){
+    Vector3 avg_position(List<Entity> units){
         Vector3 avg = new Vector3();
         foreach(Army u in units){
             avg += u.transform.position;

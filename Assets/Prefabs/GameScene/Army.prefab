@@ -222,6 +222,10 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0.1
+  identity:
+    r: 0
+    g: 0
+    b: 0
 --- !u!114 &3300536225245654010
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -267,6 +271,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  entityMovement: {fileID: 3261407148654518945}
 --- !u!114 &487852467032575918
 MonoBehaviour:
   m_ObjectHideFlags: 0

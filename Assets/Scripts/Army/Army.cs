@@ -2,19 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-
 using Unity.Mathematics;
-
-
 using UnityEngine;
 using UnityEngine.Events;
 using Mirror;
-using System;
 
-public class Army : NetworkBehaviour
+[RequireComponent(typeof(ArmyMovement))]
+public class Army : Entity
 {
-    List<Unit> armyUnits = new List<Unit>(); // Change to set if necessary
-    public ReadOnlyCollection<Unit> ArmyUnits => armyUnits.AsReadOnly();
+    readonly SyncList<Unit> armyUnits = new SyncList<Unit>(); // Change to set if necessary
+    public ReadOnlyCollection<Unit> ArmyUnits => new ReadOnlyCollection<Unit>(armyUnits);
     
     public Army() { }
 
@@ -24,7 +21,15 @@ public class Army : NetworkBehaviour
     }
     public void RemoveUnit(Unit unit)
     {
-        armyUnits.Add(unit);
+        armyUnits.Remove(unit);
+    }
+    public void SetUnits(Unit[] units) // Use array because Mirror doesn't support lists in commands 
+    {
+        armyUnits.Clear();
+        foreach(Unit unit in units)
+        {
+            armyUnits.Add(unit);
+        }
     }
     
     public float GetDeviance()
@@ -87,7 +92,7 @@ public class Army : NetworkBehaviour
         var armyComplex = new List<Vector2>();
         foreach (var u in armyUnits)
         {
-            var identity = u.ObjectIdentity.Identity;
+            var identity = u.IdentityInfo;
             var rgbIdentity = new Color(identity.r, identity.g, identity.b);
             float h;
             Color.RGBToHSV(rgbIdentity, out h, out _, out _);
@@ -146,13 +151,6 @@ public class Army : NetworkBehaviour
         var eigenVector = new Vector2(bFactor, -aFactor).normalized;
         return (eigenVector, new Vector2(xMean, yMean));
     }
-    
-
-    [SerializeField] UnityEvent onSelected;
-    [SerializeField] UnityEvent onDeselected;
-
-    ArmyMovement armyMovement;
-    public ArmyMovement UnitMovement_ => armyMovement;
 
     public static event Action<Army> ServerOnArmySpawned;
     public static event Action<Army> ServerOnArmyDespawned;
@@ -162,7 +160,7 @@ public class Army : NetworkBehaviour
 
     void Awake()
     {
-        armyMovement = GetComponent<ArmyMovement>();
+        entityMovement = GetComponent<ArmyMovement>();
     }
 
     #region Server
@@ -191,22 +189,6 @@ public class Army : NetworkBehaviour
         if (!isOwned) { return; }
 
         AuthorityOnArmyDespawned?.Invoke(this);
-    }
-
-    [Client]
-    public void Select()
-    {
-        if (!isOwned) { return; }  // Change for dev mode, check may also be redundant from UnitSelectionHandler
-
-        onSelected?.Invoke();
-    }
-
-    [Client]
-    public void Deselect()
-    {
-        if (!isOwned) { return; }
-
-        onDeselected?.Invoke();
     }
     #endregion
 }
