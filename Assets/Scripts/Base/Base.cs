@@ -19,7 +19,7 @@ public class Base : Entity
 
     [SerializeField] 
     [Tooltip("How many seconds between each unit spawn")]
-    [Range(1f, 60f)]
+    [Range(0f, 60f)]
     private float spawnRate = 5f;
 
     // Internal variables

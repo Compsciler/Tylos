@@ -21,7 +21,7 @@ public class Army : Entity
     }
     public void RemoveUnit(Unit unit)
     {
-        armyUnits.Add(unit);
+        armyUnits.Remove(unit);
     }
     public void SetUnits(Unit[] units) // Use array because Mirror doesn't support lists in commands 
     {
