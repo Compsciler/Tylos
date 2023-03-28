@@ -272,6 +272,9 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   entityMovement: {fileID: 3261407148654518945}
+  defaultScale: 1
+  scaleIncrementPerUnit: 0.05
+  scaleLerpSpeed: 1
 --- !u!114 &487852467032575918
 MonoBehaviour:
   m_ObjectHideFlags: 0

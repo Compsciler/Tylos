@@ -12,6 +12,19 @@ public class Army : Entity
 {
     readonly SyncList<Unit> armyUnits = new SyncList<Unit>(); // Change to set if necessary
     public ReadOnlyCollection<Unit> ArmyUnits => new ReadOnlyCollection<Unit>(armyUnits);
+
+    [Header("Army visual settings")]
+    [SerializeField]
+    [Range(0.1f, 10f)]
+    private float defaultScale = 1f;
+
+    [SerializeField]
+    [Range(0.1f, 2f)]
+    private float scaleIncrementPerUnit = 1f;
+
+    [SerializeField]
+    private float scaleLerpSpeed = 1f;
+    
     
     public Army() { }
 
@@ -30,6 +43,7 @@ public class Army : Entity
         {
             armyUnits.Add(unit);
         }
+        UpdateScale();
     }
     
     public float GetDeviance()
@@ -168,16 +182,33 @@ public class Army : Entity
     public override void OnStartServer()
     {
         ServerOnArmySpawned?.Invoke(this);
+        UpdateScale();
     }
 
     public override void OnStopServer()
     {
         ServerOnArmyDespawned?.Invoke(this);
     }
+    
+    [Server]
+    private void UpdateScale()
+    {
+        Debug.Log("Updating scale");
+        Vector3 start = gameObject.transform.localScale;
+        Debug.Log("Start scale: " + start);
+        Vector3 end = (Vector3.one * defaultScale) + (Vector3.one * scaleIncrementPerUnit * armyUnits.Count);
+        Debug.Log("End scale: " + end);
+        // gameObject.transform.localScale = Vector3.Lerp(start, end, Time.deltaTime * scaleLerpSpeed);
+        gameObject.transform.localScale = end;
+    }
 
     #endregion
 
     #region Client
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+    }
 
     public override void OnStartAuthority()
     {
