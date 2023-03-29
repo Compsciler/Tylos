@@ -9,6 +9,8 @@ using UnityEngine.Events;
 public class Unit
 {
     [SyncVar] IdentityInfo identityInfo;
+    [SyncVar] public float health = 1f;
+    public float Health => health;
     
     public IdentityInfo IdentityInfo => identityInfo;
     // TODO: Add unit specific data her
@@ -26,5 +28,11 @@ public class Unit
     public void SetIdentityInfo(IdentityInfo identityInfo)
     {
         this.identityInfo = identityInfo;
+    }
+
+    public void SetHealth(float health)
+    {
+        Debug.Log("Setting health to " + health);
+        this.health = health;
     }
 }   

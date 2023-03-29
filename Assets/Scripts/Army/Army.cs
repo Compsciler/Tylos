@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using Mirror;
 
-[RequireComponent(typeof(ArmyMovement))]
+[RequireComponent(typeof(ArmyMovement), typeof(ArmyHealth))]
 public class Army : Entity
 {
 
@@ -21,12 +21,19 @@ public class Army : Entity
     private float scaleIncrementPerUnit = 1f;
 
     // Internal variables    
+    [SyncVar] private ArmyState state = ArmyState.Idle;
+    public ArmyState State => state;
     readonly SyncList<Unit> armyUnits = new SyncList<Unit>(); // Change to set if necessary
     public ReadOnlyCollection<Unit> ArmyUnits => new ReadOnlyCollection<Unit>(armyUnits);
     [SyncVar] private float attackDamage = 0f;
-     
+    private Entity attackTarget = null; // Only used on the server
+
     public Army() { }
 
+    void Awake()
+    {
+        entityMovement = GetComponent<ArmyMovement>();
+    }
     public void AddUnit(Unit unit)
     {
         armyUnits.Add(unit);
@@ -38,13 +45,19 @@ public class Army : Entity
     public void SetUnits(Unit[] units) // Use array because Mirror doesn't support lists in commands 
     {
         armyUnits.Clear();
-        foreach(Unit unit in units)
+        foreach (Unit unit in units)
         {
             armyUnits.Add(unit);
         }
         UpdateScale();
     }
-    
+    public float GetAttackDamage()
+    {
+        return attackDamage;
+    }
+
+    #region ColorIdentity 
+
     public float GetDeviance()
     {
         // complex sum to find centroid
@@ -65,10 +78,10 @@ public class Army : Entity
     public (List<Unit>, List<Unit>) CalculateSplit()
     {
         var armyComplex = IdentityComplex();
-        
+
         // GetEigenCentroid returns (eigenvector, centroid) of the dataset
         var (eigenVector, centroid) = GetEigenCentroid(armyComplex);
-        
+
         // if we get a perfectly circular set it is possible for eigen to be 0
         // just randomly pick an axis if so
         if (eigenVector == Vector2.zero)
@@ -76,15 +89,16 @@ public class Army : Entity
             var angle = UnityEngine.Random.Range(0, Mathf.PI * 2);
             eigenVector = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
         }
-        
+
         // project the centroid onto the eigen
         var centroidProj = Vector2.Dot(centroid, eigenVector);
 
         var retSplit1 = new List<Unit>();
         var retSplit2 = new List<Unit>();
 
-        for (int i = 0; i < armyComplex.Count; i++){
-           
+        for (int i = 0; i < armyComplex.Count; i++)
+        {
+
             if (Vector2.Dot(armyComplex[i], eigenVector) < centroidProj)
             {
                 retSplit1.Add(armyUnits[i]);
@@ -94,10 +108,10 @@ public class Army : Entity
                 retSplit2.Add(armyUnits[i]);
             }
         }
-        
+
         return (retSplit1, retSplit2);
     }
-    
+
     private List<Vector2> IdentityComplex()
     {
         var armyComplex = new List<Vector2>();
@@ -115,7 +129,7 @@ public class Army : Entity
 
         return armyComplex;
     }
-    
+
     // this function calculates the eigenvector as well as the centroid
     private (Vector2, Vector2) GetEigenCentroid(List<Vector2> data)
     {
@@ -123,33 +137,33 @@ public class Army : Entity
         xMean = data.Aggregate(xMean, (current, c) => current + c.x) / data.Count;
         var yMean = 0f;
         yMean = data.Aggregate(yMean, (current, c) => current + c.y) / data.Count;
-        
+
         var varX = 0f;
-        varX = data.Aggregate(varX, 
+        varX = data.Aggregate(varX,
             (current, c) =>
             {
                 return current + (c.x - xMean) * (c.x - xMean);
             }) / (data.Count - 1);
-        
+
         var varY = 0f;
-        varY = data.Aggregate(varY, 
+        varY = data.Aggregate(varY,
             (current, c) =>
             {
                 return current + (c.y - yMean) * (c.y - yMean);
             }) / (data.Count - 1);
-        
+
         var covXY = 0f;
-        covXY = data.Aggregate(covXY, 
+        covXY = data.Aggregate(covXY,
             (current, c) =>
             {
                 return current + (c.y - yMean) * (c.x - xMean);
             }) / (data.Count - 1);
-        
+
         // the cov matrix is [varX, covXY; covXY, varY]
         // now we calculate the eigenvectors and eigenvalues
-        
+
         var delta = math.sqrt((varX + varY) * (varX + varY) - 4 * (varX * varY - covXY * covXY));
-        var l1 = (varX + varY + delta)/2;
+        var l1 = (varX + varY + delta) / 2;
         var l2 = Mathf.Abs(varX + varY - delta) / 2;
 
         var l = Mathf.Max(l1, l2);
@@ -163,22 +177,24 @@ public class Army : Entity
         return (eigenVector, new Vector2(xMean, yMean));
     }
 
+    #endregion
+
+    #region Events
     public static event Action<Army> ServerOnArmySpawned;
     public static event Action<Army> ServerOnArmyDespawned;
 
     public static event Action<Army> AuthorityOnArmySpawned;
     public static event Action<Army> AuthorityOnArmyDespawned;
 
-    void Awake()
-    {
-        entityMovement = GetComponent<ArmyMovement>();
-    }
+    #endregion
 
     #region Server
 
     public override void OnStartServer()
     {
         ServerOnArmySpawned?.Invoke(this);
+        entityMovement = GetComponent<ArmyMovement>();
+        entityHealth = GetComponent<ArmyHealth>();
         UpdateScale();
         InitializeArmyStats();
     }
@@ -187,7 +203,7 @@ public class Army : Entity
     {
         ServerOnArmyDespawned?.Invoke(this);
     }
-    
+
     [Server]
     private void UpdateScale()
     {
@@ -196,25 +212,30 @@ public class Army : Entity
         gameObject.transform.localScale = end;
     }
 
-    [Server] 
+    [Server]
     private void InitializeArmyStats()
     {
         attackDamage = ArmyUtils.CalculateAttackPower(ArmyUnits);
     }
 
     [Command]
+    private void CmdSetState(ArmyState state)
+    {
+        this.state = state;
+    }
+
+    [Command]
     private void CmdAttack(Entity entity)
     {
         if (entity == null) { return; }
-        if(entity.EntityHealth == null) { 
+        if (entity.EntityHealth == null)
+        {
             Debug.LogError("Entity has no health component");
-            return; 
+            return;
         }
-
         Debug.Log("Attacking");
         entity.EntityHealth.TakeDamage(attackDamage);
     }
-
     #endregion
 
     #region Client
@@ -236,11 +257,36 @@ public class Army : Entity
     }
 
     [Client]
-    public override void TryAttack(Entity entity) {
-        if(!isOwned || entity == null) { return; }
+    public override void TryMove(Vector3 position)
+    {
+        if (!isOwned) { return; }
+
+        base.TryMove(position); // This does the actual movement
+        SetState(ArmyState.Moving);
+    }
+
+    [Client]
+    public override void TryAttack(Entity entity)
+    {
+        if (!isOwned || entity == null) { return; }
 
         CmdAttack(entity);
+        SetState(ArmyState.Attacking);
+    }
 
+    [Client]
+    private void SetState(ArmyState armyState)
+    {
+        if (state == armyState) { return; }
+
+        state = armyState;
     }
     #endregion
+}
+
+public enum ArmyState
+{
+    Idle,
+    Moving,
+    Attacking
 }
