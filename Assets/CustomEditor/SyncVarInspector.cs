@@ -2,6 +2,9 @@ using UnityEditor;
 using UnityEngine;
 using Mirror;
 
+/// <summary>
+/// Custom inspector for NetworkBehaviour that displays all SyncVars
+/// </summary>
 [CustomEditor(typeof(NetworkBehaviour), true)]
 public class SyncVarInspector : Editor
 {
