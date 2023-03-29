@@ -22,7 +22,13 @@ public class EntityCommandGiver : NetworkBehaviour
 
         Ray ray = mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
 
-        if (!Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, layerMask)) { return; }
+        if (!Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, layerMask)) { return; } // No hit
+
+        if (hit.collider.TryGetComponent(out Entity entity) && !entity.isOwned)   // hit an enemy entity
+        {
+            TryAttack(entity);
+            return;
+        }
         TryMove(hit.point);
     }
     
@@ -31,6 +37,14 @@ public class EntityCommandGiver : NetworkBehaviour
         foreach (Entity entity in SelectionHandler.SelectedEntitiesCopy)
         { 
             entity.TryMove(point);
+        }
+    }
+
+    private void TryAttack(Entity target)
+    {
+        foreach (Entity entity in SelectionHandler.SelectedEntitiesCopy)
+        {
+            entity.TryAttack(target);
         }
     }
 }

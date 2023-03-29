@@ -9,7 +9,6 @@ using UnityEngine.Events;
 /// Entities are objects that can be selected and deselected.
 /// For example, an army or a base
 /// </summary>
-[RequireComponent(typeof(EntityMovement))]
 public abstract class Entity : NetworkBehaviour
 {
     public UnityEvent onSelected;
@@ -20,6 +19,11 @@ public abstract class Entity : NetworkBehaviour
     protected EntityMovement entityMovement;
     public EntityMovement EntityMovement => entityMovement;
 
+    [SerializeField]
+    protected EntityHealth entityHealth;
+    public EntityHealth EntityHealth => entityHealth;
+
+    #region Client
     [Client]
     public virtual void Select()
     {
@@ -42,4 +46,8 @@ public abstract class Entity : NetworkBehaviour
 
         entityMovement.CmdMove(position);
     }
+
+    [Client]
+    public virtual void TryAttack(Entity target) {} // Override in child classes
+    #endregion
 }

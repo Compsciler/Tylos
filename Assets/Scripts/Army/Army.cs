@@ -10,8 +10,6 @@ using Mirror;
 [RequireComponent(typeof(ArmyMovement))]
 public class Army : Entity
 {
-    readonly SyncList<Unit> armyUnits = new SyncList<Unit>(); // Change to set if necessary
-    public ReadOnlyCollection<Unit> ArmyUnits => new ReadOnlyCollection<Unit>(armyUnits);
 
     [Header("Army visual settings")]
     [SerializeField]
@@ -24,8 +22,12 @@ public class Army : Entity
 
     [SerializeField]
     private float scaleLerpSpeed = 1f;
-    
-    
+
+    // Internal variables    
+    readonly SyncList<Unit> armyUnits = new SyncList<Unit>(); // Change to set if necessary
+    public ReadOnlyCollection<Unit> ArmyUnits => new ReadOnlyCollection<Unit>(armyUnits);
+    [SyncVar] private float attackDamage = 10f;
+     
     public Army() { }
 
     public void AddUnit(Unit unit)
@@ -99,8 +101,6 @@ public class Army : Entity
         return (retSplit1, retSplit2);
     }
     
-    
-
     private List<Vector2> IdentityComplex()
     {
         var armyComplex = new List<Vector2>();
@@ -202,6 +202,19 @@ public class Army : Entity
         gameObject.transform.localScale = end;
     }
 
+    [Command]
+    private void CmdAttack(Entity entity)
+    {
+        if (entity == null) { return; }
+        if(entity.EntityHealth == null) { 
+            Debug.LogError("Entity has no health component");
+            return; 
+        }
+
+        Debug.Log("Attacking");
+        entity.EntityHealth.TakeDamage(attackDamage);
+    }
+
     #endregion
 
     #region Client
@@ -220,6 +233,14 @@ public class Army : Entity
         if (!isOwned) { return; }
 
         AuthorityOnArmyDespawned?.Invoke(this);
+    }
+
+    [Client]
+    public override void TryAttack(Entity entity) {
+        if(!isOwned || entity == null) { return; }
+
+        CmdAttack(entity);
+
     }
     #endregion
 }
