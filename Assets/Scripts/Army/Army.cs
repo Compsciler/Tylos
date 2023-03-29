@@ -20,13 +20,10 @@ public class Army : Entity
     [Range(0.1f, 2f)]
     private float scaleIncrementPerUnit = 1f;
 
-    [SerializeField]
-    private float scaleLerpSpeed = 1f;
-
     // Internal variables    
     readonly SyncList<Unit> armyUnits = new SyncList<Unit>(); // Change to set if necessary
     public ReadOnlyCollection<Unit> ArmyUnits => new ReadOnlyCollection<Unit>(armyUnits);
-    [SyncVar] private float attackDamage = 10f;
+    [SyncVar] private float attackDamage = 0f;
      
     public Army() { }
 
@@ -183,6 +180,7 @@ public class Army : Entity
     {
         ServerOnArmySpawned?.Invoke(this);
         UpdateScale();
+        InitializeArmyStats();
     }
 
     public override void OnStopServer()
@@ -193,13 +191,15 @@ public class Army : Entity
     [Server]
     private void UpdateScale()
     {
-        Debug.Log("Updating scale");
         Vector3 start = gameObject.transform.localScale;
-        Debug.Log("Start scale: " + start);
         Vector3 end = (Vector3.one * defaultScale) + (Vector3.one * scaleIncrementPerUnit * armyUnits.Count);
-        Debug.Log("End scale: " + end);
-        // gameObject.transform.localScale = Vector3.Lerp(start, end, Time.deltaTime * scaleLerpSpeed);
         gameObject.transform.localScale = end;
+    }
+
+    [Server] 
+    private void InitializeArmyStats()
+    {
+        attackDamage = ArmyUtils.CalculateAttackPower(ArmyUnits);
     }
 
     [Command]
