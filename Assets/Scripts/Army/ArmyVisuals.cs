@@ -9,6 +9,6 @@ public class ArmyVisuals : MonoBehaviour
     public void DrawDeathRay(Vector3 targetPosition)
     {
         // Renders a ray from the army to the target position
-        Debug.DrawLine(transform.position, targetPosition, Color.red, 1f);
+        Debug.DrawLine(transform.position, targetPosition, Color.red, .1f);
     }
 }
