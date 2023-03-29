@@ -100,8 +100,8 @@ GameObject:
   - component: {fileID: 3300536225245654010}
   - component: {fileID: 487852467032575918}
   - component: {fileID: -4392427088023275341}
-  - component: {fileID: 3261407148654518945}
   - component: {fileID: 8322849847392363174}
+  - component: {fileID: 3261407148654518945}
   m_Layer: 10
   m_Name: Army
   m_TagString: Untagged
@@ -276,7 +276,6 @@ MonoBehaviour:
   entityHealth: {fileID: 8322849847392363174}
   defaultScale: 1
   scaleIncrementPerUnit: 0.05
-  scaleLerpSpeed: 1
 --- !u!114 &487852467032575918
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -312,21 +311,6 @@ MonoBehaviour:
   syncInterval: 0.1
   colorRenderers:
   - {fileID: 6224673488736124910}
---- !u!114 &3261407148654518945
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6339527542047456646}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: abff5b9bcfb401a4ab9bac22fa4f9aa3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0.1
 --- !u!114 &8322849847392363174
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -337,6 +321,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0289b0eab34617d4bb7057c700a67c90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0.1
+--- !u!114 &3261407148654518945
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6339527542047456646}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb044c61d7b8bcb4c8ba807e9e75ab4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncDirection: 0

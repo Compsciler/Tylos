@@ -8,7 +8,7 @@ using UnityEngine.Events;
 [Serializable]
 public class Unit
 {
-    [SerializeField] IdentityInfo identityInfo;
+    [SyncVar] IdentityInfo identityInfo;
     
     public IdentityInfo IdentityInfo => identityInfo;
     // TODO: Add unit specific data her
