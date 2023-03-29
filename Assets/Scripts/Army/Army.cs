@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using Mirror;
 
-[RequireComponent(typeof(ArmyMovement), typeof(ArmyHealth))]
+[RequireComponent(typeof(ArmyMovement), typeof(ArmyHealth), typeof(ArmyVisuals))]
 public class Army : Entity
 {
 
@@ -20,19 +20,69 @@ public class Army : Entity
     [Range(0.1f, 2f)]
     private float scaleIncrementPerUnit = 1f;
 
-    // Internal variables    
+    // State variables
     [SyncVar] private ArmyState state = ArmyState.Idle;
     public ArmyState State => state;
+
+    // Unit variables
     readonly SyncList<Unit> armyUnits = new SyncList<Unit>(); // Change to set if necessary
     public ReadOnlyCollection<Unit> ArmyUnits => new ReadOnlyCollection<Unit>(armyUnits);
+
+    // Attack variables
+    [Header("Attack settings")]
     [SyncVar] private float attackDamage = 0f;
-    private Entity attackTarget = null; // Only used on the server
+    [SyncVar][SerializeField] private float attackRange = 5f;
+    [SyncVar] private Entity attackTarget = null; // Only used on the server
+
+    // MonoBehaviour references
+    ArmyVisuals armyVisuals;
 
     public Army() { }
 
     void Awake()
     {
         entityMovement = GetComponent<ArmyMovement>();
+    }
+
+    void Update()
+    {
+        if (isServer) // Handle game logic
+        {
+            if (state == ArmyState.Attacking)
+            {
+                if (attackTarget == null) // Target died
+                {
+                    Debug.Log("Target died");
+                    state = ArmyState.Idle;
+                }
+                else
+                {
+                    if (Vector3.Distance(transform.position, attackTarget.transform.position) <= attackRange)
+                    {
+                        Debug.Log("Attacking target");
+                        entityMovement.Stop();
+                        attackTarget.EntityHealth.TakeDamage(attackDamage * Time.deltaTime);
+                    }
+                    else
+                    {
+                        Debug.Log("Target out of range");
+                        entityMovement.Move(attackTarget.transform.position);
+                    }
+                }
+            }
+        }
+
+        if (isClient) // Handle client visuals
+        {
+            if (state == ArmyState.Attacking)
+            {
+                if (Vector3.Distance(transform.position, attackTarget.transform.position) <= attackRange)
+                {
+                    armyVisuals.DrawDeathRay(attackTarget.transform.position);
+                }
+            }
+
+        }
     }
     public void AddUnit(Unit unit)
     {
@@ -234,7 +284,8 @@ public class Army : Entity
             return;
         }
         Debug.Log("Attacking");
-        entity.EntityHealth.TakeDamage(attackDamage);
+        attackTarget = entity;
+        state = ArmyState.Attacking;
     }
     #endregion
 
@@ -242,6 +293,7 @@ public class Army : Entity
     public override void OnStartClient()
     {
         base.OnStartClient();
+        armyVisuals = GetComponent<ArmyVisuals>();
     }
 
     public override void OnStartAuthority()
@@ -262,7 +314,7 @@ public class Army : Entity
         if (!isOwned) { return; }
 
         base.TryMove(position); // This does the actual movement
-        SetState(ArmyState.Moving);
+        CmdSetState(ArmyState.Moving);
     }
 
     [Client]
@@ -271,15 +323,6 @@ public class Army : Entity
         if (!isOwned || entity == null) { return; }
 
         CmdAttack(entity);
-        SetState(ArmyState.Attacking);
-    }
-
-    [Client]
-    private void SetState(ArmyState armyState)
-    {
-        if (state == armyState) { return; }
-
-        state = armyState;
     }
     #endregion
 }
