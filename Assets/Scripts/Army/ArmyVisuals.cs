@@ -1,14 +1,88 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
+using System.Collections.ObjectModel;
 /// <summary>
 /// Handles attack visuals for an army
+/// This component is run entirely on the client
 /// </summary>
+[RequireComponent(typeof(LineRenderer))]
 public class ArmyVisuals : MonoBehaviour
 {
-    public void DrawDeathRay(Vector3 targetPosition)
+    [Header("Death ray settings")]
+    [SerializeField] private float lineDuration = 0.1f;
+
+    // Internal variables
+    LineRenderer lineRenderer;
+    float durationRemaining = 0f; // Line is drawn if this is greater than 0
+    Vector3 targetPosition;
+
+    void Awake()
     {
-        // Renders a ray from the army to the target position
-        Debug.DrawLine(transform.position, targetPosition, Color.red, .1f);
+        lineRenderer = GetComponent<LineRenderer>();
+        lineRenderer.positionCount = 2;
+        ClearDeathRay();
+    }
+
+    void Update()
+    {
+        if (durationRemaining > 0f)
+        {
+            lineRenderer.SetPosition(0, transform.position);
+            lineRenderer.SetPosition(1, targetPosition);
+            durationRemaining -= Time.deltaTime;
+            if (durationRemaining <= 0f)
+            {
+                ClearDeathRay();
+            }
+        }
+    }
+    public void SetColor(ReadOnlyCollection<Unit> armyUnits)
+    {
+        // Set the color of the line renderer
+        Color color = Color.white;
+        if (armyUnits.Count > 0)
+        {
+            float r = 0;
+            float g = 0;
+            float b = 0;
+            // Get the average color of the units
+            foreach (Unit unit in armyUnits)
+            {
+                r += unit.IdentityInfo.r;
+                g += unit.IdentityInfo.g;
+                b += unit.IdentityInfo.b;
+                Debug.Log("Unit color: " + unit.IdentityInfo.r + ", " + unit.IdentityInfo.g + ", " + unit.IdentityInfo.b);
+            }
+
+            r /= armyUnits.Count;
+            g /= armyUnits.Count;
+            b /= armyUnits.Count;
+            color = new Color(r, g, b);
+        }
+        lineRenderer.material.SetColor("_Color", color);
+        Debug.Log("Set color to " + color);
+    }
+
+    public void DrawDeathRay(Vector3 targetPosition, Color color)
+    {
+        if (!lineRenderer.enabled)
+        {
+            lineRenderer.enabled = true;
+        }
+
+        lineRenderer.material.SetColor("_Color", color);
+        durationRemaining = lineDuration; //  Reset the duration
+        if (this.targetPosition != targetPosition)
+        {
+            this.targetPosition = targetPosition;
+        }
+    }
+
+    public void ClearDeathRay()
+    {
+        // Clear the line renderer
+        lineRenderer.enabled = false;
     }
 }

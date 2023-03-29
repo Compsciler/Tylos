@@ -42,6 +42,8 @@ public class Army : Entity
     void Awake()
     {
         entityMovement = GetComponent<ArmyMovement>();
+        entityHealth = GetComponent<ArmyHealth>();
+        armyVisuals = GetComponent<ArmyVisuals>();
     }
 
     void Update()
@@ -78,7 +80,7 @@ public class Army : Entity
             {
                 if (Vector3.Distance(transform.position, attackTarget.transform.position) <= attackRange)
                 {
-                    armyVisuals.DrawDeathRay(attackTarget.transform.position);
+                    armyVisuals.DrawDeathRay(attackTarget.transform.position, Color.blue);
                 }
             }
 
@@ -243,8 +245,6 @@ public class Army : Entity
     public override void OnStartServer()
     {
         ServerOnArmySpawned?.Invoke(this);
-        entityMovement = GetComponent<ArmyMovement>();
-        entityHealth = GetComponent<ArmyHealth>();
         UpdateScale();
         InitializeArmyStats();
     }
@@ -293,7 +293,8 @@ public class Army : Entity
     public override void OnStartClient()
     {
         base.OnStartClient();
-        armyVisuals = GetComponent<ArmyVisuals>();
+        armyVisuals.SetColor(ArmyUnits); // Initialize the color of the army
+        armyUnits.Callback += OnArmyUnitsUpdatedClient;
     }
 
     public override void OnStartAuthority()
@@ -323,6 +324,12 @@ public class Army : Entity
         if (!isOwned || entity == null) { return; }
 
         CmdAttack(entity);
+    }
+
+    [Client]
+    private void OnArmyUnitsUpdatedClient(SyncList<Unit>.Operation op, int index, Unit oldUnit, Unit newUnit)
+    {
+        armyVisuals.SetColor(ArmyUnits); // TODO: Optimize this so the entire list doesn't have to be passed
     }
     #endregion
 }
