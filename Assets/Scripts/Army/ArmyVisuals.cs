@@ -45,7 +45,7 @@ public class ArmyVisuals : NetworkBehaviour
     }
 
     [Client]
-    public void SetColor(ReadOnlyCollection<Unit> armyUnits)
+    public void SetColor(SyncList<Unit> armyUnits)
     {
         if (armyUnits == null)
         {
@@ -63,9 +63,9 @@ public class ArmyVisuals : NetworkBehaviour
             // Get the average color of the units
             foreach (Unit unit in armyUnits)
             {
-                r += unit.IdentityInfo.r;
-                g += unit.IdentityInfo.g;
-                b += unit.IdentityInfo.b;
+                r += unit.identityInfo.r;
+                g += unit.identityInfo.g;
+                b += unit.identityInfo.b;
             }
 
             r /= armyUnits.Count;

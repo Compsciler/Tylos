@@ -26,7 +26,7 @@ public class Army : Entity
 
     // Unit variables
     readonly SyncList<Unit> armyUnits = new SyncList<Unit>(); // Change to set if necessary
-    public ReadOnlyCollection<Unit> ArmyUnits => new ReadOnlyCollection<Unit>(armyUnits);
+    public SyncList<Unit> ArmyUnits => armyUnits;
 
 
     // Attack variables
@@ -37,6 +37,7 @@ public class Army : Entity
 
     // MonoBehaviour references
     ArmyVisuals armyVisuals;
+    ArmyHealth  armyHealth;
 
     public Army() { }
 
@@ -44,6 +45,9 @@ public class Army : Entity
     {
         entityMovement = GetComponent<ArmyMovement>();
         entityHealth = GetComponent<ArmyHealth>();
+        armyHealth = entityHealth as ArmyHealth;
+        if(armyHealth == null)
+            Debug.LogError("ArmyHealth is null"); 
         armyVisuals = GetComponent<ArmyVisuals>();
     }
 
@@ -51,6 +55,7 @@ public class Army : Entity
     {
         if (isServer) // Handle game logic
         {
+            
             if (state == ArmyState.Attacking)
             {
                 if (attackTarget == null) // Target died
@@ -162,7 +167,7 @@ public class Army : Entity
         var armyComplex = new List<Vector2>();
         foreach (var u in armyUnits)
         {
-            var identity = u.IdentityInfo;
+            var identity = u.identityInfo;
             var rgbIdentity = new Color(identity.r, identity.g, identity.b);
             float h;
             Color.RGBToHSV(rgbIdentity, out h, out _, out _);
@@ -273,6 +278,12 @@ public class Army : Entity
         attackDamage = ArmyUtils.CalculateAttackPower(ArmyUnits);
     }
 
+    [Server]
+    public SyncList<Unit> GetArmyUnits()
+    {
+        return armyUnits;
+    }
+    
     [Command]
     private void CmdSetState(ArmyState state)
     {
@@ -342,6 +353,7 @@ public class Army : Entity
         CmdAttack(entity);
     }
 
+    [Client]
     private void OnArmyUnitsUpdated(SyncList<Unit>.Operation op, int index, Unit oldUnit, Unit newUnit)
     {
         armyVisuals.SetColor(ArmyUnits); // TODO: Optimize this so the entire list doesn't have to be passed

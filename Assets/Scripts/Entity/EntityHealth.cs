@@ -7,7 +7,7 @@ using UnityEngine.Events;
 public class EntityHealth : NetworkBehaviour
 {
     [SyncVar]
-    private float health = 100f;
+    private float health = 30f;
     public float Health => health;
 
     public UnityEvent OnDie;
@@ -16,7 +16,7 @@ public class EntityHealth : NetworkBehaviour
     #region Server
 
     [Server]
-    public void TakeDamage(float damage)
+    public virtual void TakeDamage(float damage)
     {
         OnTakeDamage.Invoke();
         Debug.Log(gameObject.name + " took " + damage + " damage");
@@ -29,7 +29,7 @@ public class EntityHealth : NetworkBehaviour
     }
 
     [Server]
-    private void Die()
+    protected virtual void Die()
     {
         Debug.Log(gameObject.name + " died");
         OnDie.Invoke();
