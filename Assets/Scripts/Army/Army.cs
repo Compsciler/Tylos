@@ -28,6 +28,7 @@ public class Army : Entity
     readonly SyncList<Unit> armyUnits = new SyncList<Unit>(); // Change to set if necessary
     public ReadOnlyCollection<Unit> ArmyUnits => new ReadOnlyCollection<Unit>(armyUnits);
 
+
     // Attack variables
     [Header("Attack settings")]
     [SyncVar] private float attackDamage = 0f;
@@ -80,7 +81,7 @@ public class Army : Entity
             {
                 if (Vector3.Distance(transform.position, attackTarget.transform.position) <= attackRange)
                 {
-                    armyVisuals.DrawDeathRay(attackTarget.transform.position, Color.blue);
+                    armyVisuals.DrawDeathRay(attackTarget.transform.position);
                 }
             }
 
@@ -94,15 +95,7 @@ public class Army : Entity
     {
         armyUnits.Remove(unit);
     }
-    public void SetUnits(Unit[] units) // Use array because Mirror doesn't support lists in commands 
-    {
-        armyUnits.Clear();
-        foreach (Unit unit in units)
-        {
-            armyUnits.Add(unit);
-        }
-        UpdateScale();
-    }
+
     public float GetAttackDamage()
     {
         return attackDamage;
@@ -255,6 +248,18 @@ public class Army : Entity
     }
 
     [Server]
+    public void SetUnits(IdentityInfo identity, int count) // Use array because Mirror doesn't support lists in commands 
+    {
+        armyUnits.Clear();
+        // add count number of units with the given identity to the army
+        for (int i = 0; i < count; i++)
+        {
+            armyUnits.Add(new Unit(identity));
+        }
+        UpdateScale();
+    }
+
+    [Server]
     private void UpdateScale()
     {
         Vector3 start = gameObject.transform.localScale;
@@ -293,8 +298,19 @@ public class Army : Entity
     public override void OnStartClient()
     {
         base.OnStartClient();
+        if (ArmyUnits == null)
+        {
+            Debug.LogError("Army units is null");
+            return;
+        }
+        else if (armyVisuals == null)
+        {
+            Debug.LogError("Army visuals is null");
+            return;
+        }
+
+        armyUnits.Callback += OnArmyUnitsUpdated;
         armyVisuals.SetColor(ArmyUnits); // Initialize the color of the army
-        armyUnits.Callback += OnArmyUnitsUpdatedClient;
     }
 
     public override void OnStartAuthority()
@@ -326,8 +342,7 @@ public class Army : Entity
         CmdAttack(entity);
     }
 
-    [Client]
-    private void OnArmyUnitsUpdatedClient(SyncList<Unit>.Operation op, int index, Unit oldUnit, Unit newUnit)
+    private void OnArmyUnitsUpdated(SyncList<Unit>.Operation op, int index, Unit oldUnit, Unit newUnit)
     {
         armyVisuals.SetColor(ArmyUnits); // TODO: Optimize this so the entire list doesn't have to be passed
     }

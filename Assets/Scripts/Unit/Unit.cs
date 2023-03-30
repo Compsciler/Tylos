@@ -1,38 +1,20 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
-using UnityEngine.Events;
 
-[Serializable]
-public class Unit
+[System.Serializable]
+public readonly struct Unit // Make sure this struct is serializable, or else it won't work with SyncLists
 {
-    [SyncVar] IdentityInfo identityInfo;
-    [SyncVar] public float health = 1f;
-    public float Health => health;
-    
-    public IdentityInfo IdentityInfo => identityInfo;
-    // TODO: Add unit specific data her
+    // fields are all readonly, to make sure they can't be changed. Changing struct fields does not trigger SyncList callbacks, so the game state will be out of sync
+    // Create a new struct if you want to change a field
+    public readonly IdentityInfo IdentityInfo;
+    public readonly float health;
 
-    public Unit()
-    {
-        identityInfo = new IdentityInfo();
-    }
+    // TODO: Add unit specific data her
 
     public Unit(IdentityInfo identityInfo)
     {
-        this.identityInfo = identityInfo;
+        IdentityInfo = identityInfo;
+        health = 10f;
     }
-
-    public void SetIdentityInfo(IdentityInfo identityInfo)
-    {
-        this.identityInfo = identityInfo;
-    }
-
-    public void SetHealth(float health)
-    {
-        Debug.Log("Setting health to " + health);
-        this.health = health;
-    }
-}   
+}

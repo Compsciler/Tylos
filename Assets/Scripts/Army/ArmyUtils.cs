@@ -5,15 +5,14 @@ using Mirror;
 using System.Collections.ObjectModel;
 public class ArmyUtils : MonoBehaviour
 {
-    public static float CalculateAttackPower(ReadOnlyCollection<Unit> units)  
+    public static float CalculateAttackPower(ReadOnlyCollection<Unit> units)
     {
         float attackPower = 0f;
         foreach (Unit unit in units)
         {
-            float r = unit.IdentityInfo.r; 
-            attackPower +=  Map(r, 0f, 255f, 1f, 2f);
+            float r = unit.IdentityInfo.r;
+            attackPower += Map(r, 0f, 255f, 1f, 2f);
         }
-        Debug.Log("Army attack power: " + attackPower);
         return attackPower;
     }
 

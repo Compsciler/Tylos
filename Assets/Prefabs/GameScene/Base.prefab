@@ -166,10 +166,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  armyPrefab: {fileID: 6339527542047456646, guid: 08346fa7e0c7ced4bb94332fb3aeec9a,
-    type: 3}
-  armySpawnPoint: {fileID: 1925953160642069296}
-  spawnRate: 1
+  spawnRate: 3
 --- !u!114 &1925953160895762784
 MonoBehaviour:
   m_ObjectHideFlags: 0

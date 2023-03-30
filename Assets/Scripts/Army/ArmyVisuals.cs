@@ -8,10 +8,15 @@ using System.Collections.ObjectModel;
 /// This component is run entirely on the client
 /// </summary>
 [RequireComponent(typeof(LineRenderer))]
-public class ArmyVisuals : MonoBehaviour
+public class ArmyVisuals : NetworkBehaviour
 {
     [Header("Death ray settings")]
     [SerializeField] private float lineDuration = 0.1f;
+    private float alpha = 1f;
+    [SerializeField]
+    [Range(0, 10)]
+    [Tooltip("Changes the amount of bloom on the line")]
+    private float intensity = 5f;
 
     // Internal variables
     LineRenderer lineRenderer;
@@ -38,10 +43,18 @@ public class ArmyVisuals : MonoBehaviour
             }
         }
     }
+
+    [Client]
     public void SetColor(ReadOnlyCollection<Unit> armyUnits)
     {
+        if (armyUnits == null)
+        {
+            Debug.LogError("ArmyVisuals: Army units is null");
+            return;
+        }
+
         // Set the color of the line renderer
-        Color color = Color.white;
+        Color baseColor = Color.white;
         if (armyUnits.Count > 0)
         {
             float r = 0;
@@ -53,26 +66,26 @@ public class ArmyVisuals : MonoBehaviour
                 r += unit.IdentityInfo.r;
                 g += unit.IdentityInfo.g;
                 b += unit.IdentityInfo.b;
-                Debug.Log("Unit color: " + unit.IdentityInfo.r + ", " + unit.IdentityInfo.g + ", " + unit.IdentityInfo.b);
             }
 
             r /= armyUnits.Count;
             g /= armyUnits.Count;
             b /= armyUnits.Count;
-            color = new Color(r, g, b);
+            baseColor = new Color(r, g, b);
         }
-        lineRenderer.material.SetColor("_Color", color);
-        Debug.Log("Set color to " + color);
+
+        Color finalColor = new Color(baseColor.r * intensity, baseColor.g * intensity, baseColor.b * intensity, alpha);
+
+        lineRenderer.material.SetColor("_Color", finalColor);
     }
 
-    public void DrawDeathRay(Vector3 targetPosition, Color color)
+    public void DrawDeathRay(Vector3 targetPosition)
     {
         if (!lineRenderer.enabled)
         {
             lineRenderer.enabled = true;
         }
 
-        lineRenderer.material.SetColor("_Color", color);
         durationRemaining = lineDuration; //  Reset the duration
         if (this.targetPosition != targetPosition)
         {
