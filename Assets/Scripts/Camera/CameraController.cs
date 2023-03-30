@@ -86,9 +86,6 @@ public class CameraController : NetworkBehaviour
     [ClientCallback]
     void Update()
     {
-        // if(!Application.isFocused) {
-        //     return;
-        // }
         if(following != null && following.Count > 0){
             Vector3 avg = avg_position(following);
             Vector3 diff = playerCameraTransform.position - avg;
@@ -99,11 +96,7 @@ public class CameraController : NetworkBehaviour
             playerCameraTransform.Translate(new Vector3(delta.x, delta.y));
             Vector2 keyboard_delta = lastInput * keyboard_scroll_speed;
             playerCameraTransform.Translate(new Vector3(keyboard_delta.x, keyboard_delta.y));
-            // Debug.Log(playerCameraTransform.position);
         }
         constrain_to_board();
-        Debug.Log(Camera.allCameras.Length);
-        // Camera.main.transform.position = playerCameraTransform.position;
-        // Camera.main.transform.rotation = playerCameraTransform.rotation;
     }
 }
