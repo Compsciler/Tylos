@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 
 public class CameraController : NetworkBehaviour
 {
-    private List<Unit> following;
+    private List<Entity> following;
     private Controls controls;
 
     private Vector2 lastInput = new Vector2(0,0);
