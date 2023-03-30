@@ -11,11 +11,11 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - Base
   - 
   - Ground
   - Terrain
-  - Unit
+  - Army
   - Minimap
   - 
   - 
@@ -40,4 +40,19 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 1520870543
+    locked: 0
+  - name: UIParticles
+    uniqueID: 1037968753
+    locked: 0
+  - name: UIText
+    uniqueID: 2161482107
+    locked: 0
+  - name: PlayerCardSprite
+    uniqueID: 293715849
+    locked: 0
+  - name: Transition
+    uniqueID: 4043252589
     locked: 0

@@ -5,69 +5,26 @@ using Mirror;
 using UnityEngine;
 using UnityEngine.Events;
 
-[RequireComponent(typeof(UnitMovement))]
-public class Unit : NetworkBehaviour
+[Serializable]
+public class Unit
 {
-    [SerializeField] UnityEvent onSelected;
-    [SerializeField] UnityEvent onDeselected;
+    [SerializeField] IdentityInfo identityInfo;
+    
+    public IdentityInfo IdentityInfo => identityInfo;
+    // TODO: Add unit specific data her
 
-    UnitMovement unitMovement;
-    public UnitMovement UnitMovement_ => unitMovement;
-
-    public static event Action<Unit> ServerOnUnitSpawned;
-    public static event Action<Unit> ServerOnUnitDespawned;
-
-    public static event Action<Unit> AuthorityOnUnitSpawned;
-    public static event Action<Unit> AuthorityOnUnitDespawned;
-
-    void Awake()
+    public Unit()
     {
-        unitMovement = GetComponent<UnitMovement>();
+        identityInfo = new IdentityInfo();
     }
 
-    #region Server
-
-    public override void OnStartServer()
+    public Unit(IdentityInfo identityInfo)
     {
-        ServerOnUnitSpawned?.Invoke(this);
+        this.identityInfo = identityInfo;
     }
 
-    public override void OnStopServer()
+    public void SetIdentityInfo(IdentityInfo identityInfo)
     {
-        ServerOnUnitDespawned?.Invoke(this);
+        this.identityInfo = identityInfo;
     }
-
-    #endregion
-
-    #region Client
-
-    public override void OnStartAuthority()
-    {
-        AuthorityOnUnitSpawned?.Invoke(this);
-    }
-
-    public override void OnStopClient()
-    {
-        if (!isOwned) { return; }
-
-        AuthorityOnUnitDespawned?.Invoke(this);
-    }
-
-    [Client]
-    public void Select()
-    {
-        if (!isOwned) { return; }  // Change for dev mode, check may also be redundant from UnitSelectionHandler
-
-        onSelected?.Invoke();
-    }
-
-    [Client]
-    public void Deselect()
-    {
-        if (!isOwned) { return; }
-
-        onDeselected?.Invoke();
-    }
-
-    #endregion
-}
+}   

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Mirror;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -7,51 +8,44 @@ using UnityEngine.EventSystems;
 [RequireComponent(typeof(ObjectIdentity))]
 public class BaseSpawner : NetworkBehaviour
 {
-    [SerializeField] float spawnRate = 4f;
 
-    [SerializeField] private GameObject unitPrefab;
-    [SerializeField] private Transform unitSpawnPoint;
+    [SerializeField] private GameObject armyPrefab;
+    [SerializeField] private Transform armySpawnPoint;
 
     #region Server
-
-    public override void OnStartServer()
-    {
-        StartCoroutine(SpawnUnits());
-    }
-
     [Server]
-    private void SpawnUnit()
+    private GameObject SpawnArmy(Unit[] units)
     {
-        GameObject unitInstance = Instantiate(
-            unitPrefab,
-            unitSpawnPoint.position,
-            unitSpawnPoint.rotation);
+        GameObject armyInstance = Instantiate(
+            armyPrefab,
+            armySpawnPoint.position,
+            armySpawnPoint.rotation);
         IdentityInfo baseIdentity = GetComponent<ObjectIdentity>().Identity;  // TODO: move to OnServerStart() if base identity doesn't change and hope race condition doesn't happen
-        unitInstance.GetComponent<ObjectIdentity>().SetIdentity(baseIdentity);
-        NetworkServer.Spawn(unitInstance, connectionToClient);
-    }
+        armyInstance.GetComponent<ObjectIdentity>().SetIdentity(baseIdentity);
+        Army army = armyInstance.GetComponent<Army>();
+        army.SetUnits(units);
+        NetworkServer.Spawn(armyInstance, connectionToClient);
+        return armyInstance;
+    } 
 
     [Command]
-    private void CmdSpawnUnit()
+    public void CmdSpawnMoveArmy(Unit[] units, Vector3 position)
     {
-        SpawnUnit();
+        GameObject armyObject = SpawnArmy(units);
+        Army army = armyObject.GetComponent<Army>();
+        RpcOnSpawnMoveArmy(army, position);
     }
 
-    [Server]
-    private IEnumerator SpawnUnits()
+    [TargetRpc]
+    public void RpcOnSpawnMoveArmy(Entity entity, Vector3 position)
     {
-        while (true)
-        {
-            SpawnUnit();
-            
-            yield return new WaitForSeconds(spawnRate);
-        }
+        SelectionHandler.AddToSelection(entity);
+        entity.TryMove(position); // This will call CmdMove() on the server, so I'm not sure if I should call it here, but calling it in CmdSpawnMoveArmy() doesn't work
     }
-
     #endregion
 
     #region Client
-    
+
     /*
     public void OnPointerClick(PointerEventData eventData)
     {
