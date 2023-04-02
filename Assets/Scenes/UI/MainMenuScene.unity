@@ -954,7 +954,7 @@ PrefabInstance:
     - target: {fileID: 6058525235975443730, guid: d04903ceb37c7594c8ab178b46a00e5d,
         type: 3}
       propertyPath: offlineScene
-      value: 
+      value: Assets/Scenes/UI/MainMenuScene.unity
       objectReference: {fileID: 0}
     - target: {fileID: 6479063781474349543, guid: d04903ceb37c7594c8ab178b46a00e5d,
         type: 3}
@@ -2553,7 +2553,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fadeOverlayAnimator: {fileID: 1034289224}
-  lobbyScene: Assets/Scenes/LobbyScene.unity
+  lobbyScene: Assets/Scenes/UI/LobbyScene.unity
 --- !u!1 &1901300557
 GameObject:
   m_ObjectHideFlags: 0
