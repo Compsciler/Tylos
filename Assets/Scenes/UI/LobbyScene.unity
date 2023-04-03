@@ -1912,7 +1912,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timerText: {fileID: 1332699696}
-  mainMenuScene: 
+  mainMenuScene: Assets/Scenes/UI/MainMenuScene.unity
   fadeOutAnimator: {fileID: 152261806}
 --- !u!1001 &1147679848
 PrefabInstance:
