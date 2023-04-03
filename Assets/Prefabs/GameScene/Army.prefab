@@ -274,8 +274,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  defaultScale: 1
-  scaleIncrementPerUnit: 0.05
   attackRange: 10
 --- !u!114 &487852467032575918
 MonoBehaviour:
@@ -327,7 +325,6 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0.1
-  health: 30
   OnDie:
     m_PersistentCalls:
       m_Calls: []
@@ -364,6 +361,8 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0.1
+  defaultScale: 1
+  scaleIncrementPerUnit: 0.1
   lineDuration: 0.01
   intensity: 8
 --- !u!120 &-5264334282099103216

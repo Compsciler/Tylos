@@ -10,16 +10,6 @@ using Mirror;
 [RequireComponent(typeof(ArmyMovement), typeof(ArmyHealth), typeof(ArmyVisuals))]
 public class Army : Entity
 {
-
-    [Header("Army visual settings")]
-    [SerializeField]
-    [Range(0.1f, 10f)]
-    private float defaultScale = 1f;
-
-    [SerializeField]
-    [Range(0.1f, 2f)]
-    private float scaleIncrementPerUnit = 1f;
-
     // State variables
     [SyncVar] private ArmyState state = ArmyState.Idle;
     public ArmyState State => state;
@@ -38,6 +28,15 @@ public class Army : Entity
     // MonoBehaviour references
     ArmyVisuals armyVisuals;
     ArmyHealth  armyHealth;
+
+    #region Events
+    public static event Action<Army> ServerOnArmySpawned;
+    public static event Action<Army> ServerOnArmyDespawned;
+
+    public static event Action<Army> AuthorityOnArmySpawned;
+    public static event Action<Army> AuthorityOnArmyDespawned;
+    
+    #endregion
 
     public Army() { }
 
@@ -67,13 +66,13 @@ public class Army : Entity
                 {
                     if (Vector3.Distance(transform.position, attackTarget.transform.position) <= attackRange)
                     {
-                        // Debug.Log("Attacking target");
+                        Debug.Log("Attacking target");
                         entityMovement.Stop();
                         attackTarget.EntityHealth.TakeDamage(attackDamage * Time.deltaTime);
                     }
                     else
                     {
-                        // Debug.Log("Target out of range");
+                        Debug.Log("Target out of range");
                         entityMovement.Move(attackTarget.transform.position);
                     }
                 }
@@ -229,21 +228,11 @@ public class Army : Entity
 
     #endregion
 
-    #region Events
-    public static event Action<Army> ServerOnArmySpawned;
-    public static event Action<Army> ServerOnArmyDespawned;
-
-    public static event Action<Army> AuthorityOnArmySpawned;
-    public static event Action<Army> AuthorityOnArmyDespawned;
-
-    #endregion
-
     #region Server
 
     public override void OnStartServer()
     {
         ServerOnArmySpawned?.Invoke(this);
-        UpdateScale();
         InitializeArmyStats();
     }
 
@@ -261,15 +250,7 @@ public class Army : Entity
         {
             armyUnits.Add(new Unit(identity));
         }
-        UpdateScale();
-    }
-
-    [Server]
-    private void UpdateScale()
-    {
-        Vector3 start = gameObject.transform.localScale;
-        Vector3 end = (Vector3.one * defaultScale) + (Vector3.one * scaleIncrementPerUnit * armyUnits.Count);
-        gameObject.transform.localScale = end;
+        armyVisuals.SetScale(armyUnits.Count);
     }
 
     [Server]

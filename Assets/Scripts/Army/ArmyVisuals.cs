@@ -10,6 +10,16 @@ using System.Collections.ObjectModel;
 [RequireComponent(typeof(LineRenderer))]
 public class ArmyVisuals : NetworkBehaviour
 {
+    
+    [Header("Army visual settings")]
+    [SerializeField]
+    [Range(0.1f, 10f)]
+    private float defaultScale = 1f;
+
+    [SerializeField]
+    [Range(0.1f, 2f)]
+    private float scaleIncrementPerUnit = 0.1f;
+
     [Header("Death ray settings")]
     [SerializeField] private float lineDuration = 0.1f;
     private float alpha = 1f;
@@ -43,6 +53,14 @@ public class ArmyVisuals : NetworkBehaviour
             }
         }
     }
+
+    [Server] 
+    public void SetScale(int count) {
+        Vector3 start = gameObject.transform.localScale;
+        Vector3 end = (Vector3.one * defaultScale) + (Vector3.one * scaleIncrementPerUnit * count);
+        gameObject.transform.localScale = end;
+    }
+    
 
     [Client]
     public void SetColor(SyncList<Unit> armyUnits)
