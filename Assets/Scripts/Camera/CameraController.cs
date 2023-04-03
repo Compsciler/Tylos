@@ -86,6 +86,8 @@ public class CameraController : NetworkBehaviour
     [ClientCallback]
     void Update()
     {
+        if(playerCameraTransform == null) return;
+
         if(following != null && following.Count > 0){
             Vector3 avg = avg_position(following);
             Vector3 diff = playerCameraTransform.position - avg;
