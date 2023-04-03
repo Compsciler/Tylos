@@ -21,14 +21,16 @@ public class ArmyHealth : EntityHealth
     #region Server
 
     [Server]
-    public virtual void TakeDamage(float damage)
+    public override void TakeDamage(float damage)
     {
         Unit unit = army.ArmyUnits[army.ArmyUnits.Count - 1];
         float health = unit.health;
         health -= damage;
+        // Debug.Log("Unit took " + damage + " damage. Health is now " + health);
 
         if(health <= 0) {
             army.ArmyUnits.RemoveAt(army.ArmyUnits.Count - 1);
+            Debug.Log("Unit died! units left: " + army.ArmyUnits.Count);
             if(army.ArmyUnits.Count == 0) {
                 Die();
             }
@@ -36,5 +38,6 @@ public class ArmyHealth : EntityHealth
             army.ArmyUnits[army.ArmyUnits.Count - 1] = new Unit(unit.identityInfo, health);
         }
     }
+    
     #endregion
 }
