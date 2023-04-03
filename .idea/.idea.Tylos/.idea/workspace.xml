@@ -2,10 +2,88 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f9384a0e-6b7e-46a7-ae79-a211d5dacabd" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Lobby.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Lobby/FadeInAnimation.anim" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Lobby/FadeInAnimation.anim.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Lobby/FadeInOverlay.controller" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Lobby/FadeInOverlay.controller.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Lobby/FadeOutAnimation.anim" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Lobby/FadeOutAnimation.anim.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Lobby/FadeOutAnimator.controller" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Lobby/FadeOutAnimator.controller.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Lobby/FadeOutOverlay.controller" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Lobby/FadeOutOverlay.controller.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Lobby/LettersFadeAndMove.anim" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Lobby/LettersFadeAndMove.anim.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/MainMenu.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/MainMenu/FadeOutOverlayAnimator.controller" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/MainMenu/FadeOutOverlayAnimator.controller.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/MainMenu/FadeOverlay.controller" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/MainMenu/FadeOverlay.controller.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Title.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Title/FadeOutAnimation.anim" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Title/FadeOutAnimation.anim.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Title/Letters.controller" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Title/Letters.controller.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Title/LettersGrowthAnimation.anim" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Title/LettersGrowthAnimation.anim.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Title/TitleFadeInAnimation.anim" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Title/TitleFadeInAnimation.anim.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Title/TitleTextMove.anim" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Title/TitleTextMove.anim.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Title/TransitionAnimation.anim" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Title/TransitionAnimation.anim.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Title/TransitionController.controller" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Animations/Title/TransitionController.controller.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/UI/Title.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/UI/Title/Letters.prefab" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/UI/Title/Letters.prefab.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/UI/Lobby/LobbyController.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/UI/Lobby/LobbyController.cs.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Tylos/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Tylos/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/MainMenuScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/MainMenuScene.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/TitleScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/TitleScene.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Animations/FadeInAnimation.anim" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Animations/FadeInAnimation.anim.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Animations/FadeInOverlay.controller" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Animations/FadeInOverlay.controller.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Animations/FadeOutAnimation.anim" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Animations/FadeOutAnimation.anim.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Animations/FadeOutOverlayAnimator.controller" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Animations/FadeOutOverlayAnimator.controller.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Animations/FadeOverlay.controller" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Animations/FadeOverlay.controller.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Animations/Letters.controller" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Animations/Letters.controller.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Animations/LettersGrowthAnimation.anim" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Animations/LettersGrowthAnimation.anim.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Animations/TitleFadeInAnimation.anim" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Animations/TitleFadeInAnimation.anim.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Animations/TitleTextMove.anim" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Animations/TitleTextMove.anim.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Animations/TransitionAnimation.anim" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Animations/TransitionAnimation.anim.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Animations/TransitionController.controller" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Animations/TransitionController.controller.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/NetworkManager.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/NetworkManager.prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/LobbyScene.unity" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/LobbyScene.unity.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/MainMenuScene.unity" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/MainMenuScene.unity.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/TitleScene.unity" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/TitleScene.unity.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/UI HUD.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/UI HUD/UI_InGameOverlay.unity" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/UI HUD/UI_InGameOverlay.unity.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/UI HUD/UI_Lobby.unity" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/UI HUD/UI_Lobby.unity.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/UI/Lobby/TimerController.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/UI/Lobby/TimerController.cs.meta" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/UI/Title/TitleController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/UI/Title/TitleController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/TextMesh Pro/Examples &amp; Extras/Resources/Fonts &amp; Materials/Anton SDF.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TextMesh Pro/Examples &amp; Extras/Resources/Fonts &amp; Materials/Anton SDF.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/TextMesh Pro/Examples &amp; Extras/Resources/Fonts &amp; Materials/Bangers SDF.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TextMesh Pro/Examples &amp; Extras/Resources/Fonts &amp; Materials/Bangers SDF.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/TextMesh Pro/Examples &amp; Extras/Resources/Fonts &amp; Materials/Electronic Highway Sign SDF.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TextMesh Pro/Examples &amp; Extras/Resources/Fonts &amp; Materials/Electronic Highway Sign SDF.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/TextMesh Pro/Resources/Fonts &amp; Materials/KgSecondChancesSketch-KpAp SDF.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TextMesh Pro/Resources/Fonts &amp; Materials/KgSecondChancesSketch-KpAp SDF.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/TextMesh Pro/Resources/Fonts &amp; Materials/KgSecondChancesSolid-2B6K SDF.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TextMesh Pro/Resources/Fonts &amp; Materials/KgSecondChancesSolid-2B6K SDF.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/EditorBuildSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/EditorBuildSettings.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -13,7 +91,8 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/UI/Lobby/TimerController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/UI/HUD/PieChartController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/UI/HUD/RGBSliderController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/UI/MainMenu/CameraRevolve.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/UI/Title/TextTwinkle.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
@@ -92,6 +171,8 @@
       <workItem from="1679884360899" duration="15000" />
       <workItem from="1679885069248" duration="4447000" />
       <workItem from="1680134109351" duration="679000" />
+      <workItem from="1680194588316" duration="1122000" />
+      <workItem from="1680463919166" duration="7280000" />
     </task>
     <servers />
   </component>
