@@ -9,8 +9,13 @@ using UnityEngine.Events;
 public class Unit
 {
     [SerializeField] IdentityInfo identityInfo;
+
+    public IdentityInfo IdentityInfo
+    {
+        get => identityInfo;
+        set => identityInfo = value;
+    }
     
-    public IdentityInfo IdentityInfo => identityInfo;
     // TODO: Add unit specific data her
 
     public Unit()

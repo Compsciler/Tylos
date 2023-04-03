@@ -6,41 +6,107 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Events;
 using Mirror;
+using Unity.VisualScripting;
 
 [RequireComponent(typeof(ArmyMovement))]
 public class Army : Entity
 {
     readonly SyncList<Unit> armyUnits = new SyncList<Unit>(); // Change to set if necessary
+    
+    // the mean of the army identity on complex plane
+    // this is calculated on on unit add/remove
+    private Vector2 _meanZ;
+    // the complex version of the armies
+    // TODO: please refactor this to be a part of identity info
+    // this is updated per frame
+    private List<Vector2> _armyComplex;
+
+    // this might need to be changed
+    private float _identityChangeRate = 0.2f;
+
     public ReadOnlyCollection<Unit> ArmyUnits => new ReadOnlyCollection<Unit>(armyUnits);
     
     public Army() { }
 
     public void AddUnit(Unit unit)
     {
+        var z = CalculateIdentityComplex(unit);
+        if (armyUnits.Count == 0)
+        {
+            _meanZ = z;
+        }
+        else
+        {
+            _meanZ = _meanZ * (float) armyUnits.Count + z;
+            _meanZ /= (armyUnits.Count + 1);
+        }
+        
         armyUnits.Add(unit);
     }
+    
     public void RemoveUnit(Unit unit)
     {
+        var z = CalculateIdentityComplex(unit);
+        if (armyUnits.Count == 0)
+        {
+            _meanZ = Vector2.zero;
+        }
+        else
+        {
+            _meanZ = _meanZ * (float) armyUnits.Count - z;
+            _meanZ /= (armyUnits.Count - 1);
+        }
         armyUnits.Remove(unit);
     }
+    
     public void SetUnits(Unit[] units) // Use array because Mirror doesn't support lists in commands 
     {
         armyUnits.Clear();
+        _meanZ = Vector2.zero;
         foreach(Unit unit in units)
         {
-            armyUnits.Add(unit);
+            AddUnit(unit);
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        // I really don't want to calculate this multiple times per frame
+        // ideally this is refactored into IdentityInfo
+        _armyComplex = IdentityComplex();
+        
+        // this is the mean H that all others will tend towards
+        var meanAngle = Mathf.Atan2(_meanZ.y, _meanZ.x);
+        for (int i = 0; i < armyUnits.Count; i++)
+        {
+            // this is the hsv identity of the unit we are currently dealing with
+            var identity = armyUnits[i].IdentityInfo;
+            Color.RGBToHSV(new Color(identity.r, identity.g, identity.b), out var h, out var s, out var v);
+
+            // this is fine?
+            // if both y and x are zero
+            // it just gives 0, which should have not effect in the subsequent calculation anyways
+            var angle = Mathf.Atan2(_armyComplex[i].y, _armyComplex[i].x);
+            
+            var newAngle = Mathf.MoveTowardsAngle(angle, meanAngle, _identityChangeRate * Time.fixedDeltaTime);
+            // an awkward way to compress it into 0-1
+            const float twoPI = (Mathf.PI * 2);
+            var newH = ((newAngle + twoPI) % twoPI)/ twoPI;
+
+            var newColor = Color.HSVToRGB(newH, s, v);
+            armyUnits[i].IdentityInfo = new IdentityInfo(newColor);
         }
     }
     
+    
+
     public float GetDeviance()
     {
-        // complex sum to find centroid
-        var sum = Vector2.zero;
-        var armyComplex = IdentityComplex();
-
-        sum = armyComplex.Aggregate(sum, (current, c) => current + c);
-        var mean = sum / armyComplex.Count;
+        var armyComplex = _armyComplex;
+        var mean = _meanZ;
         // using squared magnitude because it's like a standard
+        // PCA uses another three stdev metric
+        // is there a way to unify them to reduce problems?
         var stdev = armyComplex.Sum(c => (c - mean).sqrMagnitude);
         stdev /= armyComplex.Count;
         return stdev;
@@ -51,10 +117,10 @@ public class Army : Entity
     // the split is returned as a tuple of lists
     public (List<Unit>, List<Unit>) CalculateSplit()
     {
-        var armyComplex = IdentityComplex();
+        var armyComplex = _armyComplex;
         
         // GetEigenCentroid returns (eigenvector, centroid) of the dataset
-        var (eigenVector, centroid) = GetEigenCentroid(armyComplex);
+        var (eigenVector, centroid) = GetEigenCentroid(armyComplex, _meanZ);
         
         // if we get a perfectly circular set it is possible for eigen to be 0
         // just randomly pick an axis if so
@@ -92,26 +158,30 @@ public class Army : Entity
         var armyComplex = new List<Vector2>();
         foreach (var u in armyUnits)
         {
-            var identity = u.IdentityInfo;
-            var rgbIdentity = new Color(identity.r, identity.g, identity.b);
-            float h;
-            Color.RGBToHSV(rgbIdentity, out h, out _, out _);
-            //0->0, 1->2pi
-            var angle = 2 * Mathf.PI * h;
-            var complex = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
-            armyComplex.Add(complex);
+            armyComplex.Add(
+                CalculateIdentityComplex(u)
+                );
         }
 
         return armyComplex;
     }
+
+    private Vector2 CalculateIdentityComplex(Unit u)
+    {
+        var identity = u.IdentityInfo;
+        var rgbIdentity = new Color(identity.r, identity.g, identity.b);
+        float h;
+        Color.RGBToHSV(rgbIdentity, out h, out _, out _);
+        var angle = 2 * Mathf.PI * h;
+        var complex = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+        return complex;
+    }
     
     // this function calculates the eigenvector as well as the centroid
-    private (Vector2, Vector2) GetEigenCentroid(List<Vector2> data)
+    private (Vector2, Vector2) GetEigenCentroid(List<Vector2> data, Vector2 meanZ)
     {
-        var xMean = 0f;
-        xMean = data.Aggregate(xMean, (current, c) => current + c.x) / data.Count;
-        var yMean = 0f;
-        yMean = data.Aggregate(yMean, (current, c) => current + c.y) / data.Count;
+        var xMean = meanZ.x;
+        var yMean = meanZ.y;
         
         var varX = 0f;
         varX = data.Aggregate(varX, 
