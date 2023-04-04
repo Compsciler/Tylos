@@ -30,7 +30,6 @@ public class ArmyHealth : EntityHealth
 
         if(health <= 0) {
             army.ArmyUnits.RemoveAt(army.ArmyUnits.Count - 1);
-            Debug.Log("Unit died! units left: " + army.ArmyUnits.Count);
             if(army.ArmyUnits.Count == 0) {
                 Die();
             }

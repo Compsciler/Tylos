@@ -334,10 +334,21 @@ public class Army : Entity
         CmdAttack(entity);
     }
 
-    [Client]
     private void OnArmyUnitsUpdated(SyncList<Unit>.Operation op, int index, Unit oldUnit, Unit newUnit)
     {
-        armyVisuals.SetColor(ArmyUnits); // TODO: Optimize this so the entire list doesn't have to be passed
+        if(isServer) {
+            if(armyVisuals == null) { 
+                Debug.LogError("Army visuals is null");
+                return;
+            } else {
+                if(armyVisuals.Count != armyUnits.Count) { // If the army visuals count doesn't match the army units count, update the count and visuals
+                    armyVisuals.SetScale(armyUnits.Count);
+                }
+            }
+        } else if (isClient)
+        {
+            armyVisuals.SetColor(ArmyUnits); // TODO: Optimize this so the entire list doesn't have to be passed
+        }
     }
     #endregion
 }

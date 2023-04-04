@@ -32,6 +32,7 @@ public class ArmyVisuals : NetworkBehaviour
     LineRenderer lineRenderer;
     float durationRemaining = 0f; // Line is drawn if this is greater than 0
     Vector3 targetPosition;
+    public int Count { get; private set; } = 0;  // The number of units in the army at last SetScale() call
 
     void Awake()
     {
@@ -54,14 +55,25 @@ public class ArmyVisuals : NetworkBehaviour
         }
     }
 
+
+    /// <summary>
+    /// Sets the scale of the army based on the number of units in the army
+    /// </summary>
+    /// <param name="count">The number of units in the army</param>
     [Server] 
     public void SetScale(int count) {
+        Count = count;
         Vector3 start = gameObject.transform.localScale;
         Vector3 end = (Vector3.one * defaultScale) + (Vector3.one * scaleIncrementPerUnit * count);
         gameObject.transform.localScale = end;
     }
     
-
+    /// <summary>
+    /// Sets the color of the army based on the units in the army
+    /// </summary>
+    /// <param name="armyUnits">
+    /// Reference to the army's SyncList of units 
+    /// </param>
     [Client]
     public void SetColor(SyncList<Unit> armyUnits)
     {
