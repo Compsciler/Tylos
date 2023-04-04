@@ -9,6 +9,9 @@ public class MyNetworkManager : NetworkManager
 {
     [SerializeField] GameObject basePrefab;
 
+    [Scene]
+    [SerializeField] string gameScene;
+
     public static event Action ClientOnConnected;
     public static event Action ClientOnDisconnected;
 
@@ -51,7 +54,7 @@ public class MyNetworkManager : NetworkManager
 
         isGameInProgress = true;
 
-        ServerChangeScene("GameScene");
+        ServerChangeScene(gameScene);
     }
 
     public override void OnServerAddPlayer(NetworkConnectionToClient conn)
@@ -69,7 +72,7 @@ public class MyNetworkManager : NetworkManager
 
     public override void OnServerSceneChanged(string newSceneName)  // NOT OnServerChangeScene
     {
-        if (SceneManager.GetActiveScene().name.StartsWith("GameScene"))
+        if (newSceneName == gameScene)
         {
             // GameOverHandler gameOverHandlerInstance = Instantiate(gameOverHandler);  // TODO: Add GameOverHandler
 

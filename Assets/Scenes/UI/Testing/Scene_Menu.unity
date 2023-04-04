@@ -2888,6 +2888,7 @@ MonoBehaviour:
   - {fileID: 1116076383}
   - {fileID: 1411521134}
   - {fileID: 177202327}
+  mainMenuScene: Assets/Scenes/UI/Testing/Scene_Menu.unity
 --- !u!1 &1391860334
 GameObject:
   m_ObjectHideFlags: 0
@@ -3876,6 +3877,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6058525235975443730, guid: d04903ceb37c7594c8ab178b46a00e5d,
         type: 3}
+      propertyPath: gameScene
+      value: Assets/Scenes/GameScene.unity
+      objectReference: {fileID: 0}
+    - target: {fileID: 6058525235975443730, guid: d04903ceb37c7594c8ab178b46a00e5d,
+        type: 3}
       propertyPath: onlineScene
       value: 
       objectReference: {fileID: 0}
@@ -3944,7 +3950,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: NetworkManager
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6028676320575591641, guid: d04903ceb37c7594c8ab178b46a00e5d, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: d04903ceb37c7594c8ab178b46a00e5d, type: 3}
 --- !u!1 &2004323128
 GameObject:

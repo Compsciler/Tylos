@@ -12,6 +12,9 @@ public class LobbyMenu : MonoBehaviour
     [SerializeField] Button startGameButton;
     [SerializeField] TMP_Text[] playerNameTexts;
 
+    [Scene]
+    [SerializeField] string mainMenuScene;
+
     private void Start()
     {
         MyNetworkManager.ClientOnConnected += HandleClientConnected;
@@ -68,7 +71,7 @@ public class LobbyMenu : MonoBehaviour
         {
             NetworkManager.singleton.StopClient();
 
-            SceneManager.LoadScene("Scene_Menu");  // TODO: Make this a variable
+            SceneManager.LoadScene(mainMenuScene);
         }
     }
 }
