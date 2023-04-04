@@ -116,6 +116,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0.1
+  playerCameraTransform: {fileID: 8543621414628890487}
   max_track_speed: 1
   keyboard_scroll_speed: 0.1
   edge_drag_speed: 1
@@ -137,7 +138,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8543621414628890487
 Transform:
   m_ObjectHideFlags: 0
