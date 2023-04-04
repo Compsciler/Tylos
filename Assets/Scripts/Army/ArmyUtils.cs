@@ -7,15 +7,14 @@ public class ArmyUtils : MonoBehaviour
 {
     const float MIN_COLOR_VALUE = 0f;
     const float MAX_COLOR_VALUE = 255f;
-    const float MIN_UNIT_ATTACK_POWER = 1f;
-    const float MAX_UNIT_ATTACK_POWER = 2f;
-    public static float CalculateAttackPower(SyncList<Unit> units)
+    
+    public static float CalculateAttackPower(SyncList<Unit> units, float minUnitAttackDamage, float maxUnitAttackDamage)
     {
         float attackPower = 0f;
         foreach (Unit unit in units)
         {
             float r = unit.identityInfo.r;
-            attackPower += Map(r, MIN_COLOR_VALUE, MAX_COLOR_VALUE, MIN_UNIT_ATTACK_POWER, MAX_UNIT_ATTACK_POWER);
+            attackPower += Map(r, MIN_COLOR_VALUE, MAX_COLOR_VALUE, minUnitAttackDamage, maxUnitAttackDamage);
         }
         return attackPower;
     }

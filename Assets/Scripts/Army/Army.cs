@@ -21,6 +21,8 @@ public class Army : Entity
 
     // Attack variables
     [Header("Attack settings")]
+    [SerializeField] const float minUnitAttackDamage = 1f;
+    [SerializeField] const float maxUnitAttackDamage = 2f;
     [SyncVar] private float attackDamage = 0f;
     [SyncVar][SerializeField] private float attackRange = 5f;
     [SyncVar] private Entity attackTarget = null; // Only used on the server
@@ -54,7 +56,6 @@ public class Army : Entity
     {
         if (isServer) // Handle game logic
         {
-            
             if (state == ArmyState.Attacking)
             {
                 if (attackTarget == null) // Target died
@@ -73,6 +74,7 @@ public class Army : Entity
                     else
                     {
                         Debug.Log("Target out of range");
+                        Debug.Log("attackTarget.transform.position: " + attackTarget.transform.position);
                         entityMovement.Move(attackTarget.transform.position);
                     }
                 }
@@ -81,7 +83,7 @@ public class Army : Entity
 
         if (isClient) // Handle client visuals
         {
-            if (state == ArmyState.Attacking)
+            if (state == ArmyState.Attacking && attackTarget != null)
             {
                 if (Vector3.Distance(transform.position, attackTarget.transform.position) <= attackRange)
                 {
@@ -256,7 +258,7 @@ public class Army : Entity
     [Server]
     private void InitializeArmyStats()
     {
-        attackDamage = ArmyUtils.CalculateAttackPower(ArmyUnits);
+        attackDamage = ArmyUtils.CalculateAttackPower(ArmyUnits, minUnitAttackDamage, maxUnitAttackDamage);
     }
 
     [Server]
@@ -265,6 +267,13 @@ public class Army : Entity
         return armyUnits;
     }
     
+    [Server]
+    private void HandleAttackTargetOnDie()
+    {
+        attackTarget = null;
+        state = ArmyState.Idle;
+    }
+
     [Command]
     private void CmdSetState(ArmyState state)
     {
@@ -282,6 +291,7 @@ public class Army : Entity
         }
         Debug.Log("Attacking");
         attackTarget = entity;
+        attackTarget.GetComponent<EntityHealth>().OnDie.AddListener(HandleAttackTargetOnDie); 
         state = ArmyState.Attacking;
     }
     #endregion

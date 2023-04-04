@@ -33,7 +33,8 @@ public class EntityHealth : NetworkBehaviour
     {
         Debug.Log(gameObject.name + " died");
         OnDie.Invoke();
-        NetworkServer.Destroy(gameObject);
+        NetworkServer.Destroy(gameObject);  
+        Debug.Log("Destroyed " + gameObject.name);
     }
 
     #endregion

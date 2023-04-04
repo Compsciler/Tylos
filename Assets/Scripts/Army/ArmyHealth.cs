@@ -23,12 +23,14 @@ public class ArmyHealth : EntityHealth
     [Server]
     public override void TakeDamage(float damage)
     {
+        Debug.Log("isServer: " + isServer);
+        Debug.Log("connectionToClient " + connectionToClient.connectionId);
         Unit unit = army.ArmyUnits[army.ArmyUnits.Count - 1];
         float health = unit.health;
         health -= damage;
         // Debug.Log("Unit took " + damage + " damage. Health is now " + health);
 
-        if(health <= 0) {
+        if(health < 0) {
             army.ArmyUnits.RemoveAt(army.ArmyUnits.Count - 1);
             if(army.ArmyUnits.Count == 0) {
                 Die();
