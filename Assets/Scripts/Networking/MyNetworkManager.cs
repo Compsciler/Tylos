@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MyNetworkManager : NetworkManager
 {
@@ -15,8 +16,6 @@ public class MyNetworkManager : NetworkManager
 
     List<MyPlayer> players = new List<MyPlayer>();
     public List<MyPlayer> Players => players;
-
-    NetworkConnectionToClient hostConnection = null;
 
     public static event Action<ObjectIdentity> ServerOnPlayerIdentityUpdated;
 
@@ -66,24 +65,33 @@ public class MyNetworkManager : NetworkManager
         player.SetDisplayName($"Player {Players.Count}");
 
         player.SetPartyOwner(Players.Count == 1);
-
-        // TODO: move into StartGame() later
-        // If this is the first player to join, make them the host
-        if (hostConnection == null)
-        {
-            hostConnection = conn;
-        }
-
-        IdentityInfo playerIdentity = SetAndGetPlayerIdentity(conn);
-
-        GameObject baseInstance = Instantiate(basePrefab, conn.identity.transform.position, conn.identity.transform.rotation);
-        SetBaseIdentityToPlayerIdentity(baseInstance, playerIdentity);  // If you move this line to after the Spawn() call, the base will be the wrong color for a few frames somehow
-        NetworkServer.Spawn(baseInstance, conn);
     }
 
-    private IdentityInfo SetAndGetPlayerIdentity(NetworkConnectionToClient conn)
+    public override void OnServerSceneChanged(string newSceneName)  // NOT OnServerChangeScene
     {
-        MyPlayer player = conn.identity.GetComponent<MyPlayer>();
+        if (SceneManager.GetActiveScene().name.StartsWith("GameScene"))
+        {
+            // GameOverHandler gameOverHandlerInstance = Instantiate(gameOverHandler);  // TODO: Add GameOverHandler
+
+            // NetworkServer.Spawn(gameOverHandlerInstance.gameObject);
+
+            foreach (MyPlayer player in Players)
+            {
+                IdentityInfo playerIdentity = SetAndGetPlayerIdentity(player);
+                
+                GameObject baseInstance = Instantiate(
+                    basePrefab,
+                    GetStartPosition().position,
+                    Quaternion.identity);
+                SetBaseIdentityToPlayerIdentity(baseInstance, playerIdentity);  // If you move this line to after the Spawn() call, the base will be the wrong color for a few frames somehow
+
+                NetworkServer.Spawn(baseInstance, player.connectionToClient);
+            }
+        }
+    }
+
+    private IdentityInfo SetAndGetPlayerIdentity(MyPlayer player)
+    {
         Color randomColor = TeamColorAssigner.Instance.GetAndRemoveRandomColor();
         player.SetTeamColor(randomColor);
 
@@ -99,7 +107,7 @@ public class MyNetworkManager : NetworkManager
         ObjectIdentity baseObjectIdentity = baseInstance.GetComponent<ObjectIdentity>();
         baseObjectIdentity.SetIdentity(playerIdentity);
     }
-    
+
     #endregion
     
     #region Client

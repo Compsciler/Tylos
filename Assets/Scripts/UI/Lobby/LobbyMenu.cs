@@ -68,7 +68,7 @@ public class LobbyMenu : MonoBehaviour
         {
             NetworkManager.singleton.StopClient();
 
-            SceneManager.LoadScene(0);
+            SceneManager.LoadScene("Scene_Menu");  // TODO: Make this a variable
         }
     }
 }
