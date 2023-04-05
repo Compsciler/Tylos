@@ -8,12 +8,11 @@ using UnityEngine.UI;
 
 public class LobbyMenu : MonoBehaviour
 {
-    [SerializeField] GameObject lobbyUI;
+    // [SerializeField] GameObject lobbyUI;
     [SerializeField] Button startGameButton;
     [SerializeField] TMP_Text[] playerNameTexts;
 
-    [Scene]
-    [SerializeField] string mainMenuScene;
+    [SerializeField] LobbyController lobbyController;
 
     private void Start()
     {
@@ -31,14 +30,14 @@ public class LobbyMenu : MonoBehaviour
 
     private void HandleClientConnected()
     {
-        lobbyUI.SetActive(true);
+        // lobbyUI.SetActive(true);
     }
 
     private void ClientHandleInfoUpdated()
     {
         List<MyPlayer> players = ((MyNetworkManager)NetworkManager.singleton).Players;
 
-        for (int i = 0; i < players.Count; i++)
+        for (int i = 0; i < players.Count && i < playerNameTexts.Length; i++)
         {
             playerNameTexts[i].text = players[i].DisplayName;
         }
@@ -64,14 +63,14 @@ public class LobbyMenu : MonoBehaviour
     public void LeaveLobby()
     {
         if (NetworkServer.active && NetworkClient.isConnected)
-        {
+        {            
             NetworkManager.singleton.StopHost();
         }
         else
         {
             NetworkManager.singleton.StopClient();
 
-            SceneManager.LoadScene(mainMenuScene);
+            lobbyController.LoadMainMenu();
         }
     }
 }
