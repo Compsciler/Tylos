@@ -27,6 +27,8 @@ public class LobbyMenu : MonoBehaviour
         MyNetworkManager.ClientOnConnected += HandleClientConnected;
         MyPlayer.AuthorityOnPartyOwnerStateUpdated += AuthorityHandlePartyOwnerStateUpdated;
         MyPlayer.ClientOnInfoUpdated += ClientHandleInfoUpdated;
+
+        LobbySceneInitPlayerState();
     }
 
     void OnDestroy()
@@ -36,12 +38,25 @@ public class LobbyMenu : MonoBehaviour
         MyPlayer.ClientOnInfoUpdated -= ClientHandleInfoUpdated;
     }
 
+    private void LobbySceneInitPlayerState()
+    {
+        ClientHandleInfoUpdated();
+
+        if (NetworkServer.active)  // Is server (party owner)
+        {
+            AuthorityHandlePartyOwnerStateUpdated(true);
+        }
+        else
+        {
+            AuthorityHandlePartyOwnerStateUpdated(false);
+        }
+    }
+
     private void HandleClientConnected()
     {
         // lobbyUI.SetActive(true);
     }
 
-    // TODO: make sure LobbyMenu is DontDestroyOnLoad from MainMenu
     private void ClientHandleInfoUpdated()
     {
         List<MyPlayer> players = ((MyNetworkManager)NetworkManager.singleton).Players;
@@ -56,23 +71,19 @@ public class LobbyMenu : MonoBehaviour
             SetPlayerWaiting(i, players);
         }
 
-        Debug.Log($"Player count: {players.Count}");
         startGameButton.interactable = players.Count >= 2;
     }
 
     private void SetPlayerQueued(int playerIndex, List<MyPlayer> players)
     {
-        Debug.Log("here 1");
         playerNameTexts[playerIndex].text = players[playerIndex].DisplayName;
         playerCards[playerIndex].GetComponent<RawImage>().color = queuedPlayerColor;
-        Debug.Log("Player " + playerIndex + " is queued");
     }
 
     private void SetPlayerWaiting(int playerIndex, List<MyPlayer> players)
     {
         playerNameTexts[playerIndex].text = waitingForPlayerText;
         playerCards[playerIndex].GetComponent<RawImage>().color = waitingForPlayerColor;
-        Debug.Log("Player " + playerIndex + " is waiting");
     }
 
     private void AuthorityHandlePartyOwnerStateUpdated(bool state)

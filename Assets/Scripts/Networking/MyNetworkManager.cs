@@ -17,6 +17,10 @@ public class MyNetworkManager : NetworkManager
 
     bool isGameInProgress = false;
 
+    float lobbyCreatedTime;
+    float lobbyTimer;  // Static doesn't work either
+    public float LobbyTimer => lobbyTimer;
+
     List<MyPlayer> players = new List<MyPlayer>();
     public List<MyPlayer> Players => players;
 
@@ -24,7 +28,7 @@ public class MyNetworkManager : NetworkManager
 
 
     #region Server
-    
+
     public override void OnServerConnect(NetworkConnectionToClient conn)
     {
         if (!isGameInProgress) { return; }
@@ -44,7 +48,7 @@ public class MyNetworkManager : NetworkManager
     public override void OnStopServer()
     {
         Players.Clear();
-        
+
         isGameInProgress = false;
     }
 
@@ -67,7 +71,23 @@ public class MyNetworkManager : NetworkManager
 
         player.SetDisplayName($"Player {Players.Count}");
 
-        player.SetPartyOwner(Players.Count == 1);
+
+        if (Players.Count == 1)
+        {
+            player.SetPartyOwner(true);
+            lobbyCreatedTime = Time.time;
+        }
+        else
+        {
+            player.SetPartyOwner(false);
+        }
+    }
+
+    public override void Update()
+    {
+        base.Update();
+
+        lobbyTimer = Time.time - lobbyCreatedTime;
     }
 
     public override void OnServerSceneChanged(string newSceneName)  // NOT OnServerChangeScene
@@ -81,7 +101,7 @@ public class MyNetworkManager : NetworkManager
             foreach (MyPlayer player in Players)
             {
                 IdentityInfo playerIdentity = SetAndGetPlayerIdentity(player);
-                
+
                 GameObject baseInstance = Instantiate(
                     basePrefab,
                     GetStartPosition().position,
@@ -112,9 +132,9 @@ public class MyNetworkManager : NetworkManager
     }
 
     #endregion
-    
+
     #region Client
-    
+
     public override void OnClientConnect()
     {
         base.OnClientConnect();
