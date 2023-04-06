@@ -7,6 +7,9 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerArmies))]
 public class MyPlayer : NetworkBehaviour
 {
+    [SerializeField] Transform cameraTransform;
+    public Transform CameraTransform => cameraTransform;
+
     int playerId = -1;
 
     List<Army> myArmies = new List<Army>();
