@@ -60,21 +60,21 @@ public class Army : Entity
             {
                 if (attackTarget == null) // Target died
                 {
-                    Debug.Log("Target died");
+                    // Debug.Log("Target died");
                     state = ArmyState.Idle;
                 }
                 else
                 {
                     if (Vector3.Distance(transform.position, attackTarget.transform.position) <= attackRange)
                     {
-                        Debug.Log("Attacking target");
+                        // Debug.Log("Attacking target");
                         entityMovement.Stop();
                         attackTarget.EntityHealth.TakeDamage(attackDamage * Time.deltaTime);
                     }
                     else
                     {
-                        Debug.Log("Target out of range");
-                        Debug.Log("attackTarget.transform.position: " + attackTarget.transform.position);
+                        // Debug.Log("Target out of range");
+                        // Debug.Log("attackTarget.transform.position: " + attackTarget.transform.position);
                         entityMovement.Move(attackTarget.transform.position);
                     }
                 }
@@ -301,7 +301,7 @@ public class Army : Entity
             Debug.LogError("Entity has no health component");
             return;
         }
-        Debug.Log("Attacking");
+        // Debug.Log("Attacking");
         attackTarget = entity;
         attackTarget.GetComponent<EntityHealth>().OnDie.AddListener(HandleAttackTargetOnDie); 
         SetState(ArmyState.Attacking);

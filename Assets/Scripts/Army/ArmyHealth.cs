@@ -23,8 +23,6 @@ public class ArmyHealth : EntityHealth
     [Server]
     public override void TakeDamage(float damage)
     {
-        Debug.Log("isServer: " + isServer);
-        Debug.Log("connectionToClient " + connectionToClient.connectionId);
         Unit unit = army.ArmyUnits[army.ArmyUnits.Count - 1];
         float health = unit.health;
         health -= damage;

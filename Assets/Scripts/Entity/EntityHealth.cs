@@ -19,11 +19,12 @@ public class EntityHealth : NetworkBehaviour
     public virtual void TakeDamage(float damage)
     {
         OnTakeDamage.Invoke();
-        Debug.Log(gameObject.name + " took " + damage + " damage");
-        health -= damage;
-        Debug.Log("Health: " + health);
-        if (health <= 0)
-        {
+        // Debug.Log(gameObject.name + " took " + damage + " damage");
+        if (Mathf.Approximately(health, 0f)) { return; }
+
+        health = Mathf.Max(health - damage, 0f);
+
+        if (Mathf.Approximately(health, 0f)) { 
             Die();
         }
     }
@@ -31,10 +32,10 @@ public class EntityHealth : NetworkBehaviour
     [Server]
     protected virtual void Die()
     {
-        Debug.Log(gameObject.name + " died");
+        // Debug.Log(gameObject.name + " died");
         OnDie.Invoke();
         NetworkServer.Destroy(gameObject);  
-        Debug.Log("Destroyed " + gameObject.name);
+        // Debug.Log("Destroyed " + gameObject.name);
     }
 
     #endregion
