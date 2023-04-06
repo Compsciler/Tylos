@@ -266,7 +266,11 @@ public class Army : Entity
     {
         return armyUnits;
     }
-    
+
+
+    /// <summary>
+    /// Makes sure attackTarget is set to null when it dies
+    /// </summary>
     [Server]
     private void HandleAttackTargetOnDie()
     {
@@ -274,10 +278,18 @@ public class Army : Entity
         state = ArmyState.Idle;
     }
 
+    [Server]
+    private void SetState(ArmyState state) {
+        this.state = state; 
+        if(state != ArmyState.Attacking) { // Reset the attack target if we are not attacking
+            attackTarget = null; 
+        }
+    }
+
     [Command]
     private void CmdSetState(ArmyState state)
     {
-        this.state = state;
+        SetState(state);
     }
 
     [Command]
@@ -292,7 +304,7 @@ public class Army : Entity
         Debug.Log("Attacking");
         attackTarget = entity;
         attackTarget.GetComponent<EntityHealth>().OnDie.AddListener(HandleAttackTargetOnDie); 
-        state = ArmyState.Attacking;
+        SetState(ArmyState.Attacking);
     }
     #endregion
 
