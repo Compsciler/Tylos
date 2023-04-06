@@ -81,7 +81,7 @@ public class Base : Entity
     public override void TryMove(Vector3 position) // When move command is issued to the base, spawn an army and move it to the position
     {
         if (!isOwned || _baseUnitCount == 0) { return; } // If there are no units in the base, don't do anything
-        if (!_baseSpawner.isOwned) { return; }
+        
         _baseSpawner.CmdSpawnMoveArmy(_baseIdentityInfo, _baseUnitCount, position);
         CmdClearBaseUnits();
     }
