@@ -64,4 +64,9 @@ public struct IdentityInfo
         g = color.g;
         b = color.b;
     }
+
+    public Color GetColor()
+    {
+        return new Color(r, g, b);
+    }
 }
