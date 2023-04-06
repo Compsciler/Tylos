@@ -8,47 +8,82 @@ using UnityEngine.UI;
 
 public class LobbyMenu : MonoBehaviour
 {
-    [SerializeField] GameObject lobbyUI;
+    // [SerializeField] GameObject lobbyUI;
     [SerializeField] Button startGameButton;
+    [SerializeField] GameObject[] playerCards;
     [SerializeField] TMP_Text[] playerNameTexts;
 
-    [Scene]
-    [SerializeField] string mainMenuScene;
+    [SerializeField] LobbyController lobbyController;
 
-    private void Start()
+    string waitingForPlayerText;
+
+    [SerializeField] Color queuedPlayerColor;
+    [SerializeField] Color waitingForPlayerColor;
+
+    void Awake()
     {
+        waitingForPlayerText = playerNameTexts[0].text;
+
         MyNetworkManager.ClientOnConnected += HandleClientConnected;
         MyPlayer.AuthorityOnPartyOwnerStateUpdated += AuthorityHandlePartyOwnerStateUpdated;
         MyPlayer.ClientOnInfoUpdated += ClientHandleInfoUpdated;
+
+        LobbySceneInitPlayerState();
     }
 
-    private void OnDestroy()
+    void OnDestroy()
     {
         MyNetworkManager.ClientOnConnected -= HandleClientConnected;
         MyPlayer.AuthorityOnPartyOwnerStateUpdated -= AuthorityHandlePartyOwnerStateUpdated;
         MyPlayer.ClientOnInfoUpdated -= ClientHandleInfoUpdated;
     }
 
+    private void LobbySceneInitPlayerState()
+    {
+        ClientHandleInfoUpdated();
+
+        if (NetworkServer.active)  // Is server (party owner)
+        {
+            AuthorityHandlePartyOwnerStateUpdated(true);
+        }
+        else
+        {
+            AuthorityHandlePartyOwnerStateUpdated(false);
+        }
+    }
+
     private void HandleClientConnected()
     {
-        lobbyUI.SetActive(true);
+        // lobbyUI.SetActive(true);
     }
 
     private void ClientHandleInfoUpdated()
     {
         List<MyPlayer> players = ((MyNetworkManager)NetworkManager.singleton).Players;
 
-        for (int i = 0; i < players.Count; i++)
+        for (int i = 0; i < players.Count && i < playerNameTexts.Length; i++)
         {
-            playerNameTexts[i].text = players[i].DisplayName;
+            SetPlayerQueued(i, players);
         }
 
         for (int i = players.Count; i < playerNameTexts.Length; i++)
         {
-            playerNameTexts[i].text = "Waiting For Player...";
+            SetPlayerWaiting(i, players);
         }
 
         startGameButton.interactable = players.Count >= 2;
+    }
+
+    private void SetPlayerQueued(int playerIndex, List<MyPlayer> players)
+    {
+        playerNameTexts[playerIndex].text = players[playerIndex].DisplayName;
+        playerCards[playerIndex].GetComponent<RawImage>().color = queuedPlayerColor;
+    }
+
+    private void SetPlayerWaiting(int playerIndex, List<MyPlayer> players)
+    {
+        playerNameTexts[playerIndex].text = waitingForPlayerText;
+        playerCards[playerIndex].GetComponent<RawImage>().color = waitingForPlayerColor;
     }
 
     private void AuthorityHandlePartyOwnerStateUpdated(bool state)
@@ -71,7 +106,7 @@ public class LobbyMenu : MonoBehaviour
         {
             NetworkManager.singleton.StopClient();
 
-            SceneManager.LoadScene(mainMenuScene);
+            lobbyController.LoadMainMenu();
         }
     }
 }

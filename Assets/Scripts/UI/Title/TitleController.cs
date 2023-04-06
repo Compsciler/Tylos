@@ -18,6 +18,7 @@ public class TitleController : MonoBehaviour
     {
         // Set the FadeOutTrigger parameter to true
         transitionAnimator.SetBool(FadeOutTrigger, true);
+        yield return new WaitForSeconds(0.25f);
 
         // Set the PlayTransition parameter to true
         titleTextAnimator.SetBool(PlayTransition, true);
@@ -26,8 +27,7 @@ public class TitleController : MonoBehaviour
         titleTextAnimator.Play("TitleTextMove");
 
         // Wait for the title transition animation to complete before loading the next scene
-        // Replace 1f with the duration of your title transition animation
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
 
         SceneManager.LoadScene(sceneName);
     }
