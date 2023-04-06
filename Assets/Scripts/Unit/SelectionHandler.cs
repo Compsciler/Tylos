@@ -25,15 +25,12 @@ public class SelectionHandler : NetworkBehaviour
     {
         mainCamera = Camera.main;
         cameraController = mainCamera.GetComponent<CameraController>();
+
+        player = NetworkClient.connection.identity.GetComponent<MyPlayer>();
     }
 
     void Update()
     {
-        if (player == null && NetworkClient.connection != null && NetworkClient.connection.identity != null)
-        {
-            player = NetworkClient.connection.identity.GetComponent<MyPlayer>();
-        }
-
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             StartSelectionArea();

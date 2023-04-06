@@ -3,14 +3,42 @@
   <component name="ChangeListManager">
     <list default="true" id="f9384a0e-6b7e-46a7-ae79-a211d5dacabd" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Tylos/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Tylos/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Animations/TransitionController.controller" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Animations/TransitionController.controller" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/MainMenuScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/MainMenuScene.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/TitleScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/TitleScene.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Animations/Lobby/FadeInAnimation.anim" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Animations/Lobby/FadeInAnimation.anim" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Animations/Lobby/FadeInOverlay.controller" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Animations/Lobby/FadeInOverlay.controller" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Animations/Lobby/FadeOutAnimation.anim" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Animations/Lobby/FadeOutAnimation.anim" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Animations/Title/TitleTextMove.anim" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Animations/Title/TitleTextMove.anim" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/UI/HUDScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/UI/HUDScene.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/UI/LobbyScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/UI/LobbyScene.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/UI/MainMenuScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/UI/MainMenuScene.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/UI/TitleScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/UI/TitleScene.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/UI/MainMenu/LoadLobby.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/UI/MainMenu/LoadLobby.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/UI/Title/TitleController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/UI/Title/TitleController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/TextMesh Pro/Resources/Fonts &amp; Materials/KgSecondChancesSketch-KpAp SDF.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TextMesh Pro/Resources/Fonts &amp; Materials/KgSecondChancesSketch-KpAp SDF.asset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/TextMesh Pro/Resources/Fonts &amp; Materials/KgSecondChancesSolid-2B6K SDF.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TextMesh Pro/Resources/Fonts &amp; Materials/KgSecondChancesSolid-2B6K SDF.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/EditorBuildSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/EditorBuildSettings.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/TagManager.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/TagManager.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Textures/UI/3D Chat Box (microphone).jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Textures/UI/3D Chat Box (microphone).jpg.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Textures/UI/Back Button.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Textures/UI/Back Button.jpg.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Textures/UI/Continue.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Textures/UI/Continue.jpg.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Textures/UI/NewGameButton.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Textures/UI/NewGameButton.jpg.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Textures/UI/Pause.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Textures/UI/Pause.jpg.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Textures/UI/ProfileButton.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Textures/UI/ProfileButton.jpg.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Textures/UI/SettingsButton.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Textures/UI/SettingsButton.jpg.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Textures/UI/Sound.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Textures/UI/Sound.jpg.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Textures/UI/Title.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Textures/UI/Title.jpg.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Textures/UI/Zoom in.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Textures/UI/Zoom in.jpg.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Textures/UI/Zoom out.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Textures/UI/Zoom out.jpg.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Textures/UI/_O_ (1).png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Textures/UI/_O_ (1).png.meta" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,7 +46,8 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/UI/Lobby/TimerController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/UI/HUD/PieChartController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/UI/HUD/RGBSliderController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/UI/MainMenu/CameraRevolve.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/UI/Title/TextTwinkle.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
@@ -96,6 +125,11 @@
       <workItem from="1679703288067" duration="9037000" />
       <workItem from="1679884360899" duration="15000" />
       <workItem from="1679885069248" duration="4447000" />
+      <workItem from="1680134109351" duration="679000" />
+      <workItem from="1680194588316" duration="1122000" />
+      <workItem from="1680463919166" duration="7280000" />
+      <workItem from="1680630031477" duration="2873000" />
+      <workItem from="1680650844955" duration="2240000" />
     </task>
     <servers />
   </component>

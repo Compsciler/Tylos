@@ -1,19 +1,34 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
+using UnityEngine.InputSystem;
 
-public class CameraController : MonoBehaviour
+public class CameraController : NetworkBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
     private List<Entity> following;
+    private Controls controls;
+
+    private Vector2 lastInput = new Vector2(0,0);
+    [SerializeField] Transform playerCameraTransform;
     [SerializeField] float max_track_speed = 1;
     [SerializeField] float keyboard_scroll_speed = 0.1f;
     [SerializeField] float edge_drag_speed = 1;
+    [SerializeField] Vector2 board_min_extent = new Vector2(-5, -5);
+    [SerializeField] Vector2 board_max_extent = new Vector2(5,5);
+    public override void OnStartAuthority()
+    {        
+        playerCameraTransform.gameObject.SetActive(true);
+        controls = new Controls();
+        controls.Player.MoveCamera.performed += setInput;
+        controls.Player.MoveCamera.canceled += setInput;
+        controls.Enable();
+    }
+
+    private void setInput(InputAction.CallbackContext ctx){
+        lastInput = ctx.ReadValue<Vector2>();
+    }
 
     public void follow(List<Entity> to_follow){
         following = to_follow;
@@ -59,36 +74,30 @@ public class CameraController : MonoBehaviour
         }
     }
 
-    Vector2 keyboard_movement(bool forward, bool backward, bool left, bool right){
-        Vector2 movement = new Vector2();
-        if(forward) movement.y += 1;
-        if(backward) movement.y -= 1;
-        if(left) movement.x -= 1;
-        if(right) movement.x += 1;
-        return movement * keyboard_scroll_speed;
+    void constrain_to_board(){
+        Vector3 pos = playerCameraTransform.position;
+        pos.x = Mathf.Clamp(pos.x, board_min_extent.x, board_max_extent.x);
+        pos.z = Mathf.Clamp(pos.z, board_min_extent.y, board_max_extent.y);
+        playerCameraTransform.SetPositionAndRotation(pos, playerCameraTransform.rotation);
     }
 
     // Update is called once per frame
+    [ClientCallback]
     void Update()
     {
-        if(Input.GetMouseButton(0)){
-        }
+        if (!isOwned || !Application.isFocused) { return; }
+        
         if(following != null && following.Count > 0){
             Vector3 avg = avg_position(following);
-            Vector3 diff = Camera.main.transform.position - avg;
+            Vector3 diff = playerCameraTransform.position - avg;
             Vector2 delta = clamp_max_speed(new Vector2(diff.x, diff.z));
-            Camera.main.transform.Translate(delta);
+            playerCameraTransform.Translate(delta);
         } else {
             Vector2 delta = camera_delta(rel_mouse_pos()) / 10f;
-            Camera.main.transform.Translate(new Vector3(delta.x, delta.y));
-            bool forward = Input.GetKey(KeyCode.W);
-            bool backward = Input.GetKey(KeyCode.S);
-            bool left = Input.GetKey(KeyCode.A);
-            bool right = Input.GetKey(KeyCode.D);
-            Vector2 keyboard_delta = keyboard_movement(forward, backward, left, right);
-            Camera.main.transform.Translate(new Vector3(keyboard_delta.x, keyboard_delta.y));
-
+            playerCameraTransform.Translate(new Vector3(delta.x, delta.y));
+            Vector2 keyboard_delta = lastInput * keyboard_scroll_speed;
+            playerCameraTransform.Translate(new Vector3(keyboard_delta.x, keyboard_delta.y));
         }
-        // Input.mousePosition
+        constrain_to_board();
     }
 }
