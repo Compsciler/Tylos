@@ -7,10 +7,15 @@ using UnityEngine.SceneManagement;
 
 public class MyNetworkManager : NetworkManager
 {
+    [Header("MyNetworkManager")]
     [SerializeField] GameObject basePrefab;
 
     [Scene]
     [SerializeField] string gameScene;
+
+    [Header("Testing")]
+    [SerializeField] bool canStartWith1Player = false;
+    public bool CanStartWith1Player => canStartWith1Player;
 
     public static event Action ClientOnConnected;
     public static event Action ClientOnDisconnected;
@@ -54,7 +59,7 @@ public class MyNetworkManager : NetworkManager
 
     public void StartGame()
     {
-        if (Players.Count < 2) { return; }
+        if (Players.Count < 2 && !canStartWith1Player) { return; }
 
         isGameInProgress = true;
 
