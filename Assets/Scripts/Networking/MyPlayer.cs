@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
+using static GameStats;
 
 [RequireComponent(typeof(PlayerArmies))]
 public class MyPlayer : NetworkBehaviour
@@ -12,6 +13,7 @@ public class MyPlayer : NetworkBehaviour
 
     int playerId = -1;
 
+    GameStats stats;
     List<Army> myArmies = new List<Army>();
     public List<Army> MyArmies => myArmies;
     List<Base> myBases = new List<Base>();
@@ -94,6 +96,7 @@ public class MyPlayer : NetworkBehaviour
         if (army.connectionToClient.connectionId != connectionToClient.connectionId) { return; }
 
         myArmies.Add(army);
+        stats.AddUnitsCreated(connectionToClient.connectionId, army.ArmyUnits.Count);
         // myPlayerArmies.AddUnitToNewArmy(unit);
         // Adding and removing units from armies is done in the Army class
     }
@@ -112,6 +115,7 @@ public class MyPlayer : NetworkBehaviour
         if (base_.connectionToClient.connectionId != connectionToClient.connectionId) { return; }
 
         myBases.Add(base_);
+        stats.AddBaseCreated(connectionToClient.connectionId);
     }
 
     private void ServerHandleBaseDespawned(Base base_)
@@ -119,6 +123,7 @@ public class MyPlayer : NetworkBehaviour
         if (base_.connectionToClient.connectionId != connectionToClient.connectionId) { return; }
 
         myBases.Remove(base_);
+        stats.AddBaseDestroyed(connectionToClient.connectionId);
     }
 
     #endregion
@@ -151,7 +156,7 @@ public class MyPlayer : NetworkBehaviour
         if (!isClientOnly) { return; }  //  Return this is not the server
 
         ((MyNetworkManager)NetworkManager.singleton).Players.Remove(this);
-        
+
         if (!isOwned) { return; }  // Return if not owned by this client
 
         Army.AuthorityOnArmySpawned -= AuthorityHandleArmySpawned;
