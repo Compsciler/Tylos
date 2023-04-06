@@ -7,8 +7,7 @@ public class ArmyMovement : EntityMovement
     [Server]
     public override void Move(Vector3 position) // This function can be directly called from the server without going through the client
     {
-        if (!NavMesh.SamplePosition(position, out NavMeshHit hit, 1f, NavMesh.AllAreas)) { return; }
-
+        if (!NavMesh.SamplePosition(position, out NavMeshHit hit, 15f, NavMesh.AllAreas)) { return; } // maxDistance should be greater than the max radius of any entity in the game
         agent.SetDestination(hit.position);
     }
 

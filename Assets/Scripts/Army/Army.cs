@@ -352,7 +352,6 @@ public class Army : Entity
     public override void TryAttack(Entity entity)
     {
         if (!isOwned || entity == null) { return; }
-
         CmdAttack(entity);
     }
 

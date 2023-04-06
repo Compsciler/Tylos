@@ -17,6 +17,10 @@ public class ArmyVisuals : NetworkBehaviour
     [Range(0.1f, 2f)]
     private float scaleIncrementPerUnit = 0.1f;
 
+    [SerializeField]
+    [Range(2f, 10f)]
+    private float maxScale = 10f; 
+
     [Header("Death ray settings")]
     [SerializeField] private float lineDuration = 0.1f;
     private float alpha = 1f;
@@ -63,6 +67,7 @@ public class ArmyVisuals : NetworkBehaviour
         Count = count;
         Vector3 start = gameObject.transform.localScale;
         Vector3 end = (Vector3.one * defaultScale) + (Vector3.one * scaleIncrementPerUnit * count);
+        end = Vector3.Min(end, Vector3.one * maxScale); // Cap the max scale
         transform.localScale = end;
     }
 
