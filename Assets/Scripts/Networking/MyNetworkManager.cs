@@ -112,7 +112,6 @@ public class MyNetworkManager : NetworkManager
                     GetStartPosition().position,
                     Quaternion.identity);
                 SetBaseIdentityToPlayerIdentity(baseInstance, playerIdentity);  // If you move this line to after the Spawn() call, the base will be the wrong color for a few frames somehow
-                baseInstance.transform.Find("Player Flag").GetComponent<SpriteRenderer>().color = playerIdentity.GetColor();  // TODO: BAD CODE >:(
 
                 NetworkServer.Spawn(baseInstance, player.connectionToClient);
             }
