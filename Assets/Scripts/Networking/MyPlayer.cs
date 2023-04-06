@@ -13,7 +13,7 @@ public class MyPlayer : NetworkBehaviour
 
     int playerId = -1;
 
-    GameStats stats;
+    GameStats stats = new GameStats();
     List<Army> myArmies = new List<Army>();
     public List<Army> MyArmies => myArmies;
     List<Base> myBases = new List<Base>();
