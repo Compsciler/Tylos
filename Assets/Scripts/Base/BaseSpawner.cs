@@ -39,29 +39,18 @@ public class BaseSpawner : NetworkBehaviour
     {
         GameObject armyObject = SpawnArmy(identity, count);
         Army army = armyObject.GetComponent<Army>();
-        RpcOnSpawnMoveArmy(army, position);
+        ArmyMovement armyMovement = armyObject.GetComponent<ArmyMovement>();
+        armyMovement.Move(position);
+        RpcAddToSelection(armyObject.GetComponent<Entity>());
     }
 
-    [TargetRpc]
-    public void RpcOnSpawnMoveArmy(Entity entity, Vector3 position)
-    {
-        SelectionHandler.AddToSelection(entity);
-        entity.TryMove(position); // This will call CmdMove() on the server, so I'm not sure if I should call it here, but calling it in CmdSpawnMoveArmy() doesn't work
-    }
     #endregion
-
     #region Client
 
-    /*
-    public void OnPointerClick(PointerEventData eventData)
+    [TargetRpc]
+    public void RpcAddToSelection(Entity entity)
     {
-        if (eventData.button != PointerEventData.InputButton.Left) { return; }
-
-        if (!isOwned) { return; }
-
-        CmdSpawnUnit();
+        SelectionHandler.AddToSelection(entity);
     }
-    */
-
     #endregion
 }
