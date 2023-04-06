@@ -18,7 +18,16 @@ public abstract class EntityMovement : NetworkBehaviour
 
     #region Server
 
+    [Server]
+    public virtual void Move(Vector3 position) { } // virtual instead of abstract because Mirror does not support abstract commands
+
     [Command]
-    public virtual void CmdMove(Vector3 position){} // virtual instead of abstract because Mirror does not support abstract commands
+    public virtual void CmdMove(Vector3 position) { } // virtual instead of abstract because Mirror does not support abstract commands
+
+    [Server]
+    public virtual void Stop() { } // virtual instead of abstract because Mirror does not support abstract commands
+
+    [Command]
+    public virtual void CmdStop() { } // virtual instead of abstract because Mirror does not support abstract commands
     #endregion
 }
