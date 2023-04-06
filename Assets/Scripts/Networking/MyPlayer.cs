@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Mirror;
@@ -6,6 +7,9 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerArmies))]
 public class MyPlayer : NetworkBehaviour
 {
+    [SerializeField] Transform cameraTransform;
+    public Transform CameraTransform => cameraTransform;
+
     int playerId = -1;
 
     List<Army> myArmies = new List<Army>();
@@ -18,6 +22,19 @@ public class MyPlayer : NetworkBehaviour
     ObjectIdentity playerIdentity;
     Color teamColor = new Color();
     public Color TeamColor => teamColor;
+
+
+    [SyncVar(hook = nameof(AuthorityHandlePartyOwnerStateUpdated))]
+    bool isPartyOwner = false;
+    public bool IsPartyOwner => isPartyOwner;
+
+    [SyncVar(hook = nameof(ClientHandleDisplayNameUpdated))]
+    string displayName;
+    public string DisplayName => displayName;
+
+    public static event Action ClientOnInfoUpdated;
+    public static event Action<bool> AuthorityOnPartyOwnerStateUpdated;
+
 
     void Awake()
     {
@@ -34,6 +51,8 @@ public class MyPlayer : NetworkBehaviour
         Army.ServerOnArmyDespawned += ServerHandleArmyDespawned;
         Base.ServerOnBaseSpawned += ServerHandleBaseSpawned;
         Base.ServerOnBaseDespawned += ServerHandleBaseDespawned;
+
+        DontDestroyOnLoad(gameObject);
     }
 
     public override void OnStopServer()
@@ -45,9 +64,29 @@ public class MyPlayer : NetworkBehaviour
     }
 
     [Server]
+    public void SetDisplayName(string displayName)
+    {
+        this.displayName = displayName;
+    }
+
+    [Server]
+    public void SetPartyOwner(bool state)
+    {
+        isPartyOwner = state;
+    }
+
+    [Server]
     public void SetTeamColor(Color color)
     {
         teamColor = color;
+    }
+
+    [Command]
+    public void CmdStartGame()
+    {
+        if (!isPartyOwner) { return; }
+
+        ((MyNetworkManager)NetworkManager.singleton).StartGame();
     }
 
     private void ServerHandleArmySpawned(Army army)
@@ -96,14 +135,41 @@ public class MyPlayer : NetworkBehaviour
         Base.AuthorityOnBaseDespawned += AuthorityHandleBaseDespawned;
     }
 
+    public override void OnStartClient()
+    {
+        if (NetworkServer.active) { return; }
+
+        DontDestroyOnLoad(gameObject);
+
+        ((MyNetworkManager)NetworkManager.singleton).Players.Add(this);
+    }
+
     public override void OnStopClient()  // OnStopAuthority() is only called when authority is removed, which can happen even if the object is not destroyed
     {
-        if (!isOwned || !isClientOnly) { return; }  // Return if not owned by this client or this is the server
+        ClientOnInfoUpdated?.Invoke();
+
+        if (!isClientOnly) { return; }  //  Return this is not the server
+
+        ((MyNetworkManager)NetworkManager.singleton).Players.Remove(this);
+        
+        if (!isOwned) { return; }  // Return if not owned by this client
 
         Army.AuthorityOnArmySpawned -= AuthorityHandleArmySpawned;
         Army.AuthorityOnArmyDespawned -= AuthorityHandleArmyDespawned;
         Base.AuthorityOnBaseSpawned -= AuthorityHandleBaseSpawned;
         Base.AuthorityOnBaseDespawned -= AuthorityHandleBaseDespawned;
+    }
+
+    private void ClientHandleDisplayNameUpdated(string oldDisplayName, string newDisplayName)
+    {
+        ClientOnInfoUpdated?.Invoke();
+    }
+
+    private void AuthorityHandlePartyOwnerStateUpdated(bool oldState, bool newState)
+    {
+        if (!isOwned) { return; }
+
+        AuthorityOnPartyOwnerStateUpdated?.Invoke(newState);
     }
 
     private void AuthorityHandleArmySpawned(Army army)  // Necessary?

@@ -11,16 +11,15 @@ public class CameraController : NetworkBehaviour
     private Controls controls;
 
     private Vector2 lastInput = new Vector2(0,0);
-    Transform playerCameraTransform;
+    [SerializeField] Transform playerCameraTransform;
     [SerializeField] float max_track_speed = 1;
     [SerializeField] float keyboard_scroll_speed = 0.1f;
     [SerializeField] float edge_drag_speed = 1;
     [SerializeField] Vector2 board_min_extent = new Vector2(-5, -5);
     [SerializeField] Vector2 board_max_extent = new Vector2(5,5);
     public override void OnStartAuthority()
-    {
-        playerCameraTransform = Camera.main.transform;
-        // playerCameraTransform.gameObject.SetActive(true);
+    {        
+        playerCameraTransform.gameObject.SetActive(true);
         controls = new Controls();
         controls.Player.MoveCamera.performed += setInput;
         controls.Player.MoveCamera.canceled += setInput;
@@ -86,8 +85,8 @@ public class CameraController : NetworkBehaviour
     [ClientCallback]
     void Update()
     {
-        if(playerCameraTransform == null) return;
-
+        if (!isOwned || !Application.isFocused) { return; }
+        
         if(following != null && following.Count > 0){
             Vector3 avg = avg_position(following);
             Vector3 diff = playerCameraTransform.position - avg;
