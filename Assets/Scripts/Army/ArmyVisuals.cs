@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
-using System.Collections.ObjectModel;
 /// <summary>
 /// Handles attack visuals for an army
 /// This component is run entirely on the client
@@ -19,9 +16,6 @@ public class ArmyVisuals : NetworkBehaviour
     [SerializeField]
     [Range(0.1f, 2f)]
     private float scaleIncrementPerUnit = 0.1f;
-
-    [SyncVar(hook = nameof(OnScaleChanged))]
-    private Vector3 syncedScale;
 
     [Header("Death ray settings")]
     [SerializeField] private float lineDuration = 0.1f;
@@ -69,7 +63,7 @@ public class ArmyVisuals : NetworkBehaviour
         Count = count;
         Vector3 start = gameObject.transform.localScale;
         Vector3 end = (Vector3.one * defaultScale) + (Vector3.one * scaleIncrementPerUnit * count);
-        syncedScale = end;
+        transform.localScale = end;
     }
 
     #endregion
@@ -134,11 +128,6 @@ public class ArmyVisuals : NetworkBehaviour
     {
         // Clear the line renderer
         lineRenderer.enabled = false;
-    }
-
-    private void OnScaleChanged(Vector3 oldScale, Vector3 newScale)
-    {
-        transform.localScale = newScale;
     }
 
     #endregion

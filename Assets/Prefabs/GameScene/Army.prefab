@@ -165,7 +165,7 @@ MonoBehaviour:
   clientAuthority: 0
   syncPosition: 1
   syncRotation: 1
-  syncScale: 0
+  syncScale: 1
   showGizmos: 0
   showOverlay: 0
   overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
