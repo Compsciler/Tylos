@@ -1,4 +1,5 @@
 using System;
+using Mirror;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -9,7 +10,7 @@ public class TeamColorButton : MonoBehaviour
     Color teamColor;
     public Color TeamColor => teamColor;
 
-    public static event Action<TeamColorButton> OnColorButtonSelected;  // Use TeamColorSelector reference instead? TeamColorButton relies on TeamColorSelector existing
+    public static event Action<TeamColorButton, int> OnColorButtonSelected;  // Use TeamColorSelector reference instead? TeamColorButton relies on TeamColorSelector existing
 
     [SerializeField] UnityEvent onColorPlayerSelected;
     [SerializeField] UnityEvent onColorMadeAvailable;
@@ -22,7 +23,8 @@ public class TeamColorButton : MonoBehaviour
 
     public void SelectColorButton()  // Or TrySelectColorButton?
     {
-        OnColorButtonSelected?.Invoke(this);
+        int playerConnectionId = NetworkClient.connection.connectionId;
+        OnColorButtonSelected?.Invoke(this, playerConnectionId);
     }
 
     public void HandleColorPlayerSelected()

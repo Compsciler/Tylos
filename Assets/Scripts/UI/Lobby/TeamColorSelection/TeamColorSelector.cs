@@ -56,9 +56,13 @@ public class TeamColorSelector : NetworkBehaviour
 
     #region Client
 
-    private void HandleTeamColorSelected(TeamColorButton colorButton)
+    private void HandleTeamColorSelected(TeamColorButton colorButton, int playerConnectionId)
     {
         // Need authority check to prevent players who didn't select a color from running command?
+        Debug.Log(playerConnectionId);
+        Debug.Log(connectionToServer.connectionId);
+        // Debug.Log($"HandleTeamColorSelected: playerConnectionId {playerConnectionId}, connectionToServer.connectionId {connectionToServer.connectionId}");
+        if (playerConnectionId != connectionToServer.connectionId) { return; }
 
         CmdSelectTeamColor(colorButton.gameObject);
     }

@@ -13,14 +13,18 @@ public class PlayerArmies : MonoBehaviour
     //     myArmies.Add(army);
     //     AddUnitToArmy(unit, army);
     // }
-    
+
     // public void AddUnitToArmy(Unit unit, Army army)
     // {
     //     if (unitToArmy.ContainsKey(unit)) 
     //     {
     //         if (unitToArmy[unit] == army) { return; }
-            
+
     //         unitToArmy[unit].RemoveUnit(unit);
+    //         if (army.ArmyUnits.Count == 0)
+    //         {
+    //             myArmies.Remove(army);
+    //         }
     //     }
 
     //     army.AddUnit(unit);
