@@ -9,6 +9,9 @@ using UnityEngine.UI;
 public class LobbyMenu : MonoBehaviour
 {
     // [SerializeField] GameObject lobbyUI;
+    [SerializeField] Canvas lobbyCanvas;
+    public Canvas LobbyCanvas => lobbyCanvas;
+
     [SerializeField] Button startGameButton;
     [SerializeField] GameObject[] playerCards;
     [SerializeField] TMP_Text[] playerNameTexts;

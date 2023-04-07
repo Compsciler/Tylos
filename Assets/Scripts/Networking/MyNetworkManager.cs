@@ -10,6 +10,9 @@ public class MyNetworkManager : NetworkManager
     [Header("MyNetworkManager")]
     [SerializeField] GameObject basePrefab;
 
+    [SerializeField] GameObject teamColorSelectorPrefab;
+    [SerializeField] float teamColorSelectorSpawnDelay = 0.1f;
+
     [Scene]
     [SerializeField] string gameScene;
 
@@ -84,6 +87,8 @@ public class MyNetworkManager : NetworkManager
         {
             player.SetPartyOwner(true);
             lobbyCreatedTime = Time.time;
+
+            StartCoroutine(SpawnTeamColorSelector());
         }
         else
         {
@@ -139,6 +144,13 @@ public class MyNetworkManager : NetworkManager
         baseObjectIdentity.SetIdentity(playerIdentity);
     }
 
+    private IEnumerator SpawnTeamColorSelector()
+    {
+        yield return new WaitForSeconds(teamColorSelectorSpawnDelay);
+        Canvas lobbyCanvas = FindObjectOfType<LobbyMenu>().LobbyCanvas;
+        GameObject teamColorSelectorInstance = Instantiate(teamColorSelectorPrefab, lobbyCanvas.transform);
+        NetworkServer.Spawn(teamColorSelectorInstance);  // Provide connectionToClient?
+    }
 
     [Server]
     public void RemovePlayerFromRemainingPlayers(MyPlayer player)

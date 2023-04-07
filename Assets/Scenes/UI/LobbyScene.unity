@@ -1961,6 +1961,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6e65b32ef4c85947a55b541979ce8c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lobbyCanvas: {fileID: 2081149692}
   startGameButton: {fileID: 900029695}
   playerCards:
   - {fileID: 1942921207}
@@ -1979,7 +1980,6 @@ MonoBehaviour:
   lobbyController: {fileID: 1027350619}
   queuedPlayerColor: {r: 1, g: 1, b: 1, a: 1}
   waitingForPlayerColor: {r: 0.7529412, g: 0.7529412, b: 0.7529412, a: 1}
-  canStartWith1Player: 1
 --- !u!4 &1027350621
 Transform:
   m_ObjectHideFlags: 0
