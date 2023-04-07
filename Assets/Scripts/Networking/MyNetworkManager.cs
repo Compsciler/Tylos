@@ -29,6 +29,9 @@ public class MyNetworkManager : NetworkManager
     List<MyPlayer> players = new List<MyPlayer>();
     public List<MyPlayer> Players => players;
 
+    List<MyPlayer> remainingPlayers;
+    public List<MyPlayer> RemainingPlayers => remainingPlayers;
+
     public static event Action<ObjectIdentity> ServerOnPlayerIdentityUpdated;
 
 
@@ -45,21 +48,21 @@ public class MyNetworkManager : NetworkManager
     {
         MyPlayer player = conn.identity.GetComponent<MyPlayer>();
 
-        Players.Remove(player);
+        players.Remove(player);
 
         base.OnServerDisconnect(conn);
     }
 
     public override void OnStopServer()
     {
-        Players.Clear();
+        players.Clear();
 
         isGameInProgress = false;
     }
 
     public void StartGame()
     {
-        if (Players.Count < 2 && !canStartWith1Player) { return; }
+        if (players.Count < 2 && !canStartWith1Player) { return; }
 
         isGameInProgress = true;
 
@@ -72,12 +75,12 @@ public class MyNetworkManager : NetworkManager
 
         MyPlayer player = conn.identity.GetComponent<MyPlayer>();
 
-        Players.Add(player);
+        players.Add(player);
 
-        player.SetDisplayName($"Player {Players.Count}");
+        player.SetDisplayName($"Player {players.Count}");
 
 
-        if (Players.Count == 1)
+        if (players.Count == 1)
         {
             player.SetPartyOwner(true);
             lobbyCreatedTime = Time.time;
@@ -103,7 +106,7 @@ public class MyNetworkManager : NetworkManager
 
             // NetworkServer.Spawn(gameOverHandlerInstance.gameObject);
 
-            foreach (MyPlayer player in Players)
+            foreach (MyPlayer player in players)
             {
                 IdentityInfo playerIdentity = SetAndGetPlayerIdentity(player);
 
@@ -136,6 +139,13 @@ public class MyNetworkManager : NetworkManager
         baseObjectIdentity.SetIdentity(playerIdentity);
     }
 
+
+    [Server]
+    public void RemovePlayerFromRemainingPlayers(MyPlayer player)
+    {
+        remainingPlayers.Remove(player);
+    }
+
     #endregion
 
     #region Client
@@ -156,7 +166,7 @@ public class MyNetworkManager : NetworkManager
 
     public override void OnStopClient()
     {
-        Players.Clear();
+        players.Clear();
     }
 
     #endregion

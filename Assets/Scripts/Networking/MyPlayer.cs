@@ -11,6 +11,7 @@ public class MyPlayer : NetworkBehaviour
     [SerializeField] Transform cameraTransform;
     public Transform CameraTransform => cameraTransform;
 
+    // Is currently unused and set to the connectionId, but could later be used for team modes (would have to refactor connectionToClient.connectionId)
     int playerId = -1;
 
     GameStats stats = new GameStats();
@@ -36,6 +37,8 @@ public class MyPlayer : NetworkBehaviour
 
     public static event Action ClientOnInfoUpdated;
     public static event Action<bool> AuthorityOnPartyOwnerStateUpdated;
+
+    public static event Action<Base> ServerOnPlayerHandledBaseDespawned;
 
 
     void Awake()
@@ -124,6 +127,7 @@ public class MyPlayer : NetworkBehaviour
 
         myBases.Remove(base_);
         stats.AddBaseDestroyed(connectionToClient.connectionId);
+        ServerOnPlayerHandledBaseDespawned?.Invoke(base_);
     }
 
     #endregion
