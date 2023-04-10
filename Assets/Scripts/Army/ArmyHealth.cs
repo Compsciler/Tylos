@@ -12,7 +12,6 @@ public class ArmyHealth : EntityHealth
 {
     Army army;
     private void Awake() {
-        setHealthOnStart = false; // Army health is not set based on the serialized health value
         army = GetComponent<Army>();
         if(army == null) {
             Debug.LogError("ArmyHealth requires an Army component");
