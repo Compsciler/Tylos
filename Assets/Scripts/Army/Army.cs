@@ -29,7 +29,7 @@ public class Army : Entity
 
     // MonoBehaviour references
     ArmyVisuals armyVisuals;
-    ArmyHealth  armyHealth;
+    ArmyHealth armyHealth;
 
     #region Events
     public static event Action<Army> ServerOnArmySpawned;
@@ -37,7 +37,10 @@ public class Army : Entity
 
     public static event Action<Army> AuthorityOnArmySpawned;
     public static event Action<Army> AuthorityOnArmyDespawned;
-    
+
+    public static event Action<Army> AuthorityOnArmySelected;
+    public static event Action<Army> AuthorityOnArmyDeselected;
+
     #endregion
 
     public Army() { }
@@ -47,8 +50,8 @@ public class Army : Entity
         entityMovement = GetComponent<ArmyMovement>();
         entityHealth = GetComponent<ArmyHealth>();
         armyHealth = entityHealth as ArmyHealth;
-        if(armyHealth == null)
-            Debug.LogError("ArmyHealth is null"); 
+        if (armyHealth == null)
+            Debug.LogError("ArmyHealth is null");
         armyVisuals = GetComponent<ArmyVisuals>();
     }
 
@@ -279,10 +282,12 @@ public class Army : Entity
     }
 
     [Server]
-    private void SetState(ArmyState state) {
-        this.state = state; 
-        if(state != ArmyState.Attacking) { // Reset the attack target if we are not attacking
-            attackTarget = null; 
+    private void SetState(ArmyState state)
+    {
+        this.state = state;
+        if (state != ArmyState.Attacking)
+        { // Reset the attack target if we are not attacking
+            attackTarget = null;
         }
     }
 
@@ -303,7 +308,7 @@ public class Army : Entity
         }
         // Debug.Log("Attacking");
         attackTarget = entity;
-        attackTarget.GetComponent<EntityHealth>().OnDie.AddListener(HandleAttackTargetOnDie); 
+        attackTarget.GetComponent<EntityHealth>().OnDie.AddListener(HandleAttackTargetOnDie);
         SetState(ArmyState.Attacking);
     }
     #endregion
@@ -357,18 +362,37 @@ public class Army : Entity
 
     private void OnArmyUnitsUpdated(SyncList<Unit>.Operation op, int index, Unit oldUnit, Unit newUnit)
     {
-        if(isServer) {
-            if(armyVisuals == null) { 
+        if (isServer)
+        {
+            if (armyVisuals == null)
+            {
                 Debug.LogError("Army visuals is null");
                 return;
-            } else {
-                if(armyVisuals.Count != armyUnits.Count) { // If the army visuals count doesn't match the army units count, update the count and visuals
+            }
+            else
+            {
+                if (armyVisuals.Count != armyUnits.Count)
+                { // If the army visuals count doesn't match the army units count, update the count and visuals
                     armyVisuals.SetScale(armyUnits.Count);
                 }
             }
-        } else if (isClient)
+        }
+        else if (isClient)
         {
             armyVisuals.SetColor(ArmyUnits); // TODO: Optimize this so the entire list doesn't have to be passed
+        }
+    }
+
+    [Client]
+    public void InvokeArmySelectEvents(bool selected)
+    {
+        if (selected)
+        {
+            AuthorityOnArmySelected?.Invoke(this);
+        }
+        else
+        {
+            AuthorityOnArmyDeselected?.Invoke(this);
         }
     }
     #endregion
