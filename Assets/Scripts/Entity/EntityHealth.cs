@@ -38,5 +38,11 @@ public class EntityHealth : NetworkBehaviour
         // Debug.Log("Destroyed " + gameObject.name);
     }
 
+    [Server]
+    protected void SetHealth(float health)
+    {
+        this.health = health;
+    }
+
     #endregion
 }
