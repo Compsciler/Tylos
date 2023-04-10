@@ -100,6 +100,10 @@ public class Army : Entity
     {
         armyUnits.Add(unit);
     }
+    public void AddUnits(List<Unit> units)
+    {
+        armyUnits.AddRange(units);
+    }
     public void RemoveUnit(Unit unit)
     {
         armyUnits.Remove(unit);
