@@ -6,7 +6,7 @@ using UnityEngine.Events;
 
 public class EntityHealth : NetworkBehaviour
 {
-    [SerializeField, ] 
+    [SerializeField] 
     [SyncVar]
     private float health = 100f;
     public float Health => health;
@@ -56,17 +56,5 @@ public class EntityHealth : NetworkBehaviour
         if (this.health <= 0) { Die(); }
         else if (this.health > maxHealth) { this.health = maxHealth; }
     }
-
-    [Server]
-    protected void SetMaxHealth(float maxHealth)
-    {
-        if(maxHealth <= 0) { 
-            Debug.LogError("Max health cannot be less than or equal to 0"); 
-            return; 
-        } 
-        this.maxHealth = maxHealth;
-        if (health > this.maxHealth) { health = this.maxHealth; } 
-    }
-
     #endregion
 }
