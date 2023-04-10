@@ -413,6 +413,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0.1
+  setHealthOnStart: 0
   OnDie:
     m_PersistentCalls:
       m_Calls: []

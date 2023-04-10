@@ -6,14 +6,31 @@ using UnityEngine.Events;
 
 public class EntityHealth : NetworkBehaviour
 {
+    [SerializeField]
     [SyncVar]
-    private float health = 30f;
+    private float health = 100f;
     public float Health => health;
+
+    [SerializeField]
+    [SyncVar]
+    private float maxHeath = 100f;
+    public float MaxHealth => maxHeath;
+
+    [SyncVar]
+    [SerializeField]
+    [Tooltip("Disable if health is set by another script")]
+    private bool setHealthOnStart = true;
 
     public UnityEvent OnDie;
     public UnityEvent OnTakeDamage;
 
     #region Server
+    public override void OnStartServer()
+    {
+        if (setHealthOnStart) { 
+            SetHealth(maxHeath); 
+        }
+    }
 
     [Server]
     public virtual void TakeDamage(float damage)
@@ -42,6 +59,19 @@ public class EntityHealth : NetworkBehaviour
     protected void SetHealth(float health)
     {
         this.health = health;
+        if (this.health <= 0) { Die(); }
+        else if (this.health > maxHeath) { this.health = maxHeath; }
+    }
+
+    [Server]
+    protected void SetMaxHealth(float maxHealth)
+    {
+        if(maxHealth <= 0) { 
+            Debug.LogError("Max health cannot be less than or equal to 0"); 
+            return; 
+        } 
+        this.maxHeath = maxHealth;
+        if (health > maxHeath) { health = maxHeath; } 
     }
 
     #endregion
