@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6058525235975443730}
   - component: {fileID: 6479063781474349541}
   - component: {fileID: 6028676320575591641}
+  - component: {fileID: 4059375377872484927}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -68,6 +69,7 @@ MonoBehaviour:
   basePrefab: {fileID: 1925953160895762789, guid: d3a721d703c30dc4e901066d47431e1c,
     type: 3}
   gameScene: 
+  canStartWith1Player: 0
 --- !u!114 &6479063781474349541
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -106,3 +108,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   offsetX: 0
   offsetY: 0
+--- !u!114 &4059375377872484927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6479063781474349560}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6e55fca1f4e4844593a3dd65a3ecb39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Channels: 0200000001000000
+  Timeout: 25
+  AllowSteamRelay: 1
+  UseNextGenSteamNetworking: 1

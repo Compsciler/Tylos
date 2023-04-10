@@ -71,7 +71,7 @@ public class LobbyMenu : MonoBehaviour
             SetPlayerWaiting(i, players);
         }
 
-        startGameButton.interactable = players.Count >= 2;
+        startGameButton.interactable = players.Count >= 2 || ((MyNetworkManager)NetworkManager.singleton).CanStartWith1Player;
     }
 
     private void SetPlayerQueued(int playerIndex, List<MyPlayer> players)

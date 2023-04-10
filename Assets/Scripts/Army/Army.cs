@@ -7,14 +7,95 @@ using UnityEngine;
 using UnityEngine.Events;
 using Mirror;
 
-[RequireComponent(typeof(ArmyMovement))]
+[RequireComponent(typeof(ArmyMovement), typeof(ArmyHealth), typeof(ArmyVisuals))]
 public class Army : Entity
 {
+    // State variables
+    [SyncVar] private ArmyState state = ArmyState.Idle;
+    public ArmyState State => state;
+
+    // Unit variables
     readonly SyncList<Unit> armyUnits = new SyncList<Unit>(); // Change to set if necessary
-    public ReadOnlyCollection<Unit> ArmyUnits => new ReadOnlyCollection<Unit>(armyUnits);
-    
+    public SyncList<Unit> ArmyUnits => armyUnits;
+
+
+    // Attack variables
+    [Header("Attack settings")]
+    [SerializeField] const float minUnitAttackDamage = 1f;
+    [SerializeField] const float maxUnitAttackDamage = 2f;
+    [SyncVar] private float attackDamage = 0f;
+    [SyncVar][SerializeField] private float attackRange = 5f;
+    [SyncVar] private Entity attackTarget = null; // Only used on the server
+
+    // MonoBehaviour references
+    ArmyVisuals armyVisuals;
+    ArmyHealth armyHealth;
+
+    #region Events
+    public static event Action<Army> ServerOnArmySpawned;
+    public static event Action<Army> ServerOnArmyDespawned;
+
+    public static event Action<Army> AuthorityOnArmySpawned;
+    public static event Action<Army> AuthorityOnArmyDespawned;
+
+    public static event Action<Army> AuthorityOnArmySelected;
+    public static event Action<Army> AuthorityOnArmyDeselected;
+
+    #endregion
+
     public Army() { }
 
+    void Awake()
+    {
+        entityMovement = GetComponent<ArmyMovement>();
+        entityHealth = GetComponent<ArmyHealth>();
+        armyHealth = entityHealth as ArmyHealth;
+        if (armyHealth == null)
+            Debug.LogError("ArmyHealth is null");
+        armyVisuals = GetComponent<ArmyVisuals>();
+    }
+
+    void Update()
+    {
+        if (isServer) // Handle game logic
+        {
+            if (state == ArmyState.Attacking)
+            {
+                if (attackTarget == null) // Target died
+                {
+                    // Debug.Log("Target died");
+                    state = ArmyState.Idle;
+                }
+                else
+                {
+                    if (Vector3.Distance(transform.position, attackTarget.transform.position) <= attackRange)
+                    {
+                        // Debug.Log("Attacking target");
+                        entityMovement.Stop();
+                        attackTarget.EntityHealth.TakeDamage(attackDamage * Time.deltaTime);
+                    }
+                    else
+                    {
+                        // Debug.Log("Target out of range");
+                        // Debug.Log("attackTarget.transform.position: " + attackTarget.transform.position);
+                        entityMovement.Move(attackTarget.transform.position);
+                    }
+                }
+            }
+        }
+
+        if (isClient) // Handle client visuals
+        {
+            if (state == ArmyState.Attacking && attackTarget != null)
+            {
+                if (Vector3.Distance(transform.position, attackTarget.transform.position) <= attackRange)
+                {
+                    armyVisuals.DrawDeathRay(attackTarget.transform.position);
+                }
+            }
+
+        }
+    }
     public void AddUnit(Unit unit)
     {
         armyUnits.Add(unit);
@@ -23,15 +104,14 @@ public class Army : Entity
     {
         armyUnits.Remove(unit);
     }
-    public void SetUnits(Unit[] units) // Use array because Mirror doesn't support lists in commands 
+
+    public float GetAttackDamage()
     {
-        armyUnits.Clear();
-        foreach(Unit unit in units)
-        {
-            armyUnits.Add(unit);
-        }
+        return attackDamage;
     }
-    
+
+    #region ColorIdentity 
+
     public float GetDeviance()
     {
         // complex sum to find centroid
@@ -52,10 +132,10 @@ public class Army : Entity
     public (List<Unit>, List<Unit>) CalculateSplit()
     {
         var armyComplex = IdentityComplex();
-        
+
         // GetEigenCentroid returns (eigenvector, centroid) of the dataset
         var (eigenVector, centroid) = GetEigenCentroid(armyComplex);
-        
+
         // if we get a perfectly circular set it is possible for eigen to be 0
         // just randomly pick an axis if so
         if (eigenVector == Vector2.zero)
@@ -63,15 +143,16 @@ public class Army : Entity
             var angle = UnityEngine.Random.Range(0, Mathf.PI * 2);
             eigenVector = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
         }
-        
+
         // project the centroid onto the eigen
         var centroidProj = Vector2.Dot(centroid, eigenVector);
 
         var retSplit1 = new List<Unit>();
         var retSplit2 = new List<Unit>();
 
-        for (int i = 0; i < armyComplex.Count; i++){
-           
+        for (int i = 0; i < armyComplex.Count; i++)
+        {
+
             if (Vector2.Dot(armyComplex[i], eigenVector) < centroidProj)
             {
                 retSplit1.Add(armyUnits[i]);
@@ -81,18 +162,16 @@ public class Army : Entity
                 retSplit2.Add(armyUnits[i]);
             }
         }
-        
+
         return (retSplit1, retSplit2);
     }
-    
-    
 
     private List<Vector2> IdentityComplex()
     {
         var armyComplex = new List<Vector2>();
         foreach (var u in armyUnits)
         {
-            var identity = u.IdentityInfo;
+            var identity = u.identityInfo;
             var rgbIdentity = new Color(identity.r, identity.g, identity.b);
             float h;
             Color.RGBToHSV(rgbIdentity, out h, out _, out _);
@@ -104,7 +183,7 @@ public class Army : Entity
 
         return armyComplex;
     }
-    
+
     // this function calculates the eigenvector as well as the centroid
     private (Vector2, Vector2) GetEigenCentroid(List<Vector2> data)
     {
@@ -112,33 +191,33 @@ public class Army : Entity
         xMean = data.Aggregate(xMean, (current, c) => current + c.x) / data.Count;
         var yMean = 0f;
         yMean = data.Aggregate(yMean, (current, c) => current + c.y) / data.Count;
-        
+
         var varX = 0f;
-        varX = data.Aggregate(varX, 
+        varX = data.Aggregate(varX,
             (current, c) =>
             {
                 return current + (c.x - xMean) * (c.x - xMean);
             }) / (data.Count - 1);
-        
+
         var varY = 0f;
-        varY = data.Aggregate(varY, 
+        varY = data.Aggregate(varY,
             (current, c) =>
             {
                 return current + (c.y - yMean) * (c.y - yMean);
             }) / (data.Count - 1);
-        
+
         var covXY = 0f;
-        covXY = data.Aggregate(covXY, 
+        covXY = data.Aggregate(covXY,
             (current, c) =>
             {
                 return current + (c.y - yMean) * (c.x - xMean);
             }) / (data.Count - 1);
-        
+
         // the cov matrix is [varX, covXY; covXY, varY]
         // now we calculate the eigenvectors and eigenvalues
-        
+
         var delta = math.sqrt((varX + varY) * (varX + varY) - 4 * (varX * varY - covXY * covXY));
-        var l1 = (varX + varY + delta)/2;
+        var l1 = (varX + varY + delta) / 2;
         var l2 = Mathf.Abs(varX + varY - delta) / 2;
 
         var l = Mathf.Max(l1, l2);
@@ -152,22 +231,14 @@ public class Army : Entity
         return (eigenVector, new Vector2(xMean, yMean));
     }
 
-    public static event Action<Army> ServerOnArmySpawned;
-    public static event Action<Army> ServerOnArmyDespawned;
-
-    public static event Action<Army> AuthorityOnArmySpawned;
-    public static event Action<Army> AuthorityOnArmyDespawned;
-
-    void Awake()
-    {
-        entityMovement = GetComponent<ArmyMovement>();
-    }
+    #endregion
 
     #region Server
 
     public override void OnStartServer()
     {
         ServerOnArmySpawned?.Invoke(this);
+        InitializeArmyStats();
     }
 
     public override void OnStopServer()
@@ -175,9 +246,91 @@ public class Army : Entity
         ServerOnArmyDespawned?.Invoke(this);
     }
 
+    [Server]
+    public void SetUnits(IdentityInfo identity, int count) // Use array because Mirror doesn't support lists in commands 
+    {
+        armyUnits.Clear();
+        // add count number of units with the given identity to the army
+        for (int i = 0; i < count; i++)
+        {
+            armyUnits.Add(new Unit(identity));
+        }
+        armyVisuals.SetScale(armyUnits.Count);
+    }
+
+    [Server]
+    private void InitializeArmyStats()
+    {
+        attackDamage = ArmyUtils.CalculateAttackPower(ArmyUnits, minUnitAttackDamage, maxUnitAttackDamage);
+    }
+
+    [Server]
+    public SyncList<Unit> GetArmyUnits()
+    {
+        return armyUnits;
+    }
+
+
+    /// <summary>
+    /// Makes sure attackTarget is set to null when it dies
+    /// </summary>
+    [Server]
+    private void HandleAttackTargetOnDie()
+    {
+        attackTarget = null;
+        state = ArmyState.Idle;
+    }
+
+    [Server]
+    private void SetState(ArmyState state)
+    {
+        this.state = state;
+        if (state != ArmyState.Attacking)
+        { // Reset the attack target if we are not attacking
+            attackTarget = null;
+        }
+    }
+
+    [Command]
+    private void CmdSetState(ArmyState state)
+    {
+        SetState(state);
+    }
+
+    [Command]
+    private void CmdAttack(Entity entity)
+    {
+        if (entity == null) { return; }
+        if (entity.EntityHealth == null)
+        {
+            Debug.LogError("Entity has no health component");
+            return;
+        }
+        // Debug.Log("Attacking");
+        attackTarget = entity;
+        attackTarget.GetComponent<EntityHealth>().OnDie.AddListener(HandleAttackTargetOnDie);
+        SetState(ArmyState.Attacking);
+    }
     #endregion
 
     #region Client
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        if (ArmyUnits == null)
+        {
+            Debug.LogError("Army units is null");
+            return;
+        }
+        else if (armyVisuals == null)
+        {
+            Debug.LogError("Army visuals is null");
+            return;
+        }
+
+        armyUnits.Callback += OnArmyUnitsUpdated;
+        armyVisuals.SetColor(ArmyUnits); // Initialize the color of the army
+    }
 
     public override void OnStartAuthority()
     {
@@ -190,5 +343,64 @@ public class Army : Entity
 
         AuthorityOnArmyDespawned?.Invoke(this);
     }
+
+    [Client]
+    public override void TryMove(Vector3 position)
+    {
+        if (!isOwned) { return; }
+
+        base.TryMove(position); // This does the actual movement
+        CmdSetState(ArmyState.Moving);
+    }
+
+    [Client]
+    public override void TryAttack(Entity entity)
+    {
+        if (!isOwned || entity == null) { return; }
+        CmdAttack(entity);
+    }
+
+    private void OnArmyUnitsUpdated(SyncList<Unit>.Operation op, int index, Unit oldUnit, Unit newUnit)
+    {
+        if (isServer)
+        {
+            if (armyVisuals == null)
+            {
+                Debug.LogError("Army visuals is null");
+                return;
+            }
+            else
+            {
+                if (armyVisuals.Count != armyUnits.Count)
+                { // If the army visuals count doesn't match the army units count, update the count and visuals
+                    armyVisuals.SetScale(armyUnits.Count);
+                }
+            }
+        }
+        else if (isClient)
+        {
+            armyVisuals.SetColor(ArmyUnits); // TODO: Optimize this so the entire list doesn't have to be passed
+        }
+    }
+
+    [Client]
+    public void InvokeArmySelectEvents(bool selected)
+    {
+        if (selected)
+        {
+            AuthorityOnArmySelected?.Invoke(this);
+        }
+        else
+        {
+            AuthorityOnArmyDeselected?.Invoke(this);
+        }
+    }
     #endregion
+}
+
+public enum ArmyState
+{
+    Idle,
+    Moving,
+    Attacking
 }

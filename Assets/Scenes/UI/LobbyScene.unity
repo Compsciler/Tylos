@@ -1979,6 +1979,7 @@ MonoBehaviour:
   lobbyController: {fileID: 1027350619}
   queuedPlayerColor: {r: 1, g: 1, b: 1, a: 1}
   waitingForPlayerColor: {r: 0.7529412, g: 0.7529412, b: 0.7529412, a: 1}
+  canStartWith1Player: 1
 --- !u!4 &1027350621
 Transform:
   m_ObjectHideFlags: 0
@@ -2863,6 +2864,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 398876322}
     m_Modifications:
+    - target: {fileID: 511777708534596630, guid: 41cf6cb370f97bc4b90617a0a7405055,
+        type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1397948816699871872, guid: 41cf6cb370f97bc4b90617a0a7405055,
         type: 3}
       propertyPath: m_Pivot.x

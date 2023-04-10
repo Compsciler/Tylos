@@ -963,6 +963,11 @@ PrefabInstance:
       propertyPath: offlineScene
       value: Assets/Scenes/UI/MainMenuScene.unity
       objectReference: {fileID: 0}
+    - target: {fileID: 6058525235975443730, guid: d04903ceb37c7594c8ab178b46a00e5d,
+        type: 3}
+      propertyPath: canStartWith1Player
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6479063781474349543, guid: d04903ceb37c7594c8ab178b46a00e5d,
         type: 3}
       propertyPath: m_RootOrder
@@ -1797,7 +1802,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9613f4ca5a6f77b44aa4e9b30a365d85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainMenuScene: Assets/Scenes/UI/MainMenuScene.unity
   lobbyScene: Assets/Scenes/UI/LobbyScene.unity
+  useSteam: 0
+  maxConnections: 6
 --- !u!4 &984870283
 Transform:
   m_ObjectHideFlags: 0
