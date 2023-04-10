@@ -178,7 +178,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7377052504429608278}
   - component: {fileID: 7111859810209330456}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: MergeVolume
   m_TagString: Untagged
   m_Icon: {fileID: 0}
