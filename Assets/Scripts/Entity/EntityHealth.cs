@@ -6,14 +6,25 @@ using UnityEngine.Events;
 
 public class EntityHealth : NetworkBehaviour
 {
+    [SerializeField] 
     [SyncVar]
-    private float health = 30f;
+    private float health = 100f;
     public float Health => health;
+
+    [SerializeField]
+    [SyncVar]
+    private float maxHealth = 100f;
+
+    public float MaxHealth => maxHealth;
 
     public UnityEvent OnDie;
     public UnityEvent OnTakeDamage;
 
     #region Server
+    public override void OnStartServer()
+    {
+        SetHealth(maxHealth);
+    }
 
     [Server]
     public virtual void TakeDamage(float damage)
@@ -38,5 +49,12 @@ public class EntityHealth : NetworkBehaviour
         // Debug.Log("Destroyed " + gameObject.name);
     }
 
+    [Server]
+    protected void SetHealth(float health)
+    {
+        this.health = health;
+        if (this.health <= 0) { Die(); }
+        else if (this.health > maxHealth) { this.health = maxHealth; }
+    }
     #endregion
 }

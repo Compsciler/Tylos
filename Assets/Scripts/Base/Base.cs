@@ -27,6 +27,10 @@ public class Base : Entity
     [SyncVar] private IdentityInfo _baseIdentityInfo;
     private BaseSpawner _baseSpawner;
 
+    private void Awake() {
+        entityHealth = GetComponent<BaseHealth>();
+    }
+
     #region Server
     public override void OnStartServer()
     {

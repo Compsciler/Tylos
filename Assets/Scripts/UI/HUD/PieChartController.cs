@@ -9,6 +9,18 @@ public class PieChartController : MonoBehaviour
     public Image greenImage;
     public Image blueImage;
 
+    void Awake()
+    {
+        SelectedUnitsInfoController.AuthorityOnArmyInfoOpened += AuthorityHandleArmyInfoOpened;
+        SelectedUnitsInfoController.AuthorityOnArmyInfoClosed += AuthorityHandleArmyInfoClosed;
+    }
+
+    void OnDestroy()
+    {
+        SelectedUnitsInfoController.AuthorityOnArmyInfoOpened -= AuthorityHandleArmyInfoOpened;
+        SelectedUnitsInfoController.AuthorityOnArmyInfoClosed -= AuthorityHandleArmyInfoClosed;
+    }
+
     public void UpdatePieChart(float redValue, float greenValue, float blueValue)
     {
         float totalRGB = redValue + greenValue + blueValue;
@@ -28,4 +40,12 @@ public class PieChartController : MonoBehaviour
         greenImage.fillAmount = greenImage.fillAmount + redImage.fillAmount;
         blueImage.fillAmount = blueImage.fillAmount + greenImage.fillAmount;
     }
+
+    private void AuthorityHandleArmyInfoOpened(Army army)
+    {
+        IdentityInfo armyIdentity = army.GetComponent<ObjectIdentity>().Identity;
+        UpdatePieChart(armyIdentity.r, armyIdentity.g, armyIdentity.b);
+    }
+
+    private void AuthorityHandleArmyInfoClosed(Army army) { }
 }

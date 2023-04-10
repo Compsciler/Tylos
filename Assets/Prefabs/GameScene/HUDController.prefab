@@ -46,6 +46,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selectedUnitsInfoGO: {fileID: 7740113769339389644}
+  armyColorText: {fileID: 7740113768188566110}
+  pieChartController: {fileID: 0}
 --- !u!1001 &1639174269492999873
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -285,6 +287,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 593c2ac6cba12b14a84f79078c46e61a, type: 3}
+--- !u!114 &7740113768188566110 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9067413075483323551, guid: 593c2ac6cba12b14a84f79078c46e61a,
+    type: 3}
+  m_PrefabInstance: {fileID: 1639174269492999873}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &7740113769277149176 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 9067413076504541497, guid: 593c2ac6cba12b14a84f79078c46e61a,
