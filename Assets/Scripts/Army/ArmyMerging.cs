@@ -13,6 +13,8 @@ public class ArmyMerging : NetworkBehaviour
 
         if (!other.TryGetComponent<Army>(out Army otherArmy)) { return; }
 
+        if (otherArmy.connectionToClient.connectionId != connectionToClient.connectionId) { return; }  // Prevents merging with enemy armies (but we can implement that somewhere else later)
+
         if (!ShouldThisArmyMerge(otherArmy)) { return; }  // Prevents double merging
 
         MergeWithArmy(otherArmy);
