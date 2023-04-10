@@ -8,7 +8,7 @@ public class LoadLobby : MonoBehaviour
 {
     public Animator fadeOverlayAnimator;
     public Animator switchButtonsAnimator;
-    
+
     [Scene]
     [SerializeField] string lobbyScene;
 
@@ -25,12 +25,12 @@ public class LoadLobby : MonoBehaviour
         switchButtonsAnimator.SetTrigger(SwitchButtonsTrigger);
     }
 
-    public void onHostButtonClick()
+    public void OnHostButtonClick()
     {
         StartCoroutine(LoadLobbyWithFade());
         NetworkManager.singleton.StartHost();
     }
-    
+
 
     IEnumerator LoadLobbyWithFade()
     {
