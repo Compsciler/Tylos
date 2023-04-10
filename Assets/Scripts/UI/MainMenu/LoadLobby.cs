@@ -24,6 +24,12 @@ public class LoadLobby : MonoBehaviour
     {
         switchButtonsAnimator.SetTrigger(SwitchButtonsTrigger);
     }
+
+    public void onHostButtonClick()
+    {
+        StartCoroutine(LoadLobbyWithFade());
+        NetworkManager.singleton.StartHost();
+    }
     
 
     IEnumerator LoadLobbyWithFade()
