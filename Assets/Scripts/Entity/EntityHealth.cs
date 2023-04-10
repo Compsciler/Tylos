@@ -19,7 +19,7 @@ public class EntityHealth : NetworkBehaviour
     [SyncVar]
     [SerializeField]
     [Tooltip("Disable if health is set by another script")]
-    private bool setHealthOnStart = true;
+    protected bool setHealthOnStart = true;
 
     public UnityEvent OnDie;
     public UnityEvent OnTakeDamage;
