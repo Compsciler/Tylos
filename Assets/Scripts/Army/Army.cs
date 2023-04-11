@@ -37,10 +37,13 @@ public class Army : Entity
     // Convert variables
     [Header("Convert settings")]
     [SyncVar] private Entity convertTarget = null; // Only used on the server    
+    [SyncVar] private Army convertArmy = null; // Cache the Army component of the convert target
 
     // MonoBehaviour references
     ArmyVisuals armyVisuals;
     ArmyHealth armyHealth;
+    ArmyConversion armyConversion;
+    public ArmyConversion ArmyConversion => armyConversion;
     #endregion
 
     #region Events
@@ -81,28 +84,40 @@ public class Army : Entity
             Debug.LogError("ArmyHealth is null");
         armyVisuals = GetComponent<ArmyVisuals>();
         _armyIdentity = GetComponent<ObjectIdentity>();
+        armyConversion = GetComponent<ArmyConversion>();
     }
 
     void Update()
     {
         if (isServer) // Handle game logic
         {
-            if (state == ArmyState.Attacking)
+            switch (state)
             {
-                Attack();
+                case ArmyState.Attacking:
+                    Attack();
+                    break;
+                case ArmyState.Converting:
+                    Convert();
+                    break;
+                default:
+                    break;
             }
         }
 
         if (isClient) // Handle client visuals
         {
-            if (state == ArmyState.Attacking && attackTarget != null)
+            switch (state)
             {
-                if (Vector3.Distance(transform.position, attackTarget.transform.position) <= attackRange)
-                {
-                    armyVisuals.DrawDeathRay(attackTarget.transform.position);
-                }
+                case ArmyState.Attacking:
+                    if (attackTarget != null && Vector3.Distance(transform.position, attackTarget.transform.position) <= attackRange)
+                        armyVisuals.DrawDeathRay(attackTarget.transform.position);
+                    break;
+                case ArmyState.Converting:
+                    if (convertTarget != null && Vector3.Distance(transform.position, convertTarget.transform.position) <= attackRange)
+                        // TODO: Draw convert ray
+                        armyVisuals.DrawDeathRay(convertTarget.transform.position);
+                    break;
             }
-
         }
     }
 
@@ -469,7 +484,38 @@ public class Army : Entity
             return;
         }
         convertTarget = entity;
+        convertArmy = entity.GetComponent<Army>();
         SetState(ArmyState.Converting);
+    }
+
+    [Server]
+    private void Convert()
+    {
+        if (convertTarget == null)
+        {
+            state = ArmyState.Idle;
+            return;
+        }
+        else
+        {
+            if (Vector3.Distance(transform.position, convertTarget.transform.position) <= attackRange)
+            {
+                entityMovement.Stop();
+                if (convertArmy == null)
+                {
+                    Debug.LogError("Convert army is null");
+                }
+                else if (convertArmy.ArmyConversion == null)
+                {
+                    Debug.LogError("Convert army has no conversion component");
+                }
+                convertArmy.ArmyConversion.Convert(this);
+            }
+            else
+            {
+                entityMovement.Move(convertTarget.transform.position);
+            }
+        }
     }
     #endregion
 
@@ -517,8 +563,7 @@ public class Army : Entity
     [Client]
     public override void TryConvert(Entity entity)
     {
-        Debug.Log("Trying to convert");
-        if (!isOwned || entity == null) { return; }
+        if (!isOwned || entity == null || entity.GetComponent<Army>() == null) { return; }
         CmdConvert(entity);
     }
 
@@ -538,6 +583,7 @@ public class Army : Entity
                     attackDamage = ArmyUtils.CalculateAttackPower(ArmyUnits, minUnitAttackDamage, maxUnitAttackDamage);
                 }
             }
+            armyConversion.SetResistance(ArmyUnits.Count);
         }
         else if (isClient)
         {

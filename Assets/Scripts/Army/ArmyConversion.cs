@@ -1,11 +1,7 @@
 using UnityEngine;
 using Mirror;
-using UnityEditor;
 using System.Collections;
 
-/// <summary>
-/// 
-/// </summary>
 public class ArmyConversion : NetworkBehaviour
 {
     [SerializeField]
@@ -29,10 +25,11 @@ public class ArmyConversion : NetworkBehaviour
 
     [SerializeField]
     [Tooltip("Time it takes for the conversion progress to reset after being interrupted")]
-    private float resetTime = 0.5f;
+    private float resetTime = 1f;
 
     Coroutine conversionCoroutine = null;
     private float resetTimer = 0f;
+    private bool isConverted = false;
 
     /// <summary>
     /// Sets the resistance to being converted based on the army size
@@ -52,24 +49,29 @@ public class ArmyConversion : NetworkBehaviour
     [Server]
     public void Convert(Army otherArmy)
     {
+        resetTimer = resetTime;
         if (conversionCoroutine == null)
         {
             StartCoroutine(ConversionCoroutine());
         }
 
-        if (Mathf.Approximately(conversionProgress, 1f))
+        if (conversionProgress >= 1f)
         {
+            Debug.Log("Converted!!");
+            if (isConverted) { return; } // Make sure this is only called once
+            isConverted = true;
             // Convert all units
             otherArmy.ArmyUnits.AddRange(GetComponent<Army>().ArmyUnits);
             StopCoroutine(conversionCoroutine);
             conversionCoroutine = null;
             conversionProgress = 0f;
             resetTimer = 0f;
-            Destroy(gameObject);
+            Debug.Log("Destroying army");
+            NetworkServer.Destroy(gameObject);
         }
         else
         {
-            conversionProgress += Time.deltaTime / resistance;
+            conversionProgress += (Time.deltaTime / resistance);
         }
     }
 
@@ -77,14 +79,15 @@ public class ArmyConversion : NetworkBehaviour
     /// Resets the conversion progress after a certain amount of time
     /// </summary>
     /// <returns></returns>
+    [Server]
     IEnumerator ConversionCoroutine()
     {
-        resetTimer = resetTime;
         while (resetTimer > 0f)
         {
             resetTimer -= Time.deltaTime;
             yield return null;
         }
         conversionProgress = 0f;
+        conversionCoroutine = null;
     }
 }
