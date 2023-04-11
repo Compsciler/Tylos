@@ -469,6 +469,7 @@ public class Army : Entity
             return;
         }
         convertTarget = entity;
+        SetState(ArmyState.Converting);
     }
     #endregion
 
@@ -511,6 +512,14 @@ public class Army : Entity
     {
         if (!isOwned || entity == null) { return; }
         CmdAttack(entity);
+    }
+
+    [Client]
+    public override void TryConvert(Entity entity)
+    {
+        Debug.Log("Trying to convert");
+        if (!isOwned || entity == null) { return; }
+        CmdConvert(entity);
     }
 
     private void OnArmyUnitsUpdated(SyncList<Unit>.Operation op, int index, Unit oldUnit, Unit newUnit)
