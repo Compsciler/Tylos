@@ -529,5 +529,6 @@ public enum ArmyState
 {
     Idle,
     Moving,
-    Attacking
+    Attacking, 
+    Converting 
 }

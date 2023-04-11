@@ -47,4 +47,12 @@ public class EntityCommandGiver : NetworkBehaviour
             entity.TryAttack(target);
         }
     }
+
+    private void TryConvert(Entity target)
+    {
+        foreach (Entity entity in SelectionHandler.SelectedEntitiesCopy)
+        {
+            entity.TryConvert(target);
+        }
+    }
 }
