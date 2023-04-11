@@ -48,6 +48,7 @@ public class SelectionHandler : NetworkBehaviour
     [Client]
     public static void AddToSelection(Entity entity) 
     {
+        if (entity == null) { return; }  // Hotfix for null reference exception
         if (SelectedEntities.Contains(entity)) { return; }
         
         selectedEntities.Add(entity);
