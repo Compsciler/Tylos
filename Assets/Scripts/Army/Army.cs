@@ -89,7 +89,6 @@ public class Army : Entity
         {
             if (state == ArmyState.Attacking)
             {
-                Debug.Log("state is attacking");
                 Attack();
             }
         }
@@ -431,9 +430,7 @@ public class Army : Entity
             Debug.LogError("Entity has no health component");
             return;
         }
-        Debug.Log("Attacking");
         attackTarget = entity;
-        Debug.Log("attackTarget: " + attackTarget);
         attackTarget.GetComponent<EntityHealth>().OnDie.AddListener(HandleAttackTargetOnDie);
         SetState(ArmyState.Attacking);
     }
@@ -444,7 +441,6 @@ public class Army : Entity
     [Server]
     private void Attack()
     {
-        Debug.Log("Attack()");
         if (attackTarget == null) // Target died
         {
             // Debug.Log("Target died");
@@ -454,14 +450,11 @@ public class Army : Entity
         {
             if (Vector3.Distance(transform.position, attackTarget.transform.position) <= attackRange)
             {
-                Debug.Log("Attacking target");
                 entityMovement.Stop();
                 attackTarget.EntityHealth.TakeDamage(attackDamage * Time.deltaTime);
             }
             else
             {
-                Debug.Log("Target out of range");
-                // Debug.Log("attackTarget.transform.position: " + attackTarget.transform.position);
                 entityMovement.Move(attackTarget.transform.position);
             }
         }
@@ -473,7 +466,6 @@ public class Army : Entity
         if (entity == null) { return; }
         if (entity.GetComponent<Army>() == null)
         {
-            Debug.LogError("Entity is not an army");
             return;
         }
         convertTarget = entity;
@@ -484,14 +476,8 @@ public class Army : Entity
     public override void OnStartClient()
     {
         base.OnStartClient();
-        if (ArmyUnits == null)
+        if (ArmyUnits == null || armyVisuals == null)
         {
-            Debug.LogError("Army units is null");
-            return;
-        }
-        else if (armyVisuals == null)
-        {
-            Debug.LogError("Army visuals is null");
             return;
         }
 
@@ -533,7 +519,6 @@ public class Army : Entity
         {
             if (armyVisuals == null)
             {
-                Debug.LogError("Army visuals is null");
                 return;
             }
             else
@@ -541,6 +526,7 @@ public class Army : Entity
                 if (armyVisuals.Count != armyUnits.Count)
                 { // If the army visuals count doesn't match the army units count, update the count and visuals
                     armyVisuals.SetScale(armyUnits.Count);
+                    attackDamage = ArmyUtils.CalculateAttackPower(ArmyUnits, minUnitAttackDamage, maxUnitAttackDamage);
                 }
             }
         }
