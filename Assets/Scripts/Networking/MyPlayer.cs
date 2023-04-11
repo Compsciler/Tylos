@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using static GameStats;
 
 [RequireComponent(typeof(PlayerArmies))]
@@ -15,6 +16,7 @@ public class MyPlayer : NetworkBehaviour
     int playerId = -1;
 
     GameStats stats = new GameStats();
+    [SerializeField] int BaseCreationCost = 5;
     List<Army> myArmies = new List<Army>();
     public List<Army> MyArmies => myArmies;
     List<Base> myBases = new List<Base>();
@@ -25,6 +27,8 @@ public class MyPlayer : NetworkBehaviour
     ObjectIdentity playerIdentity;
     Color teamColor = new Color();
     public Color TeamColor => teamColor;
+
+    private Controls controls;
 
 
     [SyncVar(hook = nameof(AuthorityHandlePartyOwnerStateUpdated))]
@@ -146,6 +150,10 @@ public class MyPlayer : NetworkBehaviour
 
     public override void OnStartClient()
     {
+        controls = new Controls();
+        controls.Player.MakeBase.performed += makeBase;
+        controls.Enable();
+
         if (NetworkServer.active) { return; }
 
         DontDestroyOnLoad(gameObject);
@@ -201,6 +209,25 @@ public class MyPlayer : NetworkBehaviour
     private void AuthorityHandleBaseDespawned(Base base_)
     {
         myBases.Remove(base_);
+    }
+    [SerializeField] private GameObject basePrefab;
+    private void makeBase(InputAction.CallbackContext input)
+    {
+        foreach (Entity e in SelectionHandler.SelectedEntities)
+        {
+            if (e is Army army)
+            {
+                if (army.ArmyUnits.Count > BaseCreationCost)
+                {
+                    for (int i = 0; i < BaseCreationCost; i++)
+                    {
+                        army.ArmyUnits.RemoveAt(0);
+                    }
+                ((MyNetworkManager)NetworkManager.singleton).MakeBase(this, army.transform.position);
+                }
+            }
+
+        }
     }
 
     #endregion

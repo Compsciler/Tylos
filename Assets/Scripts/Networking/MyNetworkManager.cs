@@ -108,17 +108,23 @@ public class MyNetworkManager : NetworkManager
 
             foreach (MyPlayer player in players)
             {
-                IdentityInfo playerIdentity = SetAndGetPlayerIdentity(player);
-
-                GameObject baseInstance = Instantiate(
-                    basePrefab,
-                    GetStartPosition().position,
-                    Quaternion.identity);
-                SetBaseIdentityToPlayerIdentity(baseInstance, playerIdentity);  // If you move this line to after the Spawn() call, the base will be the wrong color for a few frames somehow
-
-                NetworkServer.Spawn(baseInstance, player.connectionToClient);
+                SetAndGetPlayerIdentity(player);
+                MakeBase(player, GetStartPosition().position);
             }
         }
+    }
+
+    public void MakeBase(MyPlayer player, Vector3 position)
+    {
+        IdentityInfo playerIdentity = player.GetComponent<ObjectIdentity>().Identity;
+
+        GameObject baseInstance = Instantiate(
+                    basePrefab,
+                    position,
+                    Quaternion.identity);
+        SetBaseIdentityToPlayerIdentity(baseInstance, playerIdentity);  // If you move this line to after the Spawn() call, the base will be the wrong color for a few frames somehow
+
+        NetworkServer.Spawn(baseInstance, player.connectionToClient);
     }
 
     private IdentityInfo SetAndGetPlayerIdentity(MyPlayer player)
