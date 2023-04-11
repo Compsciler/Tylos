@@ -22,10 +22,10 @@ public class Army : Entity
     public SyncList<Unit> ArmyUnits => armyUnits;
     // this is our local army units copy
     // the one above will be flushed every single frame
-    public List<Unit> _armyUnitsLocal = new() ;
-    
+    public List<Unit> _armyUnitsLocal = new();
+
     const float twoPI = (Mathf.PI * 2);
-    
+
     // Attack variables
     [Header("Attack settings")]
     [SerializeField] const float minUnitAttackDamage = 1f;
@@ -33,6 +33,10 @@ public class Army : Entity
     [SyncVar] private float attackDamage = 0f;
     [SyncVar][SerializeField] private float attackRange = 5f;
     [SyncVar] private Entity attackTarget = null; // Only used on the server
+
+    // Convert variables
+    [Header("Convert settings")]
+    [SyncVar] private Entity convertTarget = null; // Only used on the server    
 
     // MonoBehaviour references
     ArmyVisuals armyVisuals;
@@ -55,15 +59,15 @@ public class Army : Entity
     private List<Vector2> _armyComplex;
 
     private ObjectIdentity _armyIdentity;
-    
+
     private float _meanAngle;
 
     // this might need to be changed
     private float _identityChangeRate = 2f;
-    
+
     public static event Action<Army> AuthorityOnArmySelected;
     public static event Action<Army> AuthorityOnArmyDeselected;
-    
+
     #endregion
     public Army() { }
 
@@ -85,26 +89,7 @@ public class Army : Entity
         {
             if (state == ArmyState.Attacking)
             {
-                if (attackTarget == null) // Target died
-                {
-                    // Debug.Log("Target died");
-                    state = ArmyState.Idle;
-                }
-                else
-                {
-                    if (Vector3.Distance(transform.position, attackTarget.transform.position) <= attackRange)
-                    {
-                        // Debug.Log("Attacking target");
-                        entityMovement.Stop();
-                        attackTarget.EntityHealth.TakeDamage(attackDamage * Time.deltaTime);
-                    }
-                    else
-                    {
-                        // Debug.Log("Target out of range");
-                        // Debug.Log("attackTarget.transform.position: " + attackTarget.transform.position);
-                        entityMovement.Move(attackTarget.transform.position);
-                    }
-                }
+                Attack();
             }
         }
 
@@ -126,7 +111,7 @@ public class Army : Entity
         // I really don't want to calculate this multiple times per frame
         // ideally this is refactored into IdentityInfo
         _armyUnitsLocal.Clear();
-        
+
         foreach (var u in armyUnits)
         {
             _armyUnitsLocal.Add(u.Clone());
@@ -137,14 +122,14 @@ public class Army : Entity
         // recalculate mean
         // there is no point doing this in the setter anymore
         // because all the list flushing already threw efficiency out of the window
-        
+
         _meanZ = Vector2.zero;
         foreach (var z in _armyComplex)
         {
             _meanZ += z;
         }
         _meanZ /= _armyComplex.Count;
-        
+
         // var mean = Vector2.zero;
         // foreach (var z in _armyComplex)
         // {
@@ -152,14 +137,14 @@ public class Army : Entity
         // }
         // mean /= _armyComplex.Count;
         // Debug.Log(mean);
-        
+
 
         // update the army's visual color
         _meanAngle = Mathf.Atan2(_meanZ.y, _meanZ.x);
-        var meanH = ((_meanAngle + twoPI) % twoPI)/ twoPI;
+        var meanH = ((_meanAngle + twoPI) % twoPI) / twoPI;
         var meanColor = Color.HSVToRGB(meanH, 1f, 1f);
         _armyIdentity.SetIdentity(meanColor.r, meanColor.g, meanColor.b);
-        
+
         ProcessMeanIdentityShift();
         // flush the synced list
         armyUnits.Clear();
@@ -167,7 +152,7 @@ public class Army : Entity
         {
             armyUnits.Add(u);
         }
-        
+
     }
     #endregion
 
@@ -192,11 +177,11 @@ public class Army : Entity
         return attackDamage;
     }
 
-    
+
     public void SetUnits(Unit[] units) // Use array because Mirror doesn't support lists in commands 
     {
         armyUnits.Clear();
-        foreach(Unit unit in units)
+        foreach (Unit unit in units)
         {
             AddUnit(unit);
         }
@@ -218,7 +203,7 @@ public class Army : Entity
             // if both y and x are zero
             // it just gives 0, which should have not effect in the subsequent calculation anyways
             var angle = Mathf.Atan2(_armyComplex[i].y, _armyComplex[i].x);
-            
+
             // for whatever reason this shit operates in degrees
             // so I will have to convert to deg and convert it back
             var newAngle = Mathf.MoveTowardsAngle
@@ -227,28 +212,28 @@ public class Army : Entity
                     _meanAngle / Mathf.PI * 180f,
                     _identityChangeRate * Time.fixedDeltaTime
                 );
-            
+
             newAngle = newAngle / 180f * Mathf.PI;
-            
+
             // an awkward way to compress it into 0-1
-            
-            var newH = ((newAngle + twoPI) % twoPI)/ twoPI;
-            
+
+            var newH = ((newAngle + twoPI) % twoPI) / twoPI;
+
             var newColor = Color.HSVToRGB(newH, s, v);
 
 
             var newUnit = _armyUnitsLocal[i].Clone();
-            
+
             newUnit.identityInfo.r = newColor.r;
             newUnit.identityInfo.g = newColor.g;
             newUnit.identityInfo.b = newColor.b;
-            
+
             _armyUnitsLocal[i] = newUnit;
         }
     }
 
-    
-    
+
+
     public float GetDeviance()
     {
         var armyComplex = _armyComplex;
@@ -267,10 +252,10 @@ public class Army : Entity
     public (List<Unit>, List<Unit>) CalculateSplit()
     {
         var armyComplex = _armyComplex;
-        
+
         // GetEigenCentroid returns (eigenvector, centroid) of the dataset
         var (eigenVector, centroid) = GetEigenCentroid(armyComplex, _meanZ);
-        
+
         // if we get a perfectly circular set it is possible for eigen to be 0
         // just randomly pick an axis if so
         if (eigenVector == Vector2.zero)
@@ -319,14 +304,14 @@ public class Army : Entity
         return armyComplex;
     }
 
-    
-    
+
+
     // this function calculates the eigenvector as well as the centroid
     private (Vector2, Vector2) GetEigenCentroid(List<Vector2> data, Vector2 meanZ)
     {
         var xMean = meanZ.x;
         var yMean = meanZ.y;
-        
+
         var varX = 0f;
         varX = data.Aggregate(varX,
             (current, c) =>
@@ -432,6 +417,10 @@ public class Army : Entity
         SetState(state);
     }
 
+    /// <summary>
+    /// Sets the attack target and state to attacking
+    /// </summary>
+    /// <param name="entity"></param>
     [Command]
     private void CmdAttack(Entity entity)
     {
@@ -445,6 +434,46 @@ public class Army : Entity
         attackTarget = entity;
         attackTarget.GetComponent<EntityHealth>().OnDie.AddListener(HandleAttackTargetOnDie);
         SetState(ArmyState.Attacking);
+    }
+
+    /// <summary>
+    /// Called in the update loop when the army is attacking
+    /// </summary>
+    [Server]
+    private void Attack()
+    {
+        if (attackTarget == null) // Target died
+        {
+            // Debug.Log("Target died");
+            state = ArmyState.Idle;
+        }
+        else
+        {
+            if (Vector3.Distance(transform.position, attackTarget.transform.position) <= attackRange)
+            {
+                // Debug.Log("Attacking target");
+                entityMovement.Stop();
+                attackTarget.EntityHealth.TakeDamage(attackDamage * Time.deltaTime);
+            }
+            else
+            {
+                // Debug.Log("Target out of range");
+                // Debug.Log("attackTarget.transform.position: " + attackTarget.transform.position);
+                entityMovement.Move(attackTarget.transform.position);
+            }
+        }
+    }
+
+    [Command]
+    public void CmdConvert(Entity entity)
+    {
+        if (entity == null) { return; }
+        if (entity.GetComponent<Army>() == null)
+        {
+            Debug.LogError("Entity is not an army");
+            return;
+        }
+        convertTarget = entity;
     }
     #endregion
 
@@ -537,6 +566,6 @@ public enum ArmyState
 {
     Idle,
     Moving,
-    Attacking, 
-    Converting 
+    Attacking,
+    Converting
 }
