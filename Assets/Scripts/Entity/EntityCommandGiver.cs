@@ -36,22 +36,26 @@ public class EntityCommandGiver : NetworkBehaviour
 
         if (hit.collider.TryGetComponent(out Entity entity) && !entity.isOwned)   // hit an enemy entity
         {
-            if(mode == Mode.Attack)
+            if (mode == Mode.Attack)
             {
+                Debug.Log("Attack command issued");
                 TryAttack(entity);
             }
-            else if(mode == Mode.Convert)
+            else if (mode == Mode.Convert)
             {
                 TryConvert(entity);
             }
         }
-        TryMove(hit.point);
+        else
+        {
+            TryMove(hit.point);
+        }
     }
-    
+
     private void TryMove(Vector3 point)
     {
         foreach (Entity entity in SelectionHandler.SelectedEntitiesCopy)
-        { 
+        {
             entity.TryMove(point);
         }
     }

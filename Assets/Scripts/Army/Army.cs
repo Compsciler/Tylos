@@ -89,6 +89,7 @@ public class Army : Entity
         {
             if (state == ArmyState.Attacking)
             {
+                Debug.Log("state is attacking");
                 Attack();
             }
         }
@@ -430,8 +431,9 @@ public class Army : Entity
             Debug.LogError("Entity has no health component");
             return;
         }
-        // Debug.Log("Attacking");
+        Debug.Log("Attacking");
         attackTarget = entity;
+        Debug.Log("attackTarget: " + attackTarget);
         attackTarget.GetComponent<EntityHealth>().OnDie.AddListener(HandleAttackTargetOnDie);
         SetState(ArmyState.Attacking);
     }
@@ -442,6 +444,7 @@ public class Army : Entity
     [Server]
     private void Attack()
     {
+        Debug.Log("Attack()");
         if (attackTarget == null) // Target died
         {
             // Debug.Log("Target died");
