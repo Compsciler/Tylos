@@ -12,6 +12,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(ArmyMovement), typeof(ArmyHealth), typeof(ArmyVisuals))]
 public class Army : Entity
 {
+    # region variables
     // State variables
     [SyncVar] private ArmyState state = ArmyState.Idle;
     public ArmyState State => state;
@@ -36,6 +37,7 @@ public class Army : Entity
     // MonoBehaviour references
     ArmyVisuals armyVisuals;
     ArmyHealth armyHealth;
+    #endregion
 
     #region Events
     public static event Action<Army> ServerOnArmySpawned;
@@ -63,9 +65,9 @@ public class Army : Entity
     public static event Action<Army> AuthorityOnArmyDeselected;
     
     #endregion
-
     public Army() { }
 
+    #region Unity Methods
     void Awake()
     {
         entityMovement = GetComponent<ArmyMovement>();
@@ -118,78 +120,6 @@ public class Army : Entity
 
         }
     }
-    public void AddUnit(Unit unit)
-    {
-        _armyUnitsLocal.Add(unit);
-    }
-
-    public void AddUnits(List<Unit> units)
-    {
-        _armyUnitsLocal.AddRange(units);
-    }
-
-    public void RemoveUnit(Unit unit)
-    {
-        _armyUnitsLocal.Remove(unit);
-    }
-
-    public float GetAttackDamage()
-    {
-        return attackDamage;
-    }
-
-    #region ColorIdentity 
-    
-    public void SetUnits(Unit[] units) // Use array because Mirror doesn't support lists in commands 
-    {
-        armyUnits.Clear();
-        foreach(Unit unit in units)
-        {
-            AddUnit(unit);
-        }
-    }
-
-    private void ProcessMeanIdentityShift()
-    {
-        for (int i = 0; i < _armyUnitsLocal.Count; i++)
-        {
-            // this is the hsv identity of the unit we are currently dealing with
-            var identity = _armyUnitsLocal[i].identityInfo;
-            var originalColor = new Color(identity.r, identity.g, identity.b);
-            Color.RGBToHSV(originalColor, out var h, out var s, out var v);
-
-            // this is fine?
-            // if both y and x are zero
-            // it just gives 0, which should have not effect in the subsequent calculation anyways
-            var angle = Mathf.Atan2(_armyComplex[i].y, _armyComplex[i].x);
-            
-            // for whatever reason this shit operates in degrees
-            // so I will have to convert to deg and convert it back
-            var newAngle = Mathf.MoveTowardsAngle
-                (
-                    angle / Mathf.PI * 180f,
-                    _meanAngle / Mathf.PI * 180f,
-                    _identityChangeRate * Time.fixedDeltaTime
-                );
-            
-            newAngle = newAngle / 180f * Mathf.PI;
-            
-            // an awkward way to compress it into 0-1
-            
-            var newH = ((newAngle + twoPI) % twoPI)/ twoPI;
-            
-            var newColor = Color.HSVToRGB(newH, s, v);
-
-
-            var newUnit = _armyUnitsLocal[i].Clone();
-            
-            newUnit.identityInfo.r = newColor.r;
-            newUnit.identityInfo.g = newColor.g;
-            newUnit.identityInfo.b = newColor.b;
-            
-            _armyUnitsLocal[i] = newUnit;
-        }
-    }
 
     private void FixedUpdate()
     {
@@ -239,6 +169,84 @@ public class Army : Entity
         }
         
     }
+    #endregion
+
+    #region Unit Operations
+    public void AddUnit(Unit unit)
+    {
+        _armyUnitsLocal.Add(unit);
+    }
+
+    public void AddUnits(List<Unit> units)
+    {
+        _armyUnitsLocal.AddRange(units);
+    }
+
+    public void RemoveUnit(Unit unit)
+    {
+        _armyUnitsLocal.Remove(unit);
+    }
+
+    public float GetAttackDamage()
+    {
+        return attackDamage;
+    }
+
+    
+    public void SetUnits(Unit[] units) // Use array because Mirror doesn't support lists in commands 
+    {
+        armyUnits.Clear();
+        foreach(Unit unit in units)
+        {
+            AddUnit(unit);
+        }
+    }
+    #endregion
+
+    #region ColorIdentity 
+
+    private void ProcessMeanIdentityShift()
+    {
+        for (int i = 0; i < _armyUnitsLocal.Count; i++)
+        {
+            // this is the hsv identity of the unit we are currently dealing with
+            var identity = _armyUnitsLocal[i].identityInfo;
+            var originalColor = new Color(identity.r, identity.g, identity.b);
+            Color.RGBToHSV(originalColor, out var h, out var s, out var v);
+
+            // this is fine?
+            // if both y and x are zero
+            // it just gives 0, which should have not effect in the subsequent calculation anyways
+            var angle = Mathf.Atan2(_armyComplex[i].y, _armyComplex[i].x);
+            
+            // for whatever reason this shit operates in degrees
+            // so I will have to convert to deg and convert it back
+            var newAngle = Mathf.MoveTowardsAngle
+                (
+                    angle / Mathf.PI * 180f,
+                    _meanAngle / Mathf.PI * 180f,
+                    _identityChangeRate * Time.fixedDeltaTime
+                );
+            
+            newAngle = newAngle / 180f * Mathf.PI;
+            
+            // an awkward way to compress it into 0-1
+            
+            var newH = ((newAngle + twoPI) % twoPI)/ twoPI;
+            
+            var newColor = Color.HSVToRGB(newH, s, v);
+
+
+            var newUnit = _armyUnitsLocal[i].Clone();
+            
+            newUnit.identityInfo.r = newColor.r;
+            newUnit.identityInfo.g = newColor.g;
+            newUnit.identityInfo.b = newColor.b;
+            
+            _armyUnitsLocal[i] = newUnit;
+        }
+    }
+
     
     
     public float GetDeviance()
