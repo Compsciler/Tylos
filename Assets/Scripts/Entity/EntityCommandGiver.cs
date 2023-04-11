@@ -9,6 +9,7 @@ public class EntityCommandGiver : NetworkBehaviour
     [SerializeField] private LayerMask layerMask = new LayerMask();
 
     private Camera mainCamera;
+    private Mode mode = Mode.Attack; // Determines what right click does 
 
 
     private void Start()
@@ -18,6 +19,15 @@ public class EntityCommandGiver : NetworkBehaviour
 
     private void Update()
     {
+        // if you press space you switch between attack and convert
+        // TODO: make this use the new input system
+        if (Keyboard.current.spaceKey.wasPressedThisFrame)
+        {
+            mode = mode == Mode.Attack ? Mode.Convert : Mode.Attack;
+            Debug.Log("Mode: " + mode.ToString());
+        }
+
+
         if (!Mouse.current.rightButton.wasPressedThisFrame) { return; }
 
         Ray ray = mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
@@ -26,8 +36,14 @@ public class EntityCommandGiver : NetworkBehaviour
 
         if (hit.collider.TryGetComponent(out Entity entity) && !entity.isOwned)   // hit an enemy entity
         {
-            TryAttack(entity);
-            return;
+            if(mode == Mode.Attack)
+            {
+                TryAttack(entity);
+            }
+            else if(mode == Mode.Convert)
+            {
+                TryConvert(entity);
+            }
         }
         TryMove(hit.point);
     }
@@ -54,5 +70,11 @@ public class EntityCommandGiver : NetworkBehaviour
         {
             entity.TryConvert(target);
         }
+    }
+
+    enum Mode
+    {
+        Attack,
+        Convert
     }
 }
