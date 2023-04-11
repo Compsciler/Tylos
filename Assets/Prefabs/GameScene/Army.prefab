@@ -168,6 +168,52 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &5093423688492046088
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7377052504429608278}
+  - component: {fileID: 7111859810209330456}
+  m_Layer: 0
+  m_Name: MergeVolume
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7377052504429608278
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5093423688492046088}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6339527542047456643}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &7111859810209330456
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5093423688492046088}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.6
+  m_Height: 2.2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6339527542047456646
 GameObject:
   m_ObjectHideFlags: 0
@@ -180,6 +226,7 @@ GameObject:
   - component: {fileID: 7855368618028986320}
   - component: {fileID: 2678173039565540168}
   - component: {fileID: 6339527542047456647}
+  - component: {fileID: 3542381607104963435}
   - component: {fileID: 6339527542047456640}
   - component: {fileID: -5273569327024120270}
   - component: {fileID: 3300536225245654010}
@@ -189,6 +236,7 @@ GameObject:
   - component: {fileID: 6541587079117924198}
   - component: {fileID: 6127905368820839771}
   - component: {fileID: 3261407148654518945}
+  - component: {fileID: 7042217896372466165}
   m_Layer: 10
   m_Name: Army
   m_TagString: Untagged
@@ -212,6 +260,7 @@ Transform:
   - {fileID: 8344413383390764419}
   - {fileID: 5613905772487990604}
   - {fileID: 6119177246744945999}
+  - {fileID: 7377052504429608278}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -283,6 +332,22 @@ NavMeshAgent:
   m_BaseOffset: 0.5
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!54 &3542381607104963435
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6339527542047456646}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!135 &6339527542047456640
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -345,12 +410,36 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+      - m_Target: {fileID: 3300536225245654010}
+        m_TargetAssemblyTypeName: Army, Assembly-CSharp
+        m_MethodName: InvokeArmySelectEvents
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
   onDeselected:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 7852609698321682917}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 3300536225245654010}
+        m_TargetAssemblyTypeName: Army, Assembly-CSharp
+        m_MethodName: InvokeArmySelectEvents
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -413,6 +502,8 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0.1
+  health: 100
+  maxHealth: 100
   OnDie:
     m_PersistentCalls:
       m_Calls: []
@@ -557,6 +648,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fb044c61d7b8bcb4c8ba807e9e75ab4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0.1
+--- !u!114 &7042217896372466165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6339527542047456646}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8dffaad13344c4e4daf2bf406a26a9de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncDirection: 0
