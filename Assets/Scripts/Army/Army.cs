@@ -451,13 +451,13 @@ public class Army : Entity
         {
             if (Vector3.Distance(transform.position, attackTarget.transform.position) <= attackRange)
             {
-                // Debug.Log("Attacking target");
+                Debug.Log("Attacking target");
                 entityMovement.Stop();
                 attackTarget.EntityHealth.TakeDamage(attackDamage * Time.deltaTime);
             }
             else
             {
-                // Debug.Log("Target out of range");
+                Debug.Log("Target out of range");
                 // Debug.Log("attackTarget.transform.position: " + attackTarget.transform.position);
                 entityMovement.Move(attackTarget.transform.position);
             }
