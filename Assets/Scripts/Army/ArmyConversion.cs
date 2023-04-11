@@ -8,36 +8,47 @@ using System.Collections;
 /// </summary>
 public class ArmyConversion : NetworkBehaviour
 {
-    // Resistance stops scaling at this value
     [SerializeField]
-    private float maxUnitCount = 30f;
-
-    [SerializeField]
+    [Tooltip("Resistance to being converted by an enemy army. Scales with army size")]
     AnimationCurve resistanceCurve = new AnimationCurve();
 
+    [SerializeField]
+    [Tooltip("Resistance stops scaling at this army size")]
+    private float maxUnitCount = 30f;
+
+
+    // When this reaches 1, the army is converted
     [SyncVar]
     private float conversionProgress = 0f;
     public float ConversionProgress => conversionProgress;
 
-    // Resistance to being converted by an enemy army
-    // Scales with army size
+    // Number of seconds it takes to convert the army
     [SyncVar]
     private float resistance = 0f;
     public float Resistance => resistance;
 
-    // How long it takes to reset the conversion progress
     [SerializeField]
+    [Tooltip("Time it takes for the conversion progress to reset after being interrupted")]
     private float resetTime = 0.5f;
 
     Coroutine conversionCoroutine = null;
     private float resetTimer = 0f;
 
+    /// <summary>
+    /// Sets the resistance to being converted based on the army size
+    /// Currently called by the Army class when units are added or removed
+    /// </summary>
+    /// <param name="unitCount"></param>
     [Server]
     public void SetResistance(int unitCount)
     {
         resistance = resistanceCurve.Evaluate(unitCount / maxUnitCount);
     }
 
+    /// <summary>
+    /// Converts the army to the other army
+    /// </summary>
+    /// <param name="otherArmy"></param>
     [Server]
     public void Convert(Army otherArmy)
     {
@@ -50,6 +61,10 @@ public class ArmyConversion : NetworkBehaviour
         {
             // Convert all units
             otherArmy.ArmyUnits.AddRange(GetComponent<Army>().ArmyUnits);
+            StopCoroutine(conversionCoroutine);
+            conversionCoroutine = null;
+            conversionProgress = 0f;
+            resetTimer = 0f;
             Destroy(gameObject);
         }
         else
