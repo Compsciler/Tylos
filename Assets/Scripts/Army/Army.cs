@@ -46,7 +46,7 @@ public class Army : Entity
 
     // the mean of the army identity on complex plane
     // this is calculated on on unit add/remove
-    public Vector2 _meanZ;
+    private Vector2 _meanZ;
     // the complex version of the armies
     // TODO: please refactor this to be a part of identity info
     // this is updated per frame
@@ -57,7 +57,7 @@ public class Army : Entity
     private float _meanAngle;
 
     // this might need to be changed
-    private float _identityChangeRate = 0.2f;
+    private float _identityChangeRate = 2f;
     
     public static event Action<Army> AuthorityOnArmySelected;
     public static event Action<Army> AuthorityOnArmyDeselected;
@@ -143,7 +143,6 @@ public class Army : Entity
     public void SetUnits(Unit[] units) // Use array because Mirror doesn't support lists in commands 
     {
         armyUnits.Clear();
-        _meanZ = Vector2.zero;
         foreach(Unit unit in units)
         {
             AddUnit(unit);
@@ -164,7 +163,16 @@ public class Army : Entity
             // it just gives 0, which should have not effect in the subsequent calculation anyways
             var angle = Mathf.Atan2(_armyComplex[i].y, _armyComplex[i].x);
             
-            var newAngle = Mathf.MoveTowardsAngle(angle, _meanAngle, _identityChangeRate * Time.fixedDeltaTime);
+            // for whatever reason this shit operates in degrees
+            // so I will have to convert to deg and convert it back
+            var newAngle = Mathf.MoveTowardsAngle
+                (
+                    angle / Mathf.PI * 180f,
+                    _meanAngle / Mathf.PI * 180f,
+                    _identityChangeRate * Time.fixedDeltaTime
+                );
+            
+            newAngle = newAngle / 180f * Mathf.PI;
             
             // an awkward way to compress it into 0-1
             
@@ -199,12 +207,22 @@ public class Army : Entity
         // recalculate mean
         // there is no point doing this in the setter anymore
         // because all the list flushing already threw efficiency out of the window
+        
         _meanZ = Vector2.zero;
         foreach (var z in _armyComplex)
         {
             _meanZ += z;
         }
         _meanZ /= _armyComplex.Count;
+        
+        // var mean = Vector2.zero;
+        // foreach (var z in _armyComplex)
+        // {
+        //     mean += z;
+        // }
+        // mean /= _armyComplex.Count;
+        // Debug.Log(mean);
+        
 
         // update the army's visual color
         _meanAngle = Mathf.Atan2(_meanZ.y, _meanZ.x);
