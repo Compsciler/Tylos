@@ -3,7 +3,9 @@ guid: 32406e210b5da7f41847280bb2c32e60
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - cameraTransform: {instanceID: 0}
+  - fog: {fileID: 2100000, guid: 4cadae2960372db46b24fbeaf4bc88cf, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
