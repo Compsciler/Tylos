@@ -52,12 +52,11 @@ public class ArmyConversion : NetworkBehaviour
         resetTimer = resetTime;
         if (conversionCoroutine == null)
         {
-            StartCoroutine(ConversionCoroutine());
+            conversionCoroutine = StartCoroutine(ConversionCoroutine());
         }
 
         if (conversionProgress >= 1f)
         {
-            Debug.Log("Converted!!");
             if (isConverted) { return; } // Make sure this is only called once
             isConverted = true;
             // Convert all units
@@ -66,7 +65,6 @@ public class ArmyConversion : NetworkBehaviour
             conversionCoroutine = null;
             conversionProgress = 0f;
             resetTimer = 0f;
-            Debug.Log("Destroying army");
             NetworkServer.Destroy(gameObject);
         }
         else
