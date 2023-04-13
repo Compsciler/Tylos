@@ -48,5 +48,9 @@ public abstract class Entity : NetworkBehaviour
 
     [Client]
     public virtual void TryAttack(Entity target) { } // Override in child classes
+
+
+    [Client]
+    public virtual void TryConvert(Entity target) { } // Override in child classes
     #endregion
 }
