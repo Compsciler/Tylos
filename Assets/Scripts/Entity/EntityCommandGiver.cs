@@ -38,7 +38,6 @@ public class EntityCommandGiver : NetworkBehaviour
         {
             if (mode == Mode.Attack)
             {
-                Debug.Log("Attack command issued");
                 TryAttack(entity);
             }
             else if (mode == Mode.Convert)
