@@ -3891,6 +3891,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: EnterAddress
       objectReference: {fileID: 0}
+    - target: {fileID: 6179733354411411895, guid: 1c7bdb4f48a8a41469fb7c4ce1238198,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6179733354411411896, guid: 1c7bdb4f48a8a41469fb7c4ce1238198,
         type: 3}
       propertyPath: m_Pivot.x
@@ -4001,6 +4006,11 @@ PrefabInstance:
       propertyPath: loadLobby
       value: 
       objectReference: {fileID: 1886340365}
+    - target: {fileID: 6179733354455540800, guid: 1c7bdb4f48a8a41469fb7c4ce1238198,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0.000091552734
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1c7bdb4f48a8a41469fb7c4ce1238198, type: 3}
 --- !u!224 &2125158821 stripped
