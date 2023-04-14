@@ -22,6 +22,13 @@ public class MyPlayer : NetworkBehaviour
     List<Base> myBases = new List<Base>();
     public List<Base> MyBases => myBases;
 
+    [SerializeField] public Material fog;
+
+    [SerializeField] public int fogResolutionX = 32;
+    [SerializeField] public int fogResolutionY = 32;
+    [SerializeField] public float viewDistance = 4;
+    Texture2D fogTex;
+
     PlayerArmies myPlayerArmies;
 
     ObjectIdentity playerIdentity;
@@ -140,6 +147,7 @@ public class MyPlayer : NetworkBehaviour
 
     public override void OnStartAuthority()  // Start() for objects the client owns (equivalent to OnStartClient() with !isOwned guard)
     {
+        setupFog();
         if (NetworkServer.active) { return; }  // Return if this is running as the server (before isClientOnly is set)
 
         Army.AuthorityOnArmySpawned += AuthorityHandleArmySpawned;
@@ -147,7 +155,65 @@ public class MyPlayer : NetworkBehaviour
         Base.AuthorityOnBaseSpawned += AuthorityHandleBaseSpawned;
         Base.AuthorityOnBaseDespawned += AuthorityHandleBaseDespawned;
     }
+    private void setupFog()
+    {
+        fogTex = new Texture2D(fogResolutionX, fogResolutionY);
+        fogTex.wrapModeU = TextureWrapMode.Clamp;
+        fogTex.wrapModeV = TextureWrapMode.Clamp;
 
+        fog.SetTexture("FogTex", fogTex);
+    }
+
+    [ClientCallback]
+    void Update()
+    {
+        float[] fogVals = new float[fogResolutionX * fogResolutionY];
+        for (int i = 0; i < fogResolutionX * fogResolutionY; i++)
+        {
+            fogVals[i] = 1;
+        }
+
+        foreach (Army army in myArmies)
+        {
+            for (int x = 0; x < fogResolutionX; x++)
+            {
+                for (int y = 0; y < fogResolutionY; y++)
+                {
+                    float game_x = -(((float)x / fogResolutionX) * 20 - 10);
+                    float game_y = -(((float)y / fogResolutionY) * 20 - 10);
+                    double d_x = army.transform.position.x - game_x;
+                    double d_y = army.transform.position.z - game_y;
+                    double dist = Math.Sqrt(d_x * d_x + d_y * d_y) / viewDistance / 2;
+                    fogVals[x + y * fogResolutionX] = Math.Min(fogVals[x + y * fogResolutionX], (float)dist);
+                }
+            }
+        }
+
+        foreach (Base b in myBases)
+        {
+            for (int x = 0; x < fogResolutionX; x++)
+            {
+                for (int y = 0; y < fogResolutionY; y++)
+                {
+                    float game_x = -(((float)x / fogResolutionX) * 20 - 10);
+                    float game_y = -(((float)y / fogResolutionY) * 20 - 10);
+                    double d_x = b.transform.position.x - game_x;
+                    double d_y = b.transform.position.z - game_y;
+                    double dist = Math.Sqrt(d_x * d_x + d_y * d_y) / viewDistance / 2;
+                    fogVals[x + y * fogResolutionX] = Math.Min(fogVals[x + y * fogResolutionX], (float)dist);
+                }
+            }
+        }
+
+        for (int x = 0; x < fogResolutionX; x++)
+        {
+            for (int y = 0; y < fogResolutionY; y++)
+            {
+                fogTex.SetPixel(x, y, new Color(fogVals[x + y * fogResolutionX], 0, 0, 0));
+            }
+        }
+        fogTex.Apply(true, false);
+    }
     public override void OnStartClient()
     {
         controls = new Controls();
