@@ -276,7 +276,7 @@ public class MyPlayer : NetworkBehaviour
     {
         myBases.Remove(base_);
     }
-    [SerializeField] private GameObject basePrefab;
+
     private void makeBase(InputAction.CallbackContext input)
     {
         foreach (Entity e in SelectionHandler.SelectedEntities)
