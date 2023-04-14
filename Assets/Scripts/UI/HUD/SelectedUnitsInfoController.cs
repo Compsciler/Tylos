@@ -14,6 +14,9 @@ public class SelectedUnitsInfoController : MonoBehaviour
     // This should be on a separate script on the selectedUnitsInfoGO GameObject
     [SerializeField] TMP_Text armyColorText;
 
+    Army army;
+    ObjectIdentity armyObjectIdentity;
+
     void Awake()
     {
         Army.AuthorityOnArmySelected += AuthorityHandleArmySelected;
@@ -26,19 +29,29 @@ public class SelectedUnitsInfoController : MonoBehaviour
         Army.AuthorityOnArmyDeselected -= AuthorityHandleArmyDeselected;
     }
 
+    void Update()
+    {
+        if (army == null) { return; }
+        IdentityInfo armyIdentity = armyObjectIdentity.Identity;
+        Color armyIdentityColor = armyIdentity.GetColor();
+        armyColorText.text = $"#{ColorUtility.ToHtmlStringRGB(armyIdentityColor)}";
+    }
+
     private void AuthorityHandleArmySelected(Army army)
     {
         selectedUnitsInfoGO.SetActive(true);  // TODO
         AuthorityOnArmyInfoOpened?.Invoke(army);
 
-        IdentityInfo armyIdentity = army.GetComponent<ObjectIdentity>().Identity;
-        Color armyIdentityColor = armyIdentity.GetColor();
-        armyColorText.text = $"#{ColorUtility.ToHtmlStringRGB(armyIdentityColor)}";
+        this.army = army;
+        armyObjectIdentity = army.GetComponent<ObjectIdentity>();
     }
 
     private void AuthorityHandleArmyDeselected(Army army)
     {
         selectedUnitsInfoGO.SetActive(false);  // TODO
         AuthorityOnArmyInfoClosed?.Invoke(army);
+
+        this.army = null;
+        armyObjectIdentity = null;
     }
 }
