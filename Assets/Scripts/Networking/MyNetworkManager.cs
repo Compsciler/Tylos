@@ -9,6 +9,7 @@ public class MyNetworkManager : NetworkManager
 {
     [Header("MyNetworkManager")]
     [SerializeField] GameObject basePrefab;
+    [SerializeField] GameOverHandler gameOverHandler;
 
     [Scene]
     [SerializeField] string gameScene;
@@ -65,6 +66,7 @@ public class MyNetworkManager : NetworkManager
         if (players.Count < 2 && !canStartWith1Player) { return; }
 
         isGameInProgress = true;
+        remainingPlayers = new List<MyPlayer>(players);
 
         ServerChangeScene(gameScene);
     }
@@ -102,9 +104,9 @@ public class MyNetworkManager : NetworkManager
     {
         if (newSceneName == gameScene)
         {
-            // GameOverHandler gameOverHandlerInstance = Instantiate(gameOverHandler);  // TODO: Add GameOverHandler
+            GameOverHandler gameOverHandlerInstance = Instantiate(gameOverHandler);
 
-            // NetworkServer.Spawn(gameOverHandlerInstance.gameObject);
+            NetworkServer.Spawn(gameOverHandlerInstance.gameObject);
 
             foreach (MyPlayer player in players)
             {

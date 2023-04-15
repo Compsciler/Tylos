@@ -68,6 +68,8 @@ MonoBehaviour:
   timeInterpolationGui: 0
   basePrefab: {fileID: 1925953160895762789, guid: d3a721d703c30dc4e901066d47431e1c,
     type: 3}
+  gameOverHandler: {fileID: 7711808745854209600, guid: 50d9ef395e1d380438915a24dcb039e6,
+    type: 3}
   gameScene: 
   canStartWith1Player: 0
 --- !u!114 &6479063781474349541
