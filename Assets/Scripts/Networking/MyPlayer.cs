@@ -21,12 +21,15 @@ public class MyPlayer : NetworkBehaviour
     public List<Base> MyBases => myBases;
 
     [SerializeField] public Material fog;
+    [SerializeField] public Material mergeMaterial;
 
     [SerializeField] public int fogResolutionX = 32;
     [SerializeField] public int fogResolutionY = 32;
+    [SerializeField] public int mergeResolutionX = 32;
+    [SerializeField] public int mergeResolutionY = 32;
     [SerializeField] public float viewDistance = 4;
     Texture2D fogTex;
-
+    Texture2D mergeTex;
     PlayerArmies myPlayerArmies;
 
     ObjectIdentity playerIdentity;
@@ -156,14 +159,24 @@ public class MyPlayer : NetworkBehaviour
         fogTex = new Texture2D(fogResolutionX, fogResolutionY);
         fogTex.wrapModeU = TextureWrapMode.Clamp;
         fogTex.wrapModeV = TextureWrapMode.Clamp;
-
         fog.SetTexture("FogTex", fogTex);
+
+        mergeTex = new Texture2D(mergeResolutionX, mergeResolutionY);
+        mergeTex.wrapModeU = TextureWrapMode.Clamp;
+        mergeTex.wrapModeV = TextureWrapMode.Clamp;
+        mergeMaterial.SetTexture("UnitTex", mergeTex);
+        mergeMaterial.SetColor("FillColor", new Color(0, 1, 1, 1));
     }
 
     [ClientCallback]
     void Update()
     {
+        if (fogTex == null || mergeTex == null)
+        {
+            return;
+        }
         float[] fogVals = new float[fogResolutionX * fogResolutionY];
+        float[] mergeVals = new float[mergeResolutionX * mergeResolutionY];
         for (int i = 0; i < fogResolutionX * fogResolutionY; i++)
         {
             fogVals[i] = 1;
@@ -171,25 +184,43 @@ public class MyPlayer : NetworkBehaviour
 
         foreach (Army army in myArmies)
         {
-            for (int x = 0; x < fogResolutionX; x++)
+            for (int y = 0; y < fogResolutionY; y++)
             {
-                for (int y = 0; y < fogResolutionY; y++)
+                for (int x = 0; x < fogResolutionX; x++)
                 {
-                    float game_x = -(((float)x / fogResolutionX) * 20 - 10);
-                    float game_y = -(((float)y / fogResolutionY) * 20 - 10);
+                    float game_x = -(((float)(x + 0.5) / fogResolutionX) * 20 - 10);
+                    float game_y = -(((float)(y + 0.5) / fogResolutionY) * 20 - 10);
                     double d_x = army.transform.position.x - game_x;
                     double d_y = army.transform.position.z - game_y;
                     double dist = Math.Sqrt(d_x * d_x + d_y * d_y) / viewDistance / 2;
                     fogVals[x + y * fogResolutionX] = Math.Min(fogVals[x + y * fogResolutionX], (float)dist);
                 }
             }
+
+            float scale = army.transform.localScale.x;
+
+            for (int y = 0; y < mergeResolutionY; y++)
+            {
+                for (int x = 0; x < mergeResolutionX; x++)
+                {
+                    float game_x = -(((float)(x + 0.5) / mergeResolutionX) * 20 - 10);
+                    float game_y = -(((float)(y + 0.5) / mergeResolutionY) * 20 - 10);
+                    double d_x = army.transform.position.x - game_x;
+                    double d_y = army.transform.position.z - game_y;
+                    double dist = Math.Sqrt(d_x * d_x + d_y * d_y);
+                    double sdf_height = ((((scale - dist) - 1) * 0.8) + 1) * 0.6;
+                    mergeVals[x + y * mergeResolutionX] += (float)Math.Max(sdf_height, 0);
+                }
+            }
         }
+
+
 
         foreach (Base b in myBases)
         {
-            for (int x = 0; x < fogResolutionX; x++)
+            for (int y = 0; y < fogResolutionY; y++)
             {
-                for (int y = 0; y < fogResolutionY; y++)
+                for (int x = 0; x < fogResolutionX; x++)
                 {
                     float game_x = -(((float)x / fogResolutionX) * 20 - 10);
                     float game_y = -(((float)y / fogResolutionY) * 20 - 10);
@@ -201,14 +232,22 @@ public class MyPlayer : NetworkBehaviour
             }
         }
 
-        for (int x = 0; x < fogResolutionX; x++)
+        for (int y = 0; y < fogResolutionY; y++)
         {
-            for (int y = 0; y < fogResolutionY; y++)
+            for (int x = 0; x < fogResolutionX; x++)
             {
                 fogTex.SetPixel(x, y, new Color(fogVals[x + y * fogResolutionX], 0, 0, 0));
             }
         }
+        for (int y = 0; y < mergeResolutionY; y++)
+        {
+            for (int x = 0; x < mergeResolutionX; x++)
+            {
+                mergeTex.SetPixel(x, y, new Color(mergeVals[x + y * mergeResolutionX], teamColor.r, teamColor.g, teamColor.b));
+            }
+        }
         fogTex.Apply(true, false);
+        mergeTex.Apply(true, false);
     }
     public override void OnStartClient()
     {
