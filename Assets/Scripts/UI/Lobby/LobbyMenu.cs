@@ -19,6 +19,8 @@ public class LobbyMenu : MonoBehaviour
 
     [SerializeField] Color queuedPlayerColor;
     [SerializeField] Color waitingForPlayerColor;
+    
+    [SerializeField] private Animator fadeOutAnimator;
 
     void Awake()
     {
@@ -93,7 +95,7 @@ public class LobbyMenu : MonoBehaviour
 
     public void StartGame()
     {
-        NetworkClient.connection.identity.GetComponent<MyPlayer>().CmdStartGame();
+        StartCoroutine(LoadMainMenuWithFadeOut());
     }
 
     public void LeaveLobby()
@@ -108,5 +110,12 @@ public class LobbyMenu : MonoBehaviour
 
             lobbyController.LoadMainMenu();
         }
+    }
+    
+    private IEnumerator LoadMainMenuWithFadeOut()
+    {
+        fadeOutAnimator.SetBool("FadeOut", true);
+        yield return new WaitForSeconds(1f);
+        NetworkClient.connection.identity.GetComponent<MyPlayer>().CmdStartGame();
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,22 +12,26 @@ public class PauseButtonHandler : MonoBehaviour
     public float fadeDuration = 0.5f;
     public Button exitGameButton;
     public Image fadeOverlay;
+    public GameObject letters;
+
 
     private bool _isPaused = false;
     private CanvasGroup _pauseScreenCanvasGroup;
+    private CanvasGroup _lettersCanvasGroup;
+
 
     private void Start()
     {
         pauseButton.onClick.AddListener(TogglePause);
         exitGameButton.onClick.AddListener(ExitGame);
         _pauseScreenCanvasGroup = pauseScreen.GetComponent<CanvasGroup>();
+        _lettersCanvasGroup = letters.GetComponent<CanvasGroup>();
         pauseScreen.SetActive(false);
     }
 
     private void TogglePause()
     {
         _isPaused = !_isPaused;
-        Time.timeScale = _isPaused ? 0f : 1f;
         StartCoroutine(FadePauseScreen(_isPaused));
     }
     
@@ -73,6 +78,7 @@ public class PauseButtonHandler : MonoBehaviour
             elapsedTime += Time.unscaledDeltaTime;
             float currentAlpha = Mathf.Lerp(startAlpha, endAlpha, elapsedTime / fadeDuration);
             fadeOverlay.color = new Color(fadeColor.r, fadeColor.g, fadeColor.b, currentAlpha);
+            _lettersCanvasGroup.alpha = currentAlpha;
             yield return null;
         }
 
