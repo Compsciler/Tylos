@@ -60,7 +60,8 @@ public class ArmyConversion : NetworkBehaviour
             if (isConverted) { return; } // Make sure this is only called once
             isConverted = true;
             // Convert all units
-            otherArmy.ArmyUnits.AddRange(GetComponent<Army>().ArmyUnits);
+            otherArmy.Absorb(GetComponent<Army>().ArmyUnits);
+            // otherArmy.ArmyUnits.AddRange(GetComponent<Army>().ArmyUnits);
             StopCoroutine(conversionCoroutine);
             conversionCoroutine = null;
             conversionProgress = 0f;
