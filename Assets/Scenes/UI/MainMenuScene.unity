@@ -968,23 +968,6 @@ PrefabInstance:
       propertyPath: canStartWith1Player
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 6058525235975443730, guid: d04903ceb37c7594c8ab178b46a00e5d,
-        type: 3}
-      propertyPath: spawnPrefabs.Array.size
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 6058525235975443730, guid: d04903ceb37c7594c8ab178b46a00e5d,
-        type: 3}
-      propertyPath: spawnPrefabs.Array.data[2]
-      value: 
-      objectReference: {fileID: 7316888056027513212, guid: 50d9ef395e1d380438915a24dcb039e6,
-        type: 3}
-    - target: {fileID: 6058525235975443730, guid: d04903ceb37c7594c8ab178b46a00e5d,
-        type: 3}
-      propertyPath: spawnPrefabs.Array.data[3]
-      value: 
-      objectReference: {fileID: 1829010255509307010, guid: 7cc16cc9fa7cb854fa1198e96beb4553,
-        type: 3}
     - target: {fileID: 6479063781474349543, guid: d04903ceb37c7594c8ab178b46a00e5d,
         type: 3}
       propertyPath: m_RootOrder

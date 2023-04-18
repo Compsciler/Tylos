@@ -65,6 +65,8 @@ MonoBehaviour:
   spawnPrefabs:
   - {fileID: 1925953160895762789, guid: d3a721d703c30dc4e901066d47431e1c, type: 3}
   - {fileID: 6339527542047456646, guid: 08346fa7e0c7ced4bb94332fb3aeec9a, type: 3}
+  - {fileID: 7316888056027513212, guid: 50d9ef395e1d380438915a24dcb039e6, type: 3}
+  - {fileID: 1829010255509307010, guid: 7cc16cc9fa7cb854fa1198e96beb4553, type: 3}
   timeInterpolationGui: 0
   basePrefab: {fileID: 1925953160895762789, guid: d3a721d703c30dc4e901066d47431e1c,
     type: 3}
