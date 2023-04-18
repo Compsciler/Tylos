@@ -8,6 +8,7 @@ using UnityEngine.Events;
 using Mirror;
 
 [RequireComponent(typeof(ArmyMovement), typeof(ArmyHealth), typeof(ArmyVisuals))]
+[RequireComponent(typeof(ArmyAudio))]
 public class Army : Entity
 {
     # region variables
@@ -41,6 +42,7 @@ public class Army : Entity
     ArmyVisuals armyVisuals;
     ArmyHealth armyHealth;
     ArmyConversion armyConversion;
+    ArmyAudio armyAudio;
     public ArmyConversion ArmyConversion => armyConversion;
     #endregion
 
@@ -111,14 +113,24 @@ public class Army : Entity
             switch (state)
             {
                 case ArmyState.Attacking:
-                    if (attackTarget != null && Vector3.Distance(transform.position, attackTarget.transform.position) <= attackRange)
+                    
+                    if (attackTarget != null && Vector3.Distance(transform.position, attackTarget.transform.position) <= attackRange) 
+                    {
                         armyVisuals.DrawDeathRay(attackTarget.transform.position);
+                        armyAudio.PlayAttackAudio(); 
+                    }
+                    else {
+                        armyAudio.StopAttackAudio();
+                    }
                     break;
                 case ArmyState.Converting:
                     if (convertTarget != null && Vector3.Distance(transform.position, convertTarget.transform.position) <= attackRange)
                         // TODO: Draw convert ray
                         armyVisuals.DrawDeathRay(convertTarget.transform.position);
                     break;
+                default:
+                    armyAudio.StopAudio(); 
+                    break; 
             }
         }
     }
