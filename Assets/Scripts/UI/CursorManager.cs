@@ -43,8 +43,14 @@ public class CursorManager : MonoBehaviour
     void UpdateCursor()
     {
         //Do not update if cursor is over a UI element
+        if (!Application.isFocused)
+        {
+            SetCursor(null);
+            return;
+        }
+
         if (isCursorOverUI) return;
-        
+
         /*
         
         //Perform raycast
@@ -66,7 +72,7 @@ public class CursorManager : MonoBehaviour
         }
         
         */
-            
+
         //If no conditions are met, set to default cursor
         else
         {
@@ -81,7 +87,11 @@ public class CursorManager : MonoBehaviour
 
     void SetCursor(CursorType cursorType)
     {
-        if (cursorType != null)
+        if (cursorType == null)
+        {
+            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+        }
+        else
         {
             Cursor.SetCursor(cursorType.texture, cursorType.hotspot, CursorMode.Auto);
         }

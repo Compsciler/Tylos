@@ -4727,6 +4727,7 @@ MonoBehaviour:
   fadeDuration: 0.5
   exitGameButton: {fileID: 642294555962717662}
   fadeOverlay: {fileID: 422405550324863004}
+  letters: {fileID: 0}
 --- !u!1 &9067413076130458427
 GameObject:
   m_ObjectHideFlags: 0
