@@ -948,11 +948,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4059375377872484927, guid: d04903ceb37c7594c8ab178b46a00e5d,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6058525235975443730, guid: d04903ceb37c7594c8ab178b46a00e5d,
         type: 3}
       propertyPath: gameScene
       value: Assets/Scenes/GameScene.unity
       objectReference: {fileID: 0}
+    - target: {fileID: 6058525235975443730, guid: d04903ceb37c7594c8ab178b46a00e5d,
+        type: 3}
+      propertyPath: transport
+      value: 
+      objectReference: {fileID: 569799020}
     - target: {fileID: 6058525235975443730, guid: d04903ceb37c7594c8ab178b46a00e5d,
         type: 3}
       propertyPath: onlineScene
@@ -967,6 +977,11 @@ PrefabInstance:
         type: 3}
       propertyPath: canStartWith1Player
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6479063781474349541, guid: d04903ceb37c7594c8ab178b46a00e5d,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6479063781474349543, guid: d04903ceb37c7594c8ab178b46a00e5d,
         type: 3}
@@ -1030,6 +1045,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d04903ceb37c7594c8ab178b46a00e5d, type: 3}
+--- !u!114 &569799020 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4059375377872484927, guid: d04903ceb37c7594c8ab178b46a00e5d,
+    type: 3}
+  m_PrefabInstance: {fileID: 569799019}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6e55fca1f4e4844593a3dd65a3ecb39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &592861048
 GameObject:
   m_ObjectHideFlags: 0
@@ -1901,7 +1928,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainMenuScene: Assets/Scenes/UI/MainMenuScene.unity
   lobbyScene: Assets/Scenes/UI/LobbyScene.unity
-  useSteam: 0
+  useSteam: 1
   maxConnections: 6
 --- !u!4 &984870283
 Transform:
