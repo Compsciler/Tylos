@@ -209,7 +209,7 @@ public class MyPlayer : NetworkBehaviour
                     double d_y = army.transform.position.z - game_y;
                     double dist = Math.Sqrt(d_x * d_x + d_y * d_y);
                     double sdf_height = ((((scale - dist) - 1) * 0.8) + 1) * 0.6;
-                    mergeVals[x + y * mergeResolutionX] += (float)Math.Max(sdf_height, 0);
+                    mergeVals[x + y * mergeResolutionX] += (float)Math.Clamp(sdf_height, 0, 0.499);
                 }
             }
         }
