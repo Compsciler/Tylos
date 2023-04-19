@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
@@ -10,6 +11,9 @@ public class EntityCommandGiver : NetworkBehaviour
 
     private Camera mainCamera;
     private Mode mode = Mode.Attack; // Determines what right click does 
+    private Mode prevMode;
+
+    public static event Action<Mode> AuthorityOnModeChanged;
 
 
     private void Start()
@@ -26,6 +30,13 @@ public class EntityCommandGiver : NetworkBehaviour
             mode = mode == Mode.Attack ? Mode.Convert : Mode.Attack;
             Debug.Log("Mode: " + mode.ToString());
         }
+
+        if (mode != prevMode)
+        {
+            AuthorityOnModeChanged?.Invoke(mode);
+            // MirrorUtils.PrintNetworkInfo(this);
+        }
+        prevMode = mode;
 
 
         if (!Mouse.current.rightButton.wasPressedThisFrame) { return; }
@@ -75,7 +86,7 @@ public class EntityCommandGiver : NetworkBehaviour
         }
     }
 
-    enum Mode
+    public enum Mode
     {
         Attack,
         Convert
