@@ -59,6 +59,7 @@ public class Army : Entity
     // this is calculated on on unit add/remove
     private Vector3 _meanC;
     private Vector2 _meanZ;
+    private float _deviance;
     
     // the complex version of the armies
     // TODO: please refactor this to be a part of identity info
@@ -143,9 +144,7 @@ public class Army : Entity
         {
             _armyUnitsLocal.Add(u.Clone());
         }
-
         
-
         // recalculate mean
         // there is no point doing this in the setter anymore
         // because all the list flushing already threw efficiency out of the window
@@ -178,6 +177,8 @@ public class Army : Entity
         {
             armyUnits.Add(u);
         }
+
+        _deviance = CalculateDeviance();
     }
     #endregion
 
@@ -186,32 +187,7 @@ public class Army : Entity
     {
         _armyUnitsLocal.Add(unit);
     }
-
-    public void AddUnits(List<Unit> units)
-    {
-        _armyUnitsLocal.AddRange(units);
-    }
-
-    public void RemoveUnit(Unit unit)
-    {
-        _armyUnitsLocal.Remove(unit);
-    }
-
-    public float GetAttackDamage()
-    {
-        return attackDamage;
-    }
-
-
-    public void SetUnits(Unit[] units) // Use array because Mirror doesn't support lists in commands 
-    {
-        armyUnits.Clear();
-        foreach (Unit unit in units)
-        {
-            AddUnit(unit);
-        }
-    }
-
+    
     public void Absorb(SyncList<Unit> units)
     {
         ArmyUnits.AddRange(units);
@@ -280,10 +256,14 @@ public class Army : Entity
 
 
 
-    public float GetDeviance()
+    private float CalculateDeviance()
     {
         var armyIdentityColors = _armyUnitsLocal.Select
             (i => new Vector3(i.identityInfo.r, i.identityInfo.g, i.identityInfo.b)).ToList();
+        if (armyIdentityColors.Count == 0)
+        {
+            return 0f;
+        }
         var mean = _meanC;
         // using squared magnitude because it's like a standard
         // PCA uses another three stdev metric
@@ -291,6 +271,11 @@ public class Army : Entity
         var stdev = armyIdentityColors.Sum(c => (c - mean).sqrMagnitude);
         stdev /= armyIdentityColors.Count;
         return stdev;
+    }
+
+    public float GetDeviance()
+    {
+        return _deviance;
     }
 
     // this function does a PCA on the units identites

@@ -70,9 +70,13 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   cameraTransform: {fileID: 0}
+  BaseCreationCost: 5
   fog: {fileID: 2100000, guid: 4cadae2960372db46b24fbeaf4bc88cf, type: 2}
-  fogResolutionX: 32
-  fogResolutionY: 32
+  mergeMaterial: {fileID: 2100000, guid: 95a01779e30ef854993d733871ea2e1d, type: 2}
+  fogResolutionX: 8
+  fogResolutionY: 8
+  mergeResolutionX: 32
+  mergeResolutionY: 32
   viewDistance: 5
 --- !u!114 &616667210013298170
 MonoBehaviour:
@@ -125,8 +129,8 @@ MonoBehaviour:
   max_track_speed: 1
   keyboard_scroll_speed: 0.1
   edge_drag_speed: 1
-  board_min_extent: {x: -5, y: -5}
-  board_max_extent: {x: 5, y: 5}
+  board_min_extent: {x: -35, y: -35}
+  board_max_extent: {x: 35, y: 35}
 --- !u!1 &7075113662870992556
 GameObject:
   m_ObjectHideFlags: 0
@@ -152,7 +156,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7075113662870992556}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 20, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
