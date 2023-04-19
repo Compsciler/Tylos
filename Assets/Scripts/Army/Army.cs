@@ -90,6 +90,7 @@ public class Army : Entity
         armyVisuals = GetComponent<ArmyVisuals>();
         _armyIdentity = GetComponent<ObjectIdentity>();
         armyConversion = GetComponent<ArmyConversion>();
+        armyAudio = GetComponent<ArmyAudio>();
     }
 
     void Update()
