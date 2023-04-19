@@ -30,5 +30,6 @@ public class ArmyAudio : NetworkBehaviour
     public void StopAudio() // Stop all audio
     {
         StopAttackAudio();
+        currentSound = Sound.None;
     }
 }
