@@ -463,7 +463,11 @@ public class Army : Entity
         }
         else
         {
-            if (Vector3.Distance(transform.position, attackTarget.transform.position) <= attackRange)
+            Vector3 offset = attackTarget.transform.position - transform.position;
+            float distance = offset.magnitude;
+            float trueAttackRange = attackRange + transform.lossyScale.x + attackTarget.transform.lossyScale.x; // Takes into account the size of the army and the target
+
+            if (distance <= trueAttackRange)
             {
                 entityMovement.Stop();
                 attackTarget.EntityHealth.TakeDamage(attackDamage * Time.deltaTime);
@@ -472,6 +476,7 @@ public class Army : Entity
             {
                 entityMovement.Move(attackTarget.transform.position);
             }
+
         }
     }
 
