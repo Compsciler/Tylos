@@ -15,6 +15,8 @@ public class HotkeyButtons : MonoBehaviour
     [SerializeField] Color convertButtonOnColor;
     Color offModeColor;
 
+    [SerializeField] EntityCommandGiver entityCommandGiver;
+
     void Awake()
     {
         EntityCommandGiver.AuthorityOnModeChanged += AuthorityHandleModeChanged;
@@ -50,5 +52,11 @@ public class HotkeyButtons : MonoBehaviour
         {
             button.GetComponent<RawImage>().color = offModeColor;
         }
+    }
+
+    public void SetStatusMode(int modeInt)
+    {
+        EntityCommandGiver.Mode mode = (EntityCommandGiver.Mode)modeInt;
+        entityCommandGiver.Mode_ = mode;
     }
 }

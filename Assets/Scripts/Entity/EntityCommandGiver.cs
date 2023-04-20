@@ -11,7 +11,11 @@ public class EntityCommandGiver : NetworkBehaviour
 
     private Camera mainCamera;
     private Mode mode = Mode.Attack; // Determines what right click does 
-    public Mode Mode_ => mode;
+    public Mode Mode_
+    {
+        get => mode;
+        set => mode = value;
+    }
     private Mode prevMode;
 
     public static event Action<Mode> AuthorityOnModeChanged;
