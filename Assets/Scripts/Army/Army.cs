@@ -463,11 +463,7 @@ public class Army : Entity
         }
         else
         {
-            Vector3 offset = attackTarget.transform.position - transform.position;
-            float distance = offset.magnitude;
-            float trueAttackRange = attackRange + transform.lossyScale.x + attackTarget.transform.lossyScale.x; // Takes into account the size of the army and the target
-
-            if (distance <= trueAttackRange)
+            if (IsInRange(attackTarget.transform.position, attackRange))
             {
                 entityMovement.Stop();
                 attackTarget.EntityHealth.TakeDamage(attackDamage * Time.deltaTime);
@@ -503,7 +499,7 @@ public class Army : Entity
         }
         else
         {
-            if (Vector3.Distance(transform.position, convertTarget.transform.position) <= attackRange)
+            if (IsInRange(convertTarget.transform.position, attackRange))
             {
                 entityMovement.Stop();
                 if (convertArmy == null)
@@ -609,6 +605,15 @@ public class Army : Entity
         }
     }
     #endregion
+
+    private bool IsInRange(Vector3 targetPosition, float range)
+    {
+        Vector3 offset = targetPosition - transform.position;
+        float distance = offset.magnitude;
+        float trueAttackRange = attackRange + transform.lossyScale.x + attackTarget.transform.lossyScale.x; // Takes into account the size of the army and the target
+
+        return (distance <= trueAttackRange);
+    }
 }
 
 public enum ArmyState
