@@ -33,11 +33,9 @@ public class MyPlayer : NetworkBehaviour
     Texture2D fogTex;
     Texture2D mergeTex;
     PlayerArmies myPlayerArmies;
-
     ObjectIdentity playerIdentity;
     Color teamColor = new Color();
     public Color TeamColor => teamColor;
-
     private Controls controls;
 
 
