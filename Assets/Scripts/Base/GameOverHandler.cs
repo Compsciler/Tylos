@@ -31,17 +31,23 @@ public class GameOverHandler : NetworkBehaviour
     {
         MyPlayer basePlayer = base_.connectionToClient.identity.GetComponent<MyPlayer>();
         List<Base> playerBases = basePlayer.MyBases;
+        Debug.Log($"Player {basePlayer.connectionToClient.connectionId} has {playerBases.Count} bases");
 
         if (playerBases.Count > 0) { return; }
 
         networkManager.RemovePlayerFromRemainingPlayers(basePlayer);
         // TODO: Invoke event to notify players of eliminated player
 
+        Debug.Log($"Remaining players: {networkManager.RemainingPlayers.Count}");
+
         if (networkManager.RemainingPlayers.Count > 1) { return; }
 
         int winningPlayerId = networkManager.RemainingPlayers[0].connectionToClient.connectionId;
 
-        RpcGameOver($"Player {winningPlayerId}");  // TODO: Change to player name or just id
+        string winningPlayer = $"Player {winningPlayerId}";  // TODO: Change to player name or just id
+        RpcGameOver(winningPlayer);
+
+        Debug.Log($"{winningPlayer} wins");
 
         ServerOnGameOver?.Invoke();
     }

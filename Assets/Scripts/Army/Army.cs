@@ -6,8 +6,6 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Events;
 using Mirror;
-using Unity.VisualScripting;
-using UnityEngine.AI;
 
 [RequireComponent(typeof(ArmyMovement), typeof(ArmyHealth), typeof(ArmyVisuals))]
 public class Army : Entity
@@ -46,6 +44,8 @@ public class Army : Entity
     public ArmyConversion ArmyConversion => armyConversion;
     #endregion
 
+    private const float ConversionRateAbsorb = 0.3f;
+    private const float ConversionRateIdle = 0.02f;
     #region Events
     public static event Action<Army> ServerOnArmySpawned;
     public static event Action<Army> ServerOnArmyDespawned;
@@ -55,7 +55,10 @@ public class Army : Entity
 
     // the mean of the army identity on complex plane
     // this is calculated on on unit add/remove
+    private Vector3 _meanC;
     private Vector2 _meanZ;
+    private float _deviance;
+    
     // the complex version of the armies
     // TODO: please refactor this to be a part of identity info
     // this is updated per frame
@@ -123,44 +126,39 @@ public class Army : Entity
 
     private void FixedUpdate()
     {
-        // I really don't want to calculate this multiple times per frame
-        // ideally this is refactored into IdentityInfo
         _armyUnitsLocal.Clear();
 
         foreach (var u in armyUnits)
         {
             _armyUnitsLocal.Add(u.Clone());
         }
-        // flush the complex version list
-        _armyComplex = IdentityComplex();
-
+        
         // recalculate mean
         // there is no point doing this in the setter anymore
         // because all the list flushing already threw efficiency out of the window
-
+        _armyComplex = ArmyUnits.Select(i => i.GetIdentityZ()).ToList();
+        
+        _meanC = Vector3.zero;
         _meanZ = Vector2.zero;
+        
+        foreach (var u in _armyUnitsLocal)
+        {
+            _meanC += new Vector3(u.identityInfo.r, u.identityInfo.g,u.identityInfo.b);
+        }
+
         foreach (var z in _armyComplex)
         {
             _meanZ += z;
         }
-        _meanZ /= _armyComplex.Count;
 
-        // var mean = Vector2.zero;
-        // foreach (var z in _armyComplex)
-        // {
-        //     mean += z;
-        // }
-        // mean /= _armyComplex.Count;
-        // Debug.Log(mean);
-
-
+        _meanC /= _armyUnitsLocal.Count;
+        _meanZ /= _armyUnitsLocal.Count;
+        
+        
         // update the army's visual color
-        _meanAngle = Mathf.Atan2(_meanZ.y, _meanZ.x);
-        var meanH = ((_meanAngle + twoPI) % twoPI) / twoPI;
-        var meanColor = Color.HSVToRGB(meanH, 1f, 1f);
-        _armyIdentity.SetIdentity(meanColor.r, meanColor.g, meanColor.b);
+        _armyIdentity.SetIdentity(_meanC.x, _meanC.y, _meanC.z);
 
-        ProcessMeanIdentityShift();
+        ProcessMeanIdentityShift(_meanC, ConversionRateIdle * Time.fixedDeltaTime);
         // flush the synced list
         armyUnits.Clear();
         foreach (var u in _armyUnitsLocal)
@@ -168,6 +166,7 @@ public class Army : Entity
             armyUnits.Add(u);
         }
 
+        _deviance = CalculateDeviance();
     }
     #endregion
 
@@ -176,72 +175,68 @@ public class Army : Entity
     {
         _armyUnitsLocal.Add(unit);
     }
-
-    public void AddUnits(List<Unit> units)
+    
+    public void Absorb(SyncList<Unit> units)
     {
-        _armyUnitsLocal.AddRange(units);
-    }
+        ArmyUnits.AddRange(units);
+        // I really don't want to calculate this multiple times per frame
+        // ideally this is refactored into IdentityInfo
+        _armyUnitsLocal.Clear();
 
-    public void RemoveUnit(Unit unit)
-    {
-        _armyUnitsLocal.Remove(unit);
-    }
-
-    public float GetAttackDamage()
-    {
-        return attackDamage;
-    }
-
-
-    public void SetUnits(Unit[] units) // Use array because Mirror doesn't support lists in commands 
-    {
-        armyUnits.Clear();
-        foreach (Unit unit in units)
+        foreach (var u in armyUnits)
         {
-            AddUnit(unit);
+            _armyUnitsLocal.Add(u.Clone());
+        }
+
+        // recalculate mean
+        // there is no point doing this in the setter anymore
+        // because all the list flushing already threw efficiency out of the window
+        var meanC = Vector3.zero;
+        foreach (var u in _armyUnitsLocal)
+        {
+            meanC += new Vector3(u.identityInfo.r, u.identityInfo.g,u.identityInfo.b);
+        }
+        meanC /= _armyUnitsLocal.Count;
+
+        // var mean = Vector2.zero;
+        // foreach (var z in _armyComplex)
+        // {
+        //     mean += z;
+        // }
+        // mean /= _armyComplex.Count;
+        // Debug.Log(mean);
+        
+        // update the army's visual color
+        _armyIdentity.SetIdentity(meanC.x, meanC.y, meanC.z);
+
+        ProcessMeanIdentityShift(meanC, ConversionRateAbsorb);
+        // flush the synced list
+        armyUnits.Clear();
+        foreach (var u in _armyUnitsLocal)
+        {
+            armyUnits.Add(u);
         }
     }
     #endregion
 
     #region ColorIdentity 
 
-    private void ProcessMeanIdentityShift()
+    private void ProcessMeanIdentityShift(Vector3 meanC, float step)
     {
         for (int i = 0; i < _armyUnitsLocal.Count; i++)
         {
             // this is the hsv identity of the unit we are currently dealing with
             var identity = _armyUnitsLocal[i].identityInfo;
-            var originalColor = new Color(identity.r, identity.g, identity.b);
-            Color.RGBToHSV(originalColor, out var h, out var s, out var v);
-
-            // this is fine?
-            // if both y and x are zero
-            // it just gives 0, which should have not effect in the subsequent calculation anyways
-            var angle = Mathf.Atan2(_armyComplex[i].y, _armyComplex[i].x);
-
-            // for whatever reason this shit operates in degrees
-            // so I will have to convert to deg and convert it back
-            var newAngle = Mathf.MoveTowardsAngle
-                (
-                    angle / Mathf.PI * 180f,
-                    _meanAngle / Mathf.PI * 180f,
-                    _identityChangeRate * Time.fixedDeltaTime
-                );
-
-            newAngle = newAngle / 180f * Mathf.PI;
-
-            // an awkward way to compress it into 0-1
-
-            var newH = ((newAngle + twoPI) % twoPI) / twoPI;
-
-            var newColor = Color.HSVToRGB(newH, s, v);
-
+            var originalColor = new Vector3(identity.r, identity.g, identity.b);
+            
+            var deltaNewColor = (meanC - originalColor) * step;
+            var newColor = originalColor + deltaNewColor;
 
             var newUnit = _armyUnitsLocal[i].Clone();
 
-            newUnit.identityInfo.r = newColor.r;
-            newUnit.identityInfo.g = newColor.g;
-            newUnit.identityInfo.b = newColor.b;
+            newUnit.identityInfo.r = newColor.x;
+            newUnit.identityInfo.g = newColor.y;
+            newUnit.identityInfo.b = newColor.z;
 
             _armyUnitsLocal[i] = newUnit;
         }
@@ -249,16 +244,26 @@ public class Army : Entity
 
 
 
-    public float GetDeviance()
+    private float CalculateDeviance()
     {
-        var armyComplex = _armyComplex;
-        var mean = _meanZ;
+        var armyIdentityColors = _armyUnitsLocal.Select
+            (i => new Vector3(i.identityInfo.r, i.identityInfo.g, i.identityInfo.b)).ToList();
+        if (armyIdentityColors.Count == 0)
+        {
+            return 0f;
+        }
+        var mean = _meanC;
         // using squared magnitude because it's like a standard
         // PCA uses another three stdev metric
         // is there a way to unify them to reduce problems?
-        var stdev = armyComplex.Sum(c => (c - mean).sqrMagnitude);
-        stdev /= armyComplex.Count;
+        var stdev = armyIdentityColors.Sum(c => (c - mean).sqrMagnitude);
+        stdev /= armyIdentityColors.Count;
         return stdev;
+    }
+
+    public float GetDeviance()
+    {
+        return _deviance;
     }
 
     // this function does a PCA on the units identites

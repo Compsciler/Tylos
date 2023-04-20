@@ -9,6 +9,9 @@ public class PieChartController : MonoBehaviour
     public Image greenImage;
     public Image blueImage;
 
+    Army army;
+    ObjectIdentity armyObjectIdentity;
+
     void Awake()
     {
         SelectedUnitsInfoController.AuthorityOnArmyInfoOpened += AuthorityHandleArmyInfoOpened;
@@ -19,6 +22,13 @@ public class PieChartController : MonoBehaviour
     {
         SelectedUnitsInfoController.AuthorityOnArmyInfoOpened -= AuthorityHandleArmyInfoOpened;
         SelectedUnitsInfoController.AuthorityOnArmyInfoClosed -= AuthorityHandleArmyInfoClosed;
+    }
+
+    void Update()
+    {
+        if (army == null) { return; }
+        IdentityInfo armyIdentity = armyObjectIdentity.Identity;
+        UpdatePieChart(armyIdentity.r, armyIdentity.g, armyIdentity.b);
     }
 
     public void UpdatePieChart(float redValue, float greenValue, float blueValue)
@@ -43,9 +53,13 @@ public class PieChartController : MonoBehaviour
 
     private void AuthorityHandleArmyInfoOpened(Army army)
     {
-        IdentityInfo armyIdentity = army.GetComponent<ObjectIdentity>().Identity;
-        UpdatePieChart(armyIdentity.r, armyIdentity.g, armyIdentity.b);
+        this.army = army;
+        armyObjectIdentity = army.GetComponent<ObjectIdentity>();
     }
 
-    private void AuthorityHandleArmyInfoClosed(Army army) { }
+    private void AuthorityHandleArmyInfoClosed(Army army)
+    {
+        this.army = null;
+        armyObjectIdentity = null;
+    }
 }

@@ -9,6 +9,7 @@ public class MyNetworkManager : NetworkManager
 {
     [Header("MyNetworkManager")]
     [SerializeField] GameObject basePrefab;
+    [SerializeField] GameOverHandler gameOverHandler;
 
     [Scene]
     [SerializeField] string gameScene;
@@ -65,6 +66,7 @@ public class MyNetworkManager : NetworkManager
         if (players.Count < 2 && !canStartWith1Player) { return; }
 
         isGameInProgress = true;
+        remainingPlayers = new List<MyPlayer>(players);
 
         ServerChangeScene(gameScene);
     }
@@ -102,23 +104,29 @@ public class MyNetworkManager : NetworkManager
     {
         if (newSceneName == gameScene)
         {
-            // GameOverHandler gameOverHandlerInstance = Instantiate(gameOverHandler);  // TODO: Add GameOverHandler
+            GameOverHandler gameOverHandlerInstance = Instantiate(gameOverHandler);
 
-            // NetworkServer.Spawn(gameOverHandlerInstance.gameObject);
+            NetworkServer.Spawn(gameOverHandlerInstance.gameObject);
 
             foreach (MyPlayer player in players)
             {
-                IdentityInfo playerIdentity = SetAndGetPlayerIdentity(player);
-
-                GameObject baseInstance = Instantiate(
-                    basePrefab,
-                    GetStartPosition().position,
-                    Quaternion.identity);
-                SetBaseIdentityToPlayerIdentity(baseInstance, playerIdentity);  // If you move this line to after the Spawn() call, the base will be the wrong color for a few frames somehow
-
-                NetworkServer.Spawn(baseInstance, player.connectionToClient);
+                SetAndGetPlayerIdentity(player);
+                MakeBase(player, GetStartPosition().position);
             }
         }
+    }
+
+    public void MakeBase(MyPlayer player, Vector3 position)
+    {
+        IdentityInfo playerIdentity = player.GetComponent<ObjectIdentity>().Identity;
+
+        GameObject baseInstance = Instantiate(
+                    basePrefab,
+                    position,
+                    Quaternion.identity);
+        SetBaseIdentityToPlayerIdentity(baseInstance, playerIdentity);  // If you move this line to after the Spawn() call, the base will be the wrong color for a few frames somehow
+
+        NetworkServer.Spawn(baseInstance, player.connectionToClient);
     }
 
     private IdentityInfo SetAndGetPlayerIdentity(MyPlayer player)

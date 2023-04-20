@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using static GameStats;
 
 [RequireComponent(typeof(PlayerArmies))]
@@ -15,16 +16,29 @@ public class MyPlayer : NetworkBehaviour
     int playerId = -1;
 
     GameStats stats = new GameStats();
+    [SerializeField] int BaseCreationCost = 5;
     List<Army> myArmies = new List<Army>();
     public List<Army> MyArmies => myArmies;
     List<Base> myBases = new List<Base>();
     public List<Base> MyBases => myBases;
 
+    [SerializeField] public Material fog;
+    [SerializeField] public Material mergeMaterial;
+
+    [SerializeField] public int fogResolutionX = 32;
+    [SerializeField] public int fogResolutionY = 32;
+    [SerializeField] public int mergeResolutionX = 32;
+    [SerializeField] public int mergeResolutionY = 32;
+    [SerializeField] public float viewDistance = 4;
+    Texture2D fogTex;
+    Texture2D mergeTex;
     PlayerArmies myPlayerArmies;
 
     ObjectIdentity playerIdentity;
     Color teamColor = new Color();
     public Color TeamColor => teamColor;
+
+    private Controls controls;
 
 
     [SyncVar(hook = nameof(AuthorityHandlePartyOwnerStateUpdated))]
@@ -136,6 +150,7 @@ public class MyPlayer : NetworkBehaviour
 
     public override void OnStartAuthority()  // Start() for objects the client owns (equivalent to OnStartClient() with !isOwned guard)
     {
+        setupFog();
         if (NetworkServer.active) { return; }  // Return if this is running as the server (before isClientOnly is set)
 
         Army.AuthorityOnArmySpawned += AuthorityHandleArmySpawned;
@@ -143,9 +158,107 @@ public class MyPlayer : NetworkBehaviour
         Base.AuthorityOnBaseSpawned += AuthorityHandleBaseSpawned;
         Base.AuthorityOnBaseDespawned += AuthorityHandleBaseDespawned;
     }
+    private void setupFog()
+    {
+        fogTex = new Texture2D(fogResolutionX, fogResolutionY);
+        fogTex.wrapModeU = TextureWrapMode.Clamp;
+        fogTex.wrapModeV = TextureWrapMode.Clamp;
+        fog.SetTexture("FogTex", fogTex);
 
+        mergeTex = new Texture2D(mergeResolutionX, mergeResolutionY);
+        mergeTex.wrapModeU = TextureWrapMode.Clamp;
+        mergeTex.wrapModeV = TextureWrapMode.Clamp;
+        mergeMaterial.SetTexture("UnitTex", mergeTex);
+        mergeMaterial.SetColor("FillColor", new Color(0, 1, 1, 1));
+    }
+
+    [ClientCallback]
+    void Update()
+    {
+        if (fogTex == null || mergeTex == null)
+        {
+            return;
+        }
+        float[] fogVals = new float[fogResolutionX * fogResolutionY];
+        float[] mergeVals = new float[mergeResolutionX * mergeResolutionY];
+        for (int i = 0; i < fogResolutionX * fogResolutionY; i++)
+        {
+            fogVals[i] = 1;
+        }
+
+        foreach (Army army in myArmies)
+        {
+            for (int y = 0; y < fogResolutionY; y++)
+            {
+                for (int x = 0; x < fogResolutionX; x++)
+                {
+                    float game_x = -(((float)(x + 0.5) / fogResolutionX) * 20 - 10);
+                    float game_y = -(((float)(y + 0.5) / fogResolutionY) * 20 - 10);
+                    double d_x = army.transform.position.x - game_x;
+                    double d_y = army.transform.position.z - game_y;
+                    double dist = Math.Sqrt(d_x * d_x + d_y * d_y) / viewDistance / 2;
+                    fogVals[x + y * fogResolutionX] = Math.Min(fogVals[x + y * fogResolutionX], (float)dist);
+                }
+            }
+
+            float scale = army.transform.localScale.x;
+
+            for (int y = 0; y < mergeResolutionY; y++)
+            {
+                for (int x = 0; x < mergeResolutionX; x++)
+                {
+                    float game_x = -(((float)(x + 0.5) / mergeResolutionX) * 20 - 10);
+                    float game_y = -(((float)(y + 0.5) / mergeResolutionY) * 20 - 10);
+                    double d_x = army.transform.position.x - game_x;
+                    double d_y = army.transform.position.z - game_y;
+                    double dist = Math.Sqrt(d_x * d_x + d_y * d_y);
+                    double sdf_height = ((((scale - dist) - 1) * 0.8) + 1) * 0.6;
+                    mergeVals[x + y * mergeResolutionX] += (float)Math.Clamp(sdf_height, 0, 0.499);
+                }
+            }
+        }
+
+
+
+        foreach (Base b in myBases)
+        {
+            for (int y = 0; y < fogResolutionY; y++)
+            {
+                for (int x = 0; x < fogResolutionX; x++)
+                {
+                    float game_x = -(((float)x / fogResolutionX) * 20 - 10);
+                    float game_y = -(((float)y / fogResolutionY) * 20 - 10);
+                    double d_x = b.transform.position.x - game_x;
+                    double d_y = b.transform.position.z - game_y;
+                    double dist = Math.Sqrt(d_x * d_x + d_y * d_y) / viewDistance / 2;
+                    fogVals[x + y * fogResolutionX] = Math.Min(fogVals[x + y * fogResolutionX], (float)dist);
+                }
+            }
+        }
+
+        for (int y = 0; y < fogResolutionY; y++)
+        {
+            for (int x = 0; x < fogResolutionX; x++)
+            {
+                fogTex.SetPixel(x, y, new Color(fogVals[x + y * fogResolutionX], 0, 0, 0));
+            }
+        }
+        for (int y = 0; y < mergeResolutionY; y++)
+        {
+            for (int x = 0; x < mergeResolutionX; x++)
+            {
+                mergeTex.SetPixel(x, y, new Color(mergeVals[x + y * mergeResolutionX], teamColor.r, teamColor.g, teamColor.b));
+            }
+        }
+        fogTex.Apply(true, false);
+        mergeTex.Apply(true, false);
+    }
     public override void OnStartClient()
     {
+        controls = new Controls();
+        controls.Player.MakeBase.performed += makeBase;
+        controls.Enable();
+
         if (NetworkServer.active) { return; }
 
         DontDestroyOnLoad(gameObject);
@@ -201,6 +314,25 @@ public class MyPlayer : NetworkBehaviour
     private void AuthorityHandleBaseDespawned(Base base_)
     {
         myBases.Remove(base_);
+    }
+
+    private void makeBase(InputAction.CallbackContext input)
+    {
+        foreach (Entity e in SelectionHandler.SelectedEntities)
+        {
+            if (e is Army army)
+            {
+                if (army.ArmyUnits.Count > BaseCreationCost)
+                {
+                    for (int i = 0; i < BaseCreationCost; i++)
+                    {
+                        army.ArmyUnits.RemoveAt(0);
+                    }
+                ((MyNetworkManager)NetworkManager.singleton).MakeBase(this, army.transform.position);
+                }
+            }
+
+        }
     }
 
     #endregion
