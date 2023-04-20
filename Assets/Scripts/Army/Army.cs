@@ -58,7 +58,7 @@ public class Army : Entity
     private Vector3 _meanC;
     private Vector2 _meanZ;
     private float _deviance;
-    
+
     // the complex version of the armies
     // TODO: please refactor this to be a part of identity info
     // this is updated per frame
@@ -132,18 +132,18 @@ public class Army : Entity
         {
             _armyUnitsLocal.Add(u.Clone());
         }
-        
+
         // recalculate mean
         // there is no point doing this in the setter anymore
         // because all the list flushing already threw efficiency out of the window
         _armyComplex = ArmyUnits.Select(i => i.GetIdentityZ()).ToList();
-        
+
         _meanC = Vector3.zero;
         _meanZ = Vector2.zero;
-        
+
         foreach (var u in _armyUnitsLocal)
         {
-            _meanC += new Vector3(u.identityInfo.r, u.identityInfo.g,u.identityInfo.b);
+            _meanC += new Vector3(u.identityInfo.r, u.identityInfo.g, u.identityInfo.b);
         }
 
         foreach (var z in _armyComplex)
@@ -153,8 +153,8 @@ public class Army : Entity
 
         _meanC /= _armyUnitsLocal.Count;
         _meanZ /= _armyUnitsLocal.Count;
-        
-        
+
+
         // update the army's visual color
         _armyIdentity.SetIdentity(_meanC.x, _meanC.y, _meanC.z);
 
@@ -175,7 +175,7 @@ public class Army : Entity
     {
         _armyUnitsLocal.Add(unit);
     }
-    
+
     public void Absorb(SyncList<Unit> units)
     {
         ArmyUnits.AddRange(units);
@@ -194,7 +194,7 @@ public class Army : Entity
         var meanC = Vector3.zero;
         foreach (var u in _armyUnitsLocal)
         {
-            meanC += new Vector3(u.identityInfo.r, u.identityInfo.g,u.identityInfo.b);
+            meanC += new Vector3(u.identityInfo.r, u.identityInfo.g, u.identityInfo.b);
         }
         meanC /= _armyUnitsLocal.Count;
 
@@ -205,7 +205,7 @@ public class Army : Entity
         // }
         // mean /= _armyComplex.Count;
         // Debug.Log(mean);
-        
+
         // update the army's visual color
         _armyIdentity.SetIdentity(meanC.x, meanC.y, meanC.z);
 
@@ -228,7 +228,7 @@ public class Army : Entity
             // this is the hsv identity of the unit we are currently dealing with
             var identity = _armyUnitsLocal[i].identityInfo;
             var originalColor = new Vector3(identity.r, identity.g, identity.b);
-            
+
             var deltaNewColor = (meanC - originalColor) * step;
             var newColor = originalColor + deltaNewColor;
 
@@ -485,12 +485,13 @@ public class Army : Entity
     public void CmdConvert(Entity entity)
     {
         if (entity == null) { return; }
-        if (entity.GetComponent<Army>() == null)
+        Army army = entity.GetComponent<Army>();
+        if (army == null)
         {
             return;
         }
         convertTarget = entity;
-        convertArmy = entity.GetComponent<Army>();
+        convertArmy = army;
         SetState(ArmyState.Converting);
     }
 
