@@ -270,7 +270,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1792422645865636151
 RectTransform:
   m_ObjectHideFlags: 0
@@ -395,7 +395,6 @@ GameObject:
   - component: {fileID: 3261407148654518945}
   - component: {fileID: 7042217896372466165}
   - component: {fileID: 8078991972788428822}
-  - component: {fileID: 1665243142952872343}
   m_Layer: 10
   m_Name: Army
   m_TagString: Untagged
@@ -872,24 +871,6 @@ MonoBehaviour:
     m_RotationOrder: 4
   maxUnitCount: 30
   resetTime: 0.5
---- !u!114 &1665243142952872343
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6339527542047456646}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8e5474ef0ad10244965b45acdc58486, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  armyStatusParent: {fileID: 2928192584767313432}
-  armyStatusImage: {fileID: 6338228902851297746}
-  armyAttackStatusSprite: {fileID: 21300000, guid: b504c77072c710f44b352f1c8979a836,
-    type: 3}
-  armyConvertStatusSprite: {fileID: 21300000, guid: 984aa7f10182fab41be981f3655f654f,
-    type: 3}
 --- !u!1 &7852609698321682917
 GameObject:
   m_ObjectHideFlags: 0

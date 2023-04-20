@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 852401006412576272}
   - component: {fileID: 8416082669287357593}
   - component: {fileID: 3113140194126406409}
+  - component: {fileID: 231090195}
   m_Layer: 0
   m_Name: HUDController
   m_TagString: Untagged
@@ -62,6 +63,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fadeOverlay: {fileID: 5752562655702580403}
   fadeDuration: 1
+--- !u!114 &231090195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5205899500675863861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de04753f5f230b04c926aefe3b9b734f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackButton: {fileID: 7740113768297701799}
+  convertButton: {fileID: 7740113768063635076}
+  attackButtonOnColor: {r: 1, g: 0, b: 0, a: 1}
+  convertButtonOnColor: {r: 0, g: 1, b: 0, a: 1}
 --- !u!1 &5752562655702580403
 GameObject:
   m_ObjectHideFlags: 0
@@ -80,7 +97,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3445176289546102426
 RectTransform:
   m_ObjectHideFlags: 0
@@ -429,6 +446,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1639174269492999873}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7740113768063635076 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9067413075562084421, guid: 593c2ac6cba12b14a84f79078c46e61a,
+    type: 3}
+  m_PrefabInstance: {fileID: 1639174269492999873}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &7740113768188566110 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 9067413075483323551, guid: 593c2ac6cba12b14a84f79078c46e61a,
@@ -439,6 +468,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7740113768297701799 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9067413075323885414, guid: 593c2ac6cba12b14a84f79078c46e61a,
+    type: 3}
+  m_PrefabInstance: {fileID: 1639174269492999873}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!224 &7740113769277149176 stripped

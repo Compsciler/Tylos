@@ -12,6 +12,7 @@ public class FadeIn : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        fadeOverlay.gameObject.SetActive(true);
         _canvasGroup = fadeOverlay.GetComponent<CanvasGroup>();
         StartCoroutine(Fade());
     }
@@ -19,9 +20,9 @@ public class FadeIn : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
-    
+
     private IEnumerator Fade()
     {
         float elapsedTime = 0f;
