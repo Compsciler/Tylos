@@ -168,6 +168,7 @@ public class MyNetworkManager : NetworkManager
     {
         ObjectIdentity baseObjectIdentity = baseInstance.GetComponent<ObjectIdentity>();
         baseObjectIdentity.SetIdentity(playerIdentity);
+        baseObjectIdentity.SetTeamIdentity(playerIdentity);
     }
 
 

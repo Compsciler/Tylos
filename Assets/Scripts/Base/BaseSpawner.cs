@@ -20,7 +20,9 @@ public class BaseSpawner : NetworkBehaviour
             armyPrefab,
             armySpawnPoint.position,
             armySpawnPoint.rotation);
-        armyInstance.GetComponent<ObjectIdentity>().SetIdentity(identity);
+        ObjectIdentity objectIdentity = armyInstance.GetComponent<ObjectIdentity>();
+        objectIdentity.SetIdentity(identity);
+        objectIdentity.SetTeamIdentity(identity);
 
         Army army = armyInstance.GetComponent<Army>();
         army.SetUnits(identity, count);

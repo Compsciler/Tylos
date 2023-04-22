@@ -12,7 +12,14 @@ public class ObjectIdentity : NetworkBehaviour
     IdentityInfo identity;
     public IdentityInfo Identity => identity;
 
-    public static event Action<ObjectIdentity> ServerOnIdentityUpdated;
+    [SyncVar(hook = nameof(HandleTeamIdentityUpdated))]
+    [SerializeField]
+    IdentityInfo teamIdentity; 
+    public IdentityInfo TeamIdentity => teamIdentity;
+
+    public static event Action<ObjectIdentity> ServerOnTeamIdentityUpdated;
+
+    public event Action<ObjectIdentity> ServerOnIdentityUpdated;
 
 
     public Color GetColorFromIdentity()
@@ -27,6 +34,13 @@ public class ObjectIdentity : NetworkBehaviour
     {
         this.identity = identity;
     }
+
+    [Server]
+    public void SetTeamIdentity(IdentityInfo identity)
+    {
+        teamIdentity = identity;
+    }
+
     [Server]
     public void SetIdentity(float r, float g, float b)
     {
@@ -37,6 +51,12 @@ public class ObjectIdentity : NetworkBehaviour
 
     #region Client
 
+    private void HandleTeamIdentityUpdated(IdentityInfo oldIdentity, IdentityInfo newIdentity)
+    {
+        ServerOnTeamIdentityUpdated?.Invoke(this);
+    }
+
+    [Client]
     private void HandleIdentityUpdated(IdentityInfo oldIdentity, IdentityInfo newIdentity)
     {
         ServerOnIdentityUpdated?.Invoke(this);
@@ -63,6 +83,12 @@ public struct IdentityInfo
         r = color.r;
         g = color.g;
         b = color.b;
+    }
+    public IdentityInfo(IdentityInfo identity)
+    {
+        r = identity.r;
+        g = identity.g;
+        b = identity.b;
     }
 
     public Color GetColor()
