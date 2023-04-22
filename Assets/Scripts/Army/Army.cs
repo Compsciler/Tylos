@@ -112,11 +112,11 @@ public class Army : Entity
             switch (state)
             {
                 case ArmyState.Attacking:
-                    if (attackTarget != null && Vector3.Distance(transform.position, attackTarget.transform.position) <= attackRange)
+                    if (attackTarget != null && IsInRange(attackTarget.transform.position, attackRange))
                         armyVisuals.DrawDeathRay(attackTarget.transform.position);
                     break;
                 case ArmyState.Converting:
-                    if (convertTarget != null && Vector3.Distance(transform.position, convertTarget.transform.position) <= attackRange)
+                    if (convertTarget != null && IsInRange(convertTarget.transform.position, attackRange))
                         // TODO: Draw convert ray
                         armyVisuals.DrawDeathRay(convertTarget.transform.position);
                     break;
@@ -468,7 +468,7 @@ public class Army : Entity
         }
         else
         {
-            if (Vector3.Distance(transform.position, attackTarget.transform.position) <= attackRange)
+            if (IsInRange(attackTarget.transform.position, attackRange))
             {
                 entityMovement.Stop();
                 attackTarget.EntityHealth.TakeDamage(attackDamage * Time.deltaTime);
@@ -503,7 +503,7 @@ public class Army : Entity
         }
         else
         {
-            if (Vector3.Distance(transform.position, convertTarget.transform.position) <= attackRange)
+            if (IsInRange(convertTarget.transform.position, attackRange))
             {
                 entityMovement.Stop();
                 if (convertArmy == null)
@@ -607,6 +607,15 @@ public class Army : Entity
         {
             AuthorityOnArmyDeselected?.Invoke(this);
         }
+    }
+
+    private bool IsInRange(Vector3 targetPosition, float range)
+    {
+        Vector3 offset = targetPosition - transform.position;
+        float distance = offset.magnitude;
+        float trueAttackRange = attackRange + transform.lossyScale.x + attackTarget.transform.lossyScale.x; // Takes into account the size of the army and the target
+
+        return (distance <= trueAttackRange);
     }
     #endregion
 }
