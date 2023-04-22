@@ -49,7 +49,7 @@ public class BaseUI : MonoBehaviour
         _unitCountUI.transform.position = Camera.main.WorldToScreenPoint(transform.position) + 2.3f*_offset; // World to screen point is used because the canvas is in screen space
         _baseHealthUI.transform.position = Camera.main.WorldToScreenPoint(transform.position) + _offset;
         _unitCountText.text = _base.GetBaseUnitCount().ToString();
-        _healthBarFill.fillAmount = _base.GetBaseHealth();
+        _healthBarFill.fillAmount = _base.GetBaseHealth() / 100.0f;
     }
 
     void OnDisable() {
