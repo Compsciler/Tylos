@@ -12,9 +12,8 @@ public class MainMenu : MonoBehaviour
     [Scene]
     [SerializeField] string lobbyScene;
 
-    [Header("Steam")]
-    [SerializeField] bool useSteam = false;
-    [SerializeField] int maxConnections = 6;  // TODO: Set this to MyNetworkManager.maxConnections
+    bool useSteam;
+    int maxConnections;
 
     protected Callback<LobbyCreated_t> lobbyCreated;
     protected Callback<GameLobbyJoinRequested_t> gameLobbyJoinRequested;
@@ -25,6 +24,9 @@ public class MainMenu : MonoBehaviour
 
     void Start()
     {
+        useSteam = ((MyNetworkManager)MyNetworkManager.singleton).UseSteam;
+        maxConnections = ((MyNetworkManager)MyNetworkManager.singleton).MaxConnections;
+
         if (!useSteam) { return; }
 
         lobbyCreated = Callback<LobbyCreated_t>.Create(OnLobbyCreated);
@@ -55,10 +57,13 @@ public class MainMenu : MonoBehaviour
             return;
         }
 
+        CSteamID lobbyId = new CSteamID(callback.m_ulSteamIDLobby);
+        MyNetworkManager.LobbyId = lobbyId.m_SteamID;
+
         NetworkManager.singleton.StartHost();
 
         SteamMatchmaking.SetLobbyData(
-            new CSteamID(callback.m_ulSteamIDLobby),
+            lobbyId,
             HostAddressKey,
             SteamUser.GetSteamID().ToString());
     }

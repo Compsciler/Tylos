@@ -29,7 +29,7 @@ public class PauseButtonHandler : MonoBehaviour
         pauseScreen.SetActive(false);
     }
 
-    private void TogglePause()
+    public void TogglePause()
     {
         _isPaused = !_isPaused;
         StartCoroutine(FadePauseScreen(_isPaused));

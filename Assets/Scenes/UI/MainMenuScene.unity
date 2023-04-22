@@ -1901,8 +1901,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainMenuScene: Assets/Scenes/UI/MainMenuScene.unity
   lobbyScene: Assets/Scenes/UI/LobbyScene.unity
-  useSteam: 0
-  maxConnections: 6
 --- !u!4 &984870283
 Transform:
   m_ObjectHideFlags: 0

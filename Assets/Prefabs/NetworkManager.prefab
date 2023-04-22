@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 6479063781474349543}
   - component: {fileID: 6058525235975443730}
   - component: {fileID: 6479063781474349541}
-  - component: {fileID: 6028676320575591641}
   - component: {fileID: 4059375377872484927}
+  - component: {fileID: 8680819453598387209}
+  - component: {fileID: 6028676320575591641}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -73,6 +74,7 @@ MonoBehaviour:
   gameOverHandler: {fileID: 7711808745854209600, guid: 50d9ef395e1d380438915a24dcb039e6,
     type: 3}
   gameScene: 
+  useSteam: 0
   canStartWith1Player: 0
 --- !u!114 &6479063781474349541
 MonoBehaviour:
@@ -98,20 +100,6 @@ MonoBehaviour:
   clientMaxReceivesPerTick: 1000
   clientSendQueueLimit: 10000
   clientReceiveQueueLimit: 10000
---- !u!114 &6028676320575591641
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6479063781474349560}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6442dc8070ceb41f094e44de0bf87274, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offsetX: 0
-  offsetY: 0
 --- !u!114 &4059375377872484927
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -128,3 +116,29 @@ MonoBehaviour:
   Timeout: 25
   AllowSteamRelay: 1
   UseNextGenSteamNetworking: 1
+--- !u!114 &8680819453598387209
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6479063781474349560}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a13ba6a484d0e78408e39231bcf1ed5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6028676320575591641
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6479063781474349560}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6442dc8070ceb41f094e44de0bf87274, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offsetX: 0
+  offsetY: 0
