@@ -112,19 +112,11 @@ public class Army : Entity
             switch (state)
             {
                 case ArmyState.Attacking:
-<<<<<<< Updated upstream
-                    if (attackTarget != null && Vector3.Distance(transform.position, attackTarget.transform.position) <= attackRange)
-                        armyVisuals.DrawDeathRay(attackTarget.transform.position);
-                    break;
-                case ArmyState.Converting:
-                    if (convertTarget != null && Vector3.Distance(transform.position, convertTarget.transform.position) <= attackRange)
-=======
                     if (attackTarget != null && IsInRange(attackTarget.gameObject, attackRange))
                         armyVisuals.DrawDeathRay(attackTarget.transform.position);
                     break;
                 case ArmyState.Converting:
                     if (convertTarget != null && IsInRange(convertTarget.gameObject, attackRange))
->>>>>>> Stashed changes
                         // TODO: Draw convert ray
                         armyVisuals.DrawDeathRay(convertTarget.transform.position);
                     break;
@@ -476,11 +468,7 @@ public class Army : Entity
         }
         else
         {
-<<<<<<< Updated upstream
-            if (Vector3.Distance(transform.position, attackTarget.transform.position) <= attackRange)
-=======
             if (IsInRange(attackTarget.gameObject, attackRange))
->>>>>>> Stashed changes
             {
                 entityMovement.Stop();
                 attackTarget.EntityHealth.TakeDamage(attackDamage * Time.deltaTime);
@@ -515,12 +503,8 @@ public class Army : Entity
         }
         else
         {
-<<<<<<< Updated upstream
-            if (Vector3.Distance(transform.position, convertTarget.transform.position) <= attackRange)
-=======
             Debug.Log("convert target position: " + convertTarget.transform.position); 
             if (IsInRange(convertTarget.gameObject, attackRange))
->>>>>>> Stashed changes
             {
                 entityMovement.Stop();
                 if (convertArmy == null)
@@ -625,8 +609,6 @@ public class Army : Entity
             AuthorityOnArmyDeselected?.Invoke(this);
         }
     }
-<<<<<<< Updated upstream
-=======
 
     private bool IsInRange(GameObject target, float range)
     {
@@ -636,7 +618,6 @@ public class Army : Entity
 
         return (distance <= trueAttackRange);
     }
->>>>>>> Stashed changes
     #endregion
 }
 
