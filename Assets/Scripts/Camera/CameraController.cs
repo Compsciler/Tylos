@@ -9,7 +9,6 @@ public class CameraController : NetworkBehaviour
 {
     private List<Entity> following;
     private Controls controls;
-
     private Vector2 lastInput = new Vector2(0, 0);
     [SerializeField] Transform playerCameraTransform;
     [SerializeField] float max_track_speed = 1;
@@ -17,6 +16,9 @@ public class CameraController : NetworkBehaviour
     [SerializeField] float edge_drag_speed = 1;
     [SerializeField] Vector2 board_min_extent = new Vector2(-5, -5);
     [SerializeField] Vector2 board_max_extent = new Vector2(5, 5);
+    [SerializeField] float minOrthographicSize = 5f;
+    [SerializeField] float maxOrthographicSize = 15f;
+    [SerializeField] private float zoomMultiplier = 1f;
 
     public override void OnStartAuthority()
     {
@@ -124,6 +126,14 @@ public class CameraController : NetworkBehaviour
             Vector2 keyboard_delta = lastInput * keyboard_scroll_speed;
             playerCameraTransform.Translate(new Vector3(keyboard_delta.x, keyboard_delta.y));
         }
+        
+        float scrollInput = Input.mouseScrollDelta.y;
+        if (scrollInput != 0)
+        {
+            float newOrthographicSize = Camera.main.orthographicSize - (scrollInput * zoomMultiplier); // Adjust the divisor to control zoom speed
+            Camera.main.orthographicSize = Mathf.Clamp(newOrthographicSize, minOrthographicSize, maxOrthographicSize);
+        }
+        
         constrain_to_board();
         if (Camera.main)
         {
