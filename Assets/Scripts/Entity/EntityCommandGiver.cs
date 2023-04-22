@@ -11,6 +11,11 @@ public class EntityCommandGiver : NetworkBehaviour
 
     private Camera mainCamera;
     private Mode mode = Mode.Attack; // Determines what right click does 
+    public Mode Mode_
+    {
+        get => mode;
+        set => mode = value;
+    }
     private Mode prevMode;
 
     public static event Action<Mode> AuthorityOnModeChanged;
@@ -19,6 +24,7 @@ public class EntityCommandGiver : NetworkBehaviour
     private void Start()
     {
         mainCamera = Camera.main;
+        AuthorityOnModeChanged?.Invoke(mode);
     }
 
     private void Update()
@@ -28,6 +34,16 @@ public class EntityCommandGiver : NetworkBehaviour
         if (Keyboard.current.spaceKey.wasPressedThisFrame)
         {
             mode = mode == Mode.Attack ? Mode.Convert : Mode.Attack;
+            Debug.Log("Mode: " + mode.ToString());
+        }
+        else if (Keyboard.current.eKey.wasPressedThisFrame)
+        {
+            mode = Mode.Attack;
+            Debug.Log("Mode: " + mode.ToString());
+        }
+        else if (Keyboard.current.rKey.wasPressedThisFrame)
+        {
+            mode = Mode.Convert;
             Debug.Log("Mode: " + mode.ToString());
         }
 

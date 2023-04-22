@@ -53,6 +53,9 @@ MonoBehaviour:
     texture: {fileID: 2800000, guid: dafb0dc2989f149469881854d2f19d81, type: 3}
     hotspot: {x: 140, y: 0}
   cursorTypes:
-  - name: 
-    texture: {fileID: 0}
+  - name: CameraMove
+    texture: {fileID: 2800000, guid: 8277e0d4eb39ad543ae3ea68a4f38129, type: 3}
+    hotspot: {x: 0, y: 0}
+  - name: CameraZoom
+    texture: {fileID: 2800000, guid: bfbab20fde79eeb47bc1589623e9fb10, type: 3}
     hotspot: {x: 0, y: 0}

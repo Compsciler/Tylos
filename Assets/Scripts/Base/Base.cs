@@ -81,6 +81,11 @@ public class Base : Entity
         return _baseUnitCount;
     }
 
+    public float GetBaseHealth()
+    {
+        return entityHealth.Health;
+    }
+
     [Client]
     public override void TryMove(Vector3 position) // When move command is issued to the base, spawn an army and move it to the position
     {

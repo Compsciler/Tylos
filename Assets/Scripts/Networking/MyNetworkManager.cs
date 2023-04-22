@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Mirror;
+using Steamworks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -14,12 +15,20 @@ public class MyNetworkManager : NetworkManager
     [Scene]
     [SerializeField] string gameScene;
 
+    [Header("Steam")]
+    [SerializeField] bool useSteam = false;
+    public bool UseSteam => useSteam;
+
+    public static ulong LobbyId { get; set; }
+
     [Header("Testing")]
     [SerializeField] bool canStartWith1Player = false;
     public bool CanStartWith1Player => canStartWith1Player;
 
     public static event Action ClientOnConnected;
     public static event Action ClientOnDisconnected;
+
+    public static event Action<Vector3> SetCameraCenter;
 
     bool isGameInProgress = false;
 
@@ -34,6 +43,8 @@ public class MyNetworkManager : NetworkManager
     public List<MyPlayer> RemainingPlayers => remainingPlayers;
 
     public static event Action<ObjectIdentity> ServerOnPlayerIdentityUpdated;
+
+    public int MaxConnections => maxConnections;
 
 
     #region Server
@@ -79,8 +90,18 @@ public class MyNetworkManager : NetworkManager
 
         players.Add(player);
 
-        player.SetDisplayName($"Player {players.Count}");
-
+        if (useSteam)
+        {
+            CSteamID steamId = SteamMatchmaking.GetLobbyMemberByIndex(
+                new CSteamID(LobbyId),
+                numPlayers - 1
+            );
+            player.SetDisplayName($"{SteamFriends.GetFriendPersonaName(steamId)}");
+        }
+        else
+        {
+            player.SetDisplayName($"Player {players.Count}");
+        }
 
         if (players.Count == 1)
         {
@@ -111,7 +132,9 @@ public class MyNetworkManager : NetworkManager
             foreach (MyPlayer player in players)
             {
                 SetAndGetPlayerIdentity(player);
-                MakeBase(player, GetStartPosition().position);
+                Vector3 pos = GetStartPosition().position;
+                SetCameraCenter?.Invoke(pos);
+                MakeBase(player, pos);
             }
         }
     }
