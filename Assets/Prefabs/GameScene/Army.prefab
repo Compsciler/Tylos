@@ -542,6 +542,10 @@ MonoBehaviour:
     r: 0
     g: 0
     b: 0
+  teamIdentity:
+    r: 0
+    g: 0
+    b: 0
 --- !u!114 &3300536225245654010
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -964,7 +968,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -4877119522031250119, guid: 2214dee6082e40044a5b223284f48a90,
     type: 2}
-  m_audioClip: {fileID: 8300000, guid: 3721a591f2d20494e9541d0ab66fedba, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 4fb0134179d0f0340a05241f19ab2d2d, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1

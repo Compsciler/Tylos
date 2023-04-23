@@ -242,6 +242,7 @@ GameObject:
   - component: {fileID: 6179733354447224450}
   - component: {fileID: 6179733354447224448}
   - component: {fileID: 660053699039476763}
+  - component: {fileID: 3212358329445555723}
   m_Layer: 0
   m_Name: JoinButton
   m_TagString: Untagged
@@ -361,6 +362,19 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
+--- !u!114 &3212358329445555723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6179733354447224478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bddc1448ecca224087c852ae9ddaaf0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clickSound: {fileID: 8300000, guid: 3498ebe686364e04eab7ec53b6886a0b, type: 3}
 --- !u!1 &6179733354455540831
 GameObject:
   m_ObjectHideFlags: 0
@@ -969,6 +983,7 @@ GameObject:
   - component: {fileID: 6179733355748985794}
   - component: {fileID: 6179733355748985792}
   - component: {fileID: 7565020392313577315}
+  - component: {fileID: 4551849612740566008}
   m_Layer: 0
   m_Name: CloseButton
   m_TagString: Untagged
@@ -1099,6 +1114,19 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
+--- !u!114 &4551849612740566008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6179733355748985822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bddc1448ecca224087c852ae9ddaaf0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clickSound: {fileID: 8300000, guid: 561bef2ffe77b5949b7cb6a26788960d, type: 3}
 --- !u!1 &6179733356144680475
 GameObject:
   m_ObjectHideFlags: 0
