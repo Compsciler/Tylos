@@ -3,13 +3,14 @@
   <component name="ChangeListManager">
     <list default="true" id="f9384a0e-6b7e-46a7-ae79-a211d5dacabd" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Tylos/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Tylos/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Inputs/Controls.inputactions" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Inputs/Controls.inputactions" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/GameScene/HUDController.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/GameScene/HUDController.prefab" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Player.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Player.prefab" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Prefabs/UI/CursorManager.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/UI/CursorManager.prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/UI/TitleScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/UI/TitleScene.unity" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Camera/CameraController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Camera/CameraController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Inputs/Controls.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Inputs/Controls.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/UI/CursorManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/UI/CursorManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Textures/UI/Cursor/Zoom Cursor.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Textures/UI/Cursor/Zoom Cursor.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Textures/UI/Cursor/Cursor 2.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Textures/UI/Cursor/Cursor 2.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Textures/UI/Cursor/cursor.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Textures/UI/Cursor/cursor.png.meta" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -112,6 +113,7 @@
       <workItem from="1681671542508" duration="8598000" />
       <workItem from="1682039619638" duration="8785000" />
       <workItem from="1682191106512" duration="1769000" />
+      <workItem from="1682267309508" duration="5053000" />
     </task>
     <servers />
   </component>
