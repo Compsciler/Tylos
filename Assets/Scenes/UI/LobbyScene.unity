@@ -951,6 +951,7 @@ GameObject:
   - component: {fileID: 470439683}
   - component: {fileID: 470439682}
   - component: {fileID: 470439685}
+  - component: {fileID: 470439686}
   m_Layer: 5
   m_Name: TealButton
   m_TagString: Untagged
@@ -1102,6 +1103,19 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &470439686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 470439680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bddc1448ecca224087c852ae9ddaaf0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clickSound: {fileID: 8300000, guid: 3498ebe686364e04eab7ec53b6886a0b, type: 3}
 --- !u!1 &521523028
 GameObject:
   m_ObjectHideFlags: 0
@@ -1115,6 +1129,7 @@ GameObject:
   - component: {fileID: 521523031}
   - component: {fileID: 521523030}
   - component: {fileID: 521523033}
+  - component: {fileID: 521523034}
   m_Layer: 5
   m_Name: GreenButton
   m_TagString: Untagged
@@ -1266,6 +1281,19 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &521523034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 521523028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bddc1448ecca224087c852ae9ddaaf0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clickSound: {fileID: 8300000, guid: 3498ebe686364e04eab7ec53b6886a0b, type: 3}
 --- !u!1 &620247982 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2147471605246139127, guid: 41cf6cb370f97bc4b90617a0a7405055,
@@ -1981,6 +2009,7 @@ GameObject:
   - component: {fileID: 839760832}
   - component: {fileID: 839760835}
   - component: {fileID: 839760836}
+  - component: {fileID: 839760837}
   m_Layer: 5
   m_Name: SettingsButton
   m_TagString: Untagged
@@ -2133,6 +2162,19 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &839760837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 839760830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bddc1448ecca224087c852ae9ddaaf0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clickSound: {fileID: 8300000, guid: 3498ebe686364e04eab7ec53b6886a0b, type: 3}
 --- !u!224 &862009328 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4804023784925585800, guid: cc54b1c160cc5b44ab21e1a7268048c3,
@@ -2241,6 +2283,7 @@ GameObject:
   - component: {fileID: 900029695}
   - component: {fileID: 900029698}
   - component: {fileID: 900029699}
+  - component: {fileID: 900029700}
   m_Layer: 5
   m_Name: StartButton
   m_TagString: Untagged
@@ -2405,6 +2448,19 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &900029700
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 900029693}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bddc1448ecca224087c852ae9ddaaf0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clickSound: {fileID: 8300000, guid: 115ed52074f014044abff385bab95a88, type: 3}
 --- !u!1 &1027350617
 GameObject:
   m_ObjectHideFlags: 0
@@ -2973,6 +3029,7 @@ GameObject:
   - component: {fileID: 1333807068}
   - component: {fileID: 1333807067}
   - component: {fileID: 1333807070}
+  - component: {fileID: 1333807071}
   m_Layer: 5
   m_Name: YellowButton
   m_TagString: Untagged
@@ -3124,6 +3181,19 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &1333807071
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1333807065}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bddc1448ecca224087c852ae9ddaaf0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clickSound: {fileID: 8300000, guid: 3498ebe686364e04eab7ec53b6886a0b, type: 3}
 --- !u!1001 &1348394345
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3274,6 +3344,7 @@ GameObject:
   - component: {fileID: 1353879156}
   - component: {fileID: 1353879155}
   - component: {fileID: 1353879158}
+  - component: {fileID: 1353879159}
   m_Layer: 5
   m_Name: HomeButton
   m_TagString: Untagged
@@ -3438,6 +3509,19 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &1353879159
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1353879153}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bddc1448ecca224087c852ae9ddaaf0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clickSound: {fileID: 8300000, guid: 115ed52074f014044abff385bab95a88, type: 3}
 --- !u!1 &1394484806
 GameObject:
   m_ObjectHideFlags: 0
@@ -3644,6 +3728,7 @@ GameObject:
   - component: {fileID: 1566280857}
   - component: {fileID: 1566280856}
   - component: {fileID: 1566280859}
+  - component: {fileID: 1566280860}
   m_Layer: 5
   m_Name: BlueButton
   m_TagString: Untagged
@@ -3795,6 +3880,19 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &1566280860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1566280854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bddc1448ecca224087c852ae9ddaaf0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clickSound: {fileID: 8300000, guid: 3498ebe686364e04eab7ec53b6886a0b, type: 3}
 --- !u!1 &1633488270 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2147471605246139127, guid: 41cf6cb370f97bc4b90617a0a7405055,
@@ -4346,6 +4444,7 @@ GameObject:
   - component: {fileID: 2128502293}
   - component: {fileID: 2128502292}
   - component: {fileID: 2128502295}
+  - component: {fileID: 2128502296}
   m_Layer: 5
   m_Name: PurpleButton
   m_TagString: Untagged
@@ -4497,6 +4596,19 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &2128502296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2128502290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bddc1448ecca224087c852ae9ddaaf0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clickSound: {fileID: 8300000, guid: 3498ebe686364e04eab7ec53b6886a0b, type: 3}
 --- !u!1 &2145403491
 GameObject:
   m_ObjectHideFlags: 0
@@ -4510,6 +4622,7 @@ GameObject:
   - component: {fileID: 2145403494}
   - component: {fileID: 2145403493}
   - component: {fileID: 2145403496}
+  - component: {fileID: 2145403497}
   m_Layer: 5
   m_Name: RedButton
   m_TagString: Untagged
@@ -4661,6 +4774,19 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &2145403497
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2145403491}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bddc1448ecca224087c852ae9ddaaf0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clickSound: {fileID: 8300000, guid: 3498ebe686364e04eab7ec53b6886a0b, type: 3}
 --- !u!1001 &7452918265730209327
 PrefabInstance:
   m_ObjectHideFlags: 0
