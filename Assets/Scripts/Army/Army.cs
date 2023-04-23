@@ -8,6 +8,7 @@ using UnityEngine.Events;
 using Mirror;
 
 [RequireComponent(typeof(ArmyMovement), typeof(ArmyHealth), typeof(ArmyVisuals))]
+[RequireComponent(typeof(ArmyAudio))]
 public class Army : Entity
 {
     # region variables
@@ -41,6 +42,7 @@ public class Army : Entity
     ArmyVisuals armyVisuals;
     ArmyHealth armyHealth;
     ArmyConversion armyConversion;
+    ArmyAudio armyAudio;
     public ArmyConversion ArmyConversion => armyConversion;
     #endregion
 
@@ -58,7 +60,7 @@ public class Army : Entity
     private Vector3 _meanC;
     private Vector2 _meanZ;
     private float _deviance;
-    
+
     // the complex version of the armies
     // TODO: please refactor this to be a part of identity info
     // this is updated per frame
@@ -88,6 +90,7 @@ public class Army : Entity
         armyVisuals = GetComponent<ArmyVisuals>();
         _armyIdentity = GetComponent<ObjectIdentity>();
         armyConversion = GetComponent<ArmyConversion>();
+        armyAudio = GetComponent<ArmyAudio>();
     }
 
     void Update()
@@ -112,18 +115,28 @@ public class Army : Entity
             switch (state)
             {
                 case ArmyState.Attacking:
-                    if (attackTarget != null && IsInRange(attackTarget.transform.position, attackRange))
+                    if (attackTarget != null && IsInRange(attackTarget.gameObject, attackRange))
+                    {
                         armyVisuals.DrawDeathRay(attackTarget.transform.position);
+                        armyAudio.PlayAttackAudio();
+
+                    }
+                    else
+                    {
+                        armyAudio.StopAttackAudio();
+                    }
                     break;
                 case ArmyState.Converting:
-                    if (convertTarget != null && IsInRange(convertTarget.transform.position, attackRange))
+                    if (convertTarget != null && IsInRange(convertTarget.gameObject, attackRange))
                         // TODO: Draw convert ray
                         armyVisuals.DrawDeathRay(convertTarget.transform.position);
+                    break;
+                default:
+                    armyAudio.StopAudio();
                     break;
             }
         }
     }
-
     private void FixedUpdate()
     {
         _armyUnitsLocal.Clear();
@@ -132,18 +145,18 @@ public class Army : Entity
         {
             _armyUnitsLocal.Add(u.Clone());
         }
-        
+
         // recalculate mean
         // there is no point doing this in the setter anymore
         // because all the list flushing already threw efficiency out of the window
         _armyComplex = ArmyUnits.Select(i => i.GetIdentityZ()).ToList();
-        
+
         _meanC = Vector3.zero;
         _meanZ = Vector2.zero;
-        
+
         foreach (var u in _armyUnitsLocal)
         {
-            _meanC += new Vector3(u.identityInfo.r, u.identityInfo.g,u.identityInfo.b);
+            _meanC += new Vector3(u.identityInfo.r, u.identityInfo.g, u.identityInfo.b);
         }
 
         foreach (var z in _armyComplex)
@@ -153,8 +166,8 @@ public class Army : Entity
 
         _meanC /= _armyUnitsLocal.Count;
         _meanZ /= _armyUnitsLocal.Count;
-        
-        
+
+
         // update the army's visual color
         _armyIdentity.SetIdentity(_meanC.x, _meanC.y, _meanC.z);
 
@@ -175,7 +188,7 @@ public class Army : Entity
     {
         _armyUnitsLocal.Add(unit);
     }
-    
+
     public void Absorb(SyncList<Unit> units)
     {
         ArmyUnits.AddRange(units);
@@ -194,7 +207,7 @@ public class Army : Entity
         var meanC = Vector3.zero;
         foreach (var u in _armyUnitsLocal)
         {
-            meanC += new Vector3(u.identityInfo.r, u.identityInfo.g,u.identityInfo.b);
+            meanC += new Vector3(u.identityInfo.r, u.identityInfo.g, u.identityInfo.b);
         }
         meanC /= _armyUnitsLocal.Count;
 
@@ -205,7 +218,7 @@ public class Army : Entity
         // }
         // mean /= _armyComplex.Count;
         // Debug.Log(mean);
-        
+
         // update the army's visual color
         _armyIdentity.SetIdentity(meanC.x, meanC.y, meanC.z);
 
@@ -228,7 +241,7 @@ public class Army : Entity
             // this is the hsv identity of the unit we are currently dealing with
             var identity = _armyUnitsLocal[i].identityInfo;
             var originalColor = new Vector3(identity.r, identity.g, identity.b);
-            
+
             var deltaNewColor = (meanC - originalColor) * step;
             var newColor = originalColor + deltaNewColor;
 
@@ -468,7 +481,7 @@ public class Army : Entity
         }
         else
         {
-            if (IsInRange(attackTarget.transform.position, attackRange))
+            if (IsInRange(attackTarget.gameObject, attackRange))
             {
                 entityMovement.Stop();
                 attackTarget.EntityHealth.TakeDamage(attackDamage * Time.deltaTime);
@@ -503,7 +516,7 @@ public class Army : Entity
         }
         else
         {
-            if (IsInRange(convertTarget.transform.position, attackRange))
+            if (IsInRange(convertTarget.gameObject, attackRange))
             {
                 entityMovement.Stop();
                 if (convertArmy == null)
@@ -609,21 +622,21 @@ public class Army : Entity
         }
     }
 
-    private bool IsInRange(Vector3 targetPosition, float range)
+    private bool IsInRange(GameObject target, float range)
     {
-        Vector3 offset = targetPosition - transform.position;
+        Vector3 offset = target.transform.position - transform.position;
         float distance = offset.magnitude;
-        float trueAttackRange = attackRange + transform.lossyScale.x + attackTarget.transform.lossyScale.x; // Takes into account the size of the army and the target
+        float trueAttackRange = attackRange + transform.lossyScale.x + target.transform.lossyScale.x; // Takes into account the size of the army and the target
 
         return (distance <= trueAttackRange);
     }
     #endregion
-}
 
-public enum ArmyState
-{
-    Idle,
-    Moving,
-    Attacking,
-    Converting
+    public enum ArmyState
+    {
+        Idle,
+        Moving,
+        Attacking,
+        Converting
+    }
 }

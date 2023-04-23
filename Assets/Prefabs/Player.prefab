@@ -131,6 +131,8 @@ MonoBehaviour:
   edge_drag_speed: 1
   board_min_extent: {x: -35, y: -35}
   board_max_extent: {x: 35, y: 35}
+  minOrthographicSize: 5
+  maxOrthographicSize: 300
 --- !u!1 &7075113662870992556
 GameObject:
   m_ObjectHideFlags: 0

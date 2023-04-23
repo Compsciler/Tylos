@@ -15,7 +15,7 @@ public class CursorManager : MonoBehaviour, Controls.IPlayerActions
     public CursorType defaultCursor;
     public CursorType defaultPointer;
     public List<CursorType> cursorTypes;
-
+    private float zoomCursorTimer = 0f;
     private Controls _controls;
 
     void Awake()
@@ -38,6 +38,18 @@ public class CursorManager : MonoBehaviour, Controls.IPlayerActions
         SetCursor(defaultCursor);
     }
 
+    void Update()
+    {
+        if (zoomCursorTimer > 0)
+        {
+            zoomCursorTimer -= Time.deltaTime;
+            if (zoomCursorTimer <= 0)
+            {
+                SetCursor(defaultCursor);
+            }
+        }
+    }
+    
     public void OnMouseEnterUI()
     {
         SetCursor(defaultPointer);
@@ -79,6 +91,15 @@ public class CursorManager : MonoBehaviour, Controls.IPlayerActions
 
     public void OnMakeBase(InputAction.CallbackContext context)
     {
-        throw new System.NotImplementedException();
+        return;
+    }
+
+    public void OnZoom(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            zoomCursorTimer = 0.2f; // Adjust this value to control how long the zoom cursor stays visible
+            SetCursor(FindCursorType("CameraZoom"));
+        }
     }
 }
