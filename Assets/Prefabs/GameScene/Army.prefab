@@ -198,7 +198,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6339527542047456643}
-  m_RootOrder: 5
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!212 &1272290180009731959
 SpriteRenderer:
@@ -220,7 +220,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 1c4577657dcd4188b82b8d2e01a31fdd, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -355,7 +355,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6339527542047456643}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &7111859810209330456
 CapsuleCollider:
@@ -418,9 +418,9 @@ Transform:
   - {fileID: 4989918209487520903}
   - {fileID: 8344413383390764419}
   - {fileID: 5613905772487990604}
+  - {fileID: 1622858651882034241}
   - {fileID: 6119177246744945999}
   - {fileID: 7377052504429608278}
-  - {fileID: 1622858651882034241}
   - {fileID: 1792422645865636151}
   - {fileID: 2776106639980795309}
   m_Father: {fileID: 0}
@@ -542,6 +542,10 @@ MonoBehaviour:
     r: 0
     g: 0
     b: 0
+  teamIdentity:
+    r: 0
+    g: 0
+    b: 0
 --- !u!114 &3300536225245654010
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -650,6 +654,7 @@ MonoBehaviour:
   colorRenderers:
   - {fileID: 6224673488736124910}
   - {fileID: 552418154616217347}
+  - {fileID: 1272290180009731959}
   - {fileID: 1272290180009731959}
 --- !u!114 &7250866212133716554
 MonoBehaviour:
@@ -802,6 +807,8 @@ MonoBehaviour:
   maxScale: 10
   lineDuration: 0.1
   intensity: 5
+  armyRenderer: {fileID: 1272290180009731959}
+  highlightRenderer: {fileID: 4734291854308293617}
 --- !u!114 &3261407148654518945
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1066,7 +1073,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6119177246744945999
 Transform:
   m_ObjectHideFlags: 0
@@ -1080,7 +1087,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6339527542047456643}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!212 &4734291854308293617
 SpriteRenderer:
@@ -1263,7 +1270,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 65b75fe0ffb601649967397a90d404b9, type: 2}
+  - {fileID: 2100000, guid: 1c4577657dcd4188b82b8d2e01a31fdd, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1283,7 +1290,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 94
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b,
     type: 3}
   m_Color: {r: 1, g: 0, b: 0, a: 1}
