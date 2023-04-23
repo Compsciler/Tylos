@@ -5,6 +5,8 @@ Shader "Unlit/DevianceShader"
         _MainTex ("Texture", 2D) = "white" {}
         _ArmyColor ("Army Color", Color) = (1,1,1,1)
         _HighlightColor ("Highlight Color", Color) = (1,0,0, 0.5)
+        _Amplitude ("Amplitude", Float) = 0
+        _Freq ("Frequency", Float) = 10    
     }
     SubShader
     {
@@ -37,6 +39,8 @@ Shader "Unlit/DevianceShader"
 
             sampler2D _MainTex;
             float4 _MainTex_ST;
+            float _Amplitude;
+            float _Freq;
 
             float4 _ArmyColor;
             float4 _HighlightColor;
@@ -55,7 +59,7 @@ Shader "Unlit/DevianceShader"
                 float2 dir = i.uv - float2(0.5f, 0.5f);
                 float len = length(dir);
                 float angle = atan2(dir.y, dir.x);
-                float ref_len = 0.05f * sin(angle * 10) + 0.4f;
+                float ref_len = _Amplitude * sin(angle * _Freq) + 0.5f - _Amplitude;
                 // sample the texture
                 fixed4 col = _ArmyColor;
                 if (len > ref_len)

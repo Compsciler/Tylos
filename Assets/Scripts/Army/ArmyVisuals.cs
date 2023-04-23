@@ -34,12 +34,22 @@ public class ArmyVisuals : NetworkBehaviour
     float durationRemaining = 0f; // Line is drawn if this is greater than 0
     Vector3 targetPosition;
     public int Count { get; private set; } = 0;  // The number of units in the army at last SetScale() call
+    
+    // a bit inelegant, bonk me when this becomes a problem - rj
+    
+    [SerializeField] private SpriteRenderer armyRenderer;
+    private Material armyShaderMat;
+    [SerializeField] private SpriteRenderer highlightRenderer;
+    
+    private Army army;
 
     void Awake()
     {
         lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.positionCount = 2;
         ClearDeathRay();
+        army = GetComponent<Army>();
+        armyShaderMat = armyRenderer.material;
     }
 
     void Update()
@@ -54,6 +64,16 @@ public class ArmyVisuals : NetworkBehaviour
                 ClearDeathRay();
             }
         }
+        
+        // update wrinkle shader
+        armyShaderMat.SetColor("_ArmyColor", armyRenderer.color);
+        armyShaderMat.SetColor("_HighlightColor", highlightRenderer.color);
+        var deviance = army.GetDeviance();
+        // max amplitude 0.15 (look already kinda bumpy)
+        // also note that max deviance is 1 (when literally the entire army is split across the ring
+        // 0.2 makes it so that a cell that is about to split look kinda bumpy
+        armyShaderMat.SetFloat("_Amplitude", deviance * 0.2f);
+        
     }
 
     #region Server
