@@ -7,26 +7,19 @@ using UnityEngine;
 [RequireComponent(typeof(ObjectIdentity))]
 public class IdentityColorRendererSetter : ColorRendererSetter
 {
-    #region Server
+    ObjectIdentity objectIdentity;
 
+    #region Server
     public override void OnStartServer()
     {
         base.OnStartServer();
-        ObjectIdentity.ServerOnIdentityUpdated += ServerHandleIdentityUpdated;
+        GetComponent<ObjectIdentity>().ServerOnIdentityUpdated += ServerHandleIdentityUpdated;
     }
 
     public override void OnStopServer()
     {
         base.OnStopServer();
-        ObjectIdentity.ServerOnIdentityUpdated -= ServerHandleIdentityUpdated;
-    }
-
-    [Server]
-    private void ServerHandleIdentityUpdated(ObjectIdentity identity)
-    {
-        if (identity.connectionToClient != connectionToClient) { return; }
-
-        color = identity.GetColorFromIdentity();
+        GetComponent<ObjectIdentity>().ServerOnIdentityUpdated -= ServerHandleIdentityUpdated;
     }
 
     [Server]
@@ -37,5 +30,10 @@ public class IdentityColorRendererSetter : ColorRendererSetter
         return identity.GetColorFromIdentity();
     }
 
+    [Server]
+    private void ServerHandleIdentityUpdated(ObjectIdentity identity)
+    {
+        color = identity.GetColorFromIdentity();
+    }
     #endregion
 }

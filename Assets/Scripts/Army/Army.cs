@@ -115,10 +115,11 @@ public class Army : Entity
             switch (state)
             {
                 case ArmyState.Attacking:
-                    if (attackTarget != null && IsInRange(attackTarget.transform.position, attackRange))
+                    if (attackTarget != null && IsInRange(attackTarget.gameObject, attackRange))
                     {
                         armyVisuals.DrawDeathRay(attackTarget.transform.position);
                         armyAudio.PlayAttackAudio();
+
                     }
                     else
                     {
@@ -126,7 +127,7 @@ public class Army : Entity
                     }
                     break;
                 case ArmyState.Converting:
-                    if (convertTarget != null && IsInRange(convertTarget.transform.position, attackRange))
+                    if (convertTarget != null && IsInRange(convertTarget.gameObject, attackRange))
                         // TODO: Draw convert ray
                         armyVisuals.DrawDeathRay(convertTarget.transform.position);
                     break;
@@ -136,7 +137,6 @@ public class Army : Entity
             }
         }
     }
-
     private void FixedUpdate()
     {
         _armyUnitsLocal.Clear();
@@ -481,7 +481,7 @@ public class Army : Entity
         }
         else
         {
-            if (IsInRange(attackTarget.transform.position, attackRange))
+            if (IsInRange(attackTarget.gameObject, attackRange))
             {
                 entityMovement.Stop();
                 attackTarget.EntityHealth.TakeDamage(attackDamage * Time.deltaTime);
@@ -516,7 +516,7 @@ public class Army : Entity
         }
         else
         {
-            if (IsInRange(convertTarget.transform.position, attackRange))
+            if (IsInRange(convertTarget.gameObject, attackRange))
             {
                 entityMovement.Stop();
                 if (convertArmy == null)
@@ -622,21 +622,21 @@ public class Army : Entity
         }
     }
 
-    private bool IsInRange(Vector3 targetPosition, float range)
+    private bool IsInRange(GameObject target, float range)
     {
-        Vector3 offset = targetPosition - transform.position;
+        Vector3 offset = target.transform.position - transform.position;
         float distance = offset.magnitude;
-        float trueAttackRange = attackRange + transform.lossyScale.x + attackTarget.transform.lossyScale.x; // Takes into account the size of the army and the target
+        float trueAttackRange = attackRange + transform.lossyScale.x + target.transform.lossyScale.x; // Takes into account the size of the army and the target
 
         return (distance <= trueAttackRange);
     }
     #endregion
-}
 
-public enum ArmyState
-{
-    Idle,
-    Moving,
-    Attacking,
-    Converting
+    public enum ArmyState
+    {
+        Idle,
+        Moving,
+        Attacking,
+        Converting
+    }
 }
