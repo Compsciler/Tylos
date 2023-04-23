@@ -97,6 +97,10 @@ MonoBehaviour:
     r: 0
     g: 0
     b: 0
+  teamIdentity:
+    r: 0
+    g: 0
+    b: 0
 --- !u!114 &2113709123941704973
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -131,8 +135,11 @@ MonoBehaviour:
   edge_drag_speed: 1
   board_min_extent: {x: -35, y: -35}
   board_max_extent: {x: 35, y: 35}
-  minOrthographicSize: 5
-  maxOrthographicSize: 300
+  minOrthographicSize: 10
+  maxOrthographicSize: 50
+  zoomMultiplier: 1
+  edgePanZoneProportion: 0.02
+  zoomButtonMultiplier: 10
 --- !u!1 &7075113662870992556
 GameObject:
   m_ObjectHideFlags: 0
