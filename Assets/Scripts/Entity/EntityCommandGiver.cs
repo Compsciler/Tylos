@@ -21,10 +21,20 @@ public class EntityCommandGiver : NetworkBehaviour
     public static event Action<Mode> AuthorityOnModeChanged;
 
 
+    void Awake()
+    {
+        GameOverHandler.ClientOnGameOver += ClientHandleGameOver;
+    }
+
     private void Start()
     {
         mainCamera = Camera.main;
         AuthorityOnModeChanged?.Invoke(mode);
+    }
+
+    void OnDestroy()
+    {
+        GameOverHandler.ClientOnGameOver -= ClientHandleGameOver;
     }
 
     private void Update()
@@ -100,6 +110,12 @@ public class EntityCommandGiver : NetworkBehaviour
         {
             entity.TryConvert(target);
         }
+    }
+
+    [Client]
+    private void ClientHandleGameOver(string winnerName)
+    {
+        enabled = false;
     }
 
     public enum Mode

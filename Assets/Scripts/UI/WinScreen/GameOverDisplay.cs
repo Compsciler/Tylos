@@ -41,6 +41,12 @@ public class GameOverDisplay : MonoBehaviour
         }
     }
 
+    public void Spectate()
+    {
+        gameOverDisplayParent.SetActive(false);
+        // TODO: set fog of war off
+    }
+
     private void TargetClientHandlePlayerLost()
     {
         DisplayLoseScreen();
