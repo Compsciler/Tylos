@@ -3,13 +3,14 @@
   <component name="ChangeListManager">
     <list default="true" id="f9384a0e-6b7e-46a7-ae79-a211d5dacabd" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Tylos/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Tylos/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/AudioMixer.mixer" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/AudioMixer.mixer" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Inputs/Controls.inputactions" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Inputs/Controls.inputactions" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Prefabs/GameScene/Army.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/GameScene/Army.prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/GameScene/Base.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/GameScene/Base.prefab" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Prefabs/GameScene/HUDCanvas.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/GameScene/HUDCanvas.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/UI/MainMenu/EnterAddress.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/UI/MainMenu/EnterAddress.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/UI/LobbyScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/UI/LobbyScene.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/UI/MainMenuScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/UI/MainMenuScene.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/UI/TitleScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/UI/TitleScene.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Player.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Player.prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Army/Army.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Army/Army.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Inputs/Controls.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Inputs/Controls.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Networking/MyPlayer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Networking/MyPlayer.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,6 +21,7 @@
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Audio/MusicManager.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Audio/UI/UIButtonClickSound.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/UI/CursorManager.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/UI/HUD/BuildButtonController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/UI/HUD/FadeIn.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/UI/HUD/PauseButtonHandler.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/UI/HUD/PieChartController.cs" root0="FORCE_HIGHLIGHTING" />
@@ -115,6 +117,7 @@
       <workItem from="1682039619638" duration="8785000" />
       <workItem from="1682191106512" duration="1769000" />
       <workItem from="1682267309508" duration="9860000" />
+      <workItem from="1682290822706" duration="10255000" />
     </task>
     <servers />
   </component>

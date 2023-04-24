@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -48,6 +49,10 @@ public class Army : Entity
 
     private const float ConversionRateAbsorb = 0.3f;
     private const float ConversionRateIdle = 0.02f;
+    [SerializeField] private GameObject unableToBuildIcon;
+    [SerializeField] private GameObject buildingIcon;
+    [SerializeField] private float iconDisplayDuration = 0.5f;
+    
     #region Events
     public static event Action<Army> ServerOnArmySpawned;
     public static event Action<Army> ServerOnArmyDespawned;
@@ -629,6 +634,29 @@ public class Army : Entity
         float trueAttackRange = attackRange + transform.lossyScale.x + target.transform.lossyScale.x; // Takes into account the size of the army and the target
 
         return (distance <= trueAttackRange);
+    }
+    
+    public void ShowUnableToBuildIcon()
+    {
+        if (!unableToBuildIcon.activeInHierarchy)
+        {
+            unableToBuildIcon.SetActive(true);
+            StartCoroutine(HideUnableToBuildIconAfterDelay(iconDisplayDuration));
+        }
+    }
+
+    public void SetBuildingIcon(bool active)
+    {
+        if (buildingIcon != null)
+        {
+            buildingIcon.SetActive(active);
+        }
+    }
+
+    private IEnumerator HideUnableToBuildIconAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        unableToBuildIcon.SetActive(false);
     }
     #endregion
 
