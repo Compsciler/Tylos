@@ -378,7 +378,6 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1969338469038381967}
   - {fileID: 3099551171298299904}
   - {fileID: 3099551171429271824}
   - {fileID: 3099551171737409758}
@@ -561,7 +560,7 @@ RectTransform:
   - {fileID: 3099551171228560602}
   - {fileID: 3099551171683094049}
   m_Father: {fileID: 3099551170323605986}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
@@ -766,7 +765,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 2557730904947883848}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: CursorManager, Assembly-CSharp
           m_MethodName: OnMouseEnterUI
           m_Mode: 1
@@ -782,7 +781,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 2557730904947883848}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: CursorManager, Assembly-CSharp
           m_MethodName: OnMouseExitUI
           m_Mode: 1
@@ -2291,7 +2290,7 @@ RectTransform:
   - {fileID: 3099551171660001186}
   - {fileID: 3099551170473625401}
   m_Father: {fileID: 3099551170323605986}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -2529,7 +2528,7 @@ RectTransform:
   - {fileID: 3099551170486072377}
   - {fileID: 710119897560319715}
   m_Father: {fileID: 3099551170323605986}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -2811,7 +2810,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 2557730904947883848}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: CursorManager, Assembly-CSharp
           m_MethodName: OnMouseEnterUI
           m_Mode: 1
@@ -2827,7 +2826,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 2557730904947883848}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: CursorManager, Assembly-CSharp
           m_MethodName: OnMouseExitUI
           m_Mode: 1
@@ -3155,7 +3154,7 @@ RectTransform:
   - {fileID: 3099551170439901592}
   - {fileID: 3099551171542926288}
   m_Father: {fileID: 3099551170323605986}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -4408,7 +4407,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 2557730904947883848}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: CursorManager, Assembly-CSharp
           m_MethodName: OnMouseEnterUI
           m_Mode: 1
@@ -4424,7 +4423,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 2557730904947883848}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: CursorManager, Assembly-CSharp
           m_MethodName: OnMouseExitUI
           m_Mode: 1
@@ -4436,90 +4435,3 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
---- !u!1001 &7762137201514774906
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 3099551170323605986}
-    m_Modifications:
-    - target: {fileID: 8137116463043009269, guid: 17b28f6ce3000ec4a8c20506039e2433,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8137116463043009269, guid: 17b28f6ce3000ec4a8c20506039e2433,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 1114.6578
-      objectReference: {fileID: 0}
-    - target: {fileID: 8137116463043009269, guid: 17b28f6ce3000ec4a8c20506039e2433,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 600.2042
-      objectReference: {fileID: 0}
-    - target: {fileID: 8137116463043009269, guid: 17b28f6ce3000ec4a8c20506039e2433,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 7.2572947
-      objectReference: {fileID: 0}
-    - target: {fileID: 8137116463043009269, guid: 17b28f6ce3000ec4a8c20506039e2433,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8137116463043009269, guid: 17b28f6ce3000ec4a8c20506039e2433,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8137116463043009269, guid: 17b28f6ce3000ec4a8c20506039e2433,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8137116463043009269, guid: 17b28f6ce3000ec4a8c20506039e2433,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8137116463043009269, guid: 17b28f6ce3000ec4a8c20506039e2433,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8137116463043009269, guid: 17b28f6ce3000ec4a8c20506039e2433,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8137116463043009269, guid: 17b28f6ce3000ec4a8c20506039e2433,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8814565897037096691, guid: 17b28f6ce3000ec4a8c20506039e2433,
-        type: 3}
-      propertyPath: m_Name
-      value: CursorManager
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 17b28f6ce3000ec4a8c20506039e2433, type: 3}
---- !u!4 &1969338469038381967 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8137116463043009269, guid: 17b28f6ce3000ec4a8c20506039e2433,
-    type: 3}
-  m_PrefabInstance: {fileID: 7762137201514774906}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &2557730904947883848 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5243953703812529714, guid: 17b28f6ce3000ec4a8c20506039e2433,
-    type: 3}
-  m_PrefabInstance: {fileID: 7762137201514774906}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 753edd17170f75b40bbbecc9f1b9abdc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

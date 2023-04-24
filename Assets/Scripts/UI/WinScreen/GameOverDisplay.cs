@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Mirror;
@@ -16,11 +17,15 @@ public class GameOverDisplay : MonoBehaviour
 
     private void Start()
     {
+        GameOverHandler.TargetClientOnPlayerLost += TargetClientHandlePlayerLost;
+        GameOverHandler.TargetClientOnPlayerWon += TargetClientHandlePlayerWon;
         GameOverHandler.ClientOnGameOver += ClientHandleGameOver;
     }
 
     private void OnDestroy()
     {
+        GameOverHandler.TargetClientOnPlayerLost -= TargetClientHandlePlayerLost;
+        GameOverHandler.TargetClientOnPlayerWon -= TargetClientHandlePlayerWon;
         GameOverHandler.ClientOnGameOver -= ClientHandleGameOver;
     }
 
@@ -36,10 +41,35 @@ public class GameOverDisplay : MonoBehaviour
         }
     }
 
+    private void TargetClientHandlePlayerLost()
+    {
+        DisplayLoseScreen();
+    }
+
+    private void TargetClientHandlePlayerWon()
+    {
+        DisplayWinScreen();
+    }
+
     private void ClientHandleGameOver(string winner)
     {
         // winnerNameText.text = $"{winner} gets the victory royale";
+        Debug.Log($"{winner} gets the victory royale");
 
+        // gameOverDisplayParent.SetActive(true);
+    }
+
+    private void DisplayWinScreen()
+    {
         gameOverDisplayParent.SetActive(true);
+        winDisplayParent.SetActive(true);
+        loseDisplayParent.SetActive(false);
+    }
+
+    private void DisplayLoseScreen()
+    {
+        gameOverDisplayParent.SetActive(true);
+        loseDisplayParent.SetActive(true);
+        winDisplayParent.SetActive(false);
     }
 }

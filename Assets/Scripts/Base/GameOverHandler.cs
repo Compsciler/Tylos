@@ -9,6 +9,10 @@ public class GameOverHandler : NetworkBehaviour
     public static event Action ServerOnGameOver;
     public static event Action<string> ClientOnGameOver;
 
+    public static event Action<string> ClientOnPlayerLost;
+    public static event Action TargetClientOnPlayerLost;
+    public static event Action TargetClientOnPlayerWon;
+
     MyNetworkManager networkManager;
 
     #region Server
@@ -30,22 +34,27 @@ public class GameOverHandler : NetworkBehaviour
     private void ServerHandleBaseDespawned(Base base_)
     {
         MyPlayer basePlayer = base_.connectionToClient.identity.GetComponent<MyPlayer>();
+        int basePlayerId = basePlayer.connectionToClient.connectionId;
         List<Base> playerBases = basePlayer.MyBases;
-        Debug.Log($"Player {basePlayer.connectionToClient.connectionId} has {playerBases.Count} bases");
+        Debug.Log($"Player {basePlayerId} has {playerBases.Count} bases");
 
         if (playerBases.Count > 0) { return; }
 
         networkManager.RemovePlayerFromRemainingPlayers(basePlayer);
         // TODO: Invoke event to notify players of eliminated player
 
+        TargetRpcPlayerLost(basePlayer.connectionToClient);
+
         Debug.Log($"Remaining players: {networkManager.RemainingPlayers.Count}");
 
         if (networkManager.RemainingPlayers.Count > 1) { return; }
 
-        int winningPlayerId = networkManager.RemainingPlayers[0].connectionToClient.connectionId;
+        MyPlayer winningPlayer = networkManager.RemainingPlayers[0];
+        int winningPlayerId = winningPlayer.connectionToClient.connectionId;
 
-        string winningPlayer = $"Player {winningPlayerId}";  // TODO: Change to player name or just id
-        RpcGameOver(winningPlayer);
+        string winningPlayerName = $"Player {winningPlayerId}";  // TODO: Change to player name or just id
+        RpcGameOver(winningPlayerName);
+        TargetRpcPlayerWon(winningPlayer.connectionToClient);
 
         Debug.Log($"{winningPlayer} wins");
 
@@ -55,6 +64,24 @@ public class GameOverHandler : NetworkBehaviour
     #endregion
 
     #region Client
+
+    [ClientRpc]
+    private void RpcPlayerLost(string loser)
+    {
+        ClientOnPlayerLost?.Invoke(loser);
+    }
+
+    [TargetRpc]
+    private void TargetRpcPlayerLost(NetworkConnectionToClient target)
+    {
+        TargetClientOnPlayerLost?.Invoke();
+    }
+
+    [TargetRpc]
+    private void TargetRpcPlayerWon(NetworkConnectionToClient target)
+    {
+        TargetClientOnPlayerWon?.Invoke();
+    }
 
     [ClientRpc]
     private void RpcGameOver(string winner)
