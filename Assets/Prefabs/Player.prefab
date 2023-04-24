@@ -138,8 +138,8 @@ MonoBehaviour:
   board_min_extent: {x: -35, y: -35}
   board_max_extent: {x: 35, y: 35}
   minOrthographicSize: 10
-  maxOrthographicSize: 50
-  zoomMultiplier: 1
+  maxOrthographicSize: 40
+  zoomMultiplier: 3
   edgePanZoneProportion: 0.02
   zoomButtonMultiplier: 10
 --- !u!82 &2884340505833497749
