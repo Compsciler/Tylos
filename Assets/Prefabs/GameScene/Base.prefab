@@ -210,6 +210,10 @@ MonoBehaviour:
     r: 0
     g: 0
     b: 0
+  teamIdentity:
+    r: 0
+    g: 0
+    b: 0
 --- !u!114 &489540403649832554
 MonoBehaviour:
   m_ObjectHideFlags: 0

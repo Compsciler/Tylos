@@ -6721,6 +6721,7 @@ GameObject:
   - component: {fileID: 9067413076736038584}
   - component: {fileID: 2751460590677647769}
   - component: {fileID: 2585853468122746159}
+  - component: {fileID: 9193273750935269843}
   m_Layer: 5
   m_Name: BuildButton
   m_TagString: Untagged
@@ -6887,6 +6888,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   clickSound: {fileID: 8300000, guid: 3498ebe686364e04eab7ec53b6886a0b, type: 3}
+--- !u!114 &9193273750935269843
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9067413076736038588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 839a62fb36e24c5429532f32e92ce464, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buildButton: {fileID: 9067413076736038584}
 --- !u!1 &9067413076781059762
 GameObject:
   m_ObjectHideFlags: 0

@@ -30,6 +30,8 @@ public class MyPlayer : NetworkBehaviour
     [SerializeField] public int mergeResolutionX = 32;
     [SerializeField] public int mergeResolutionY = 32;
     [SerializeField] public float viewDistance = 4;
+    [SerializeField] private float holdDuration = 1f; // Adjust this value to set the required hold duration
+    private bool isHoldingKey = false;
     Texture2D fogTex;
     Texture2D mergeTex;
     PlayerArmies myPlayerArmies;
@@ -37,6 +39,7 @@ public class MyPlayer : NetworkBehaviour
     Color teamColor = new Color();
     public Color TeamColor => teamColor;
     private Controls controls;
+    private AudioSource audioSource;
 
 
     [SyncVar(hook = nameof(AuthorityHandlePartyOwnerStateUpdated))]
@@ -56,6 +59,7 @@ public class MyPlayer : NetworkBehaviour
     void Awake()
     {
         myPlayerArmies = GetComponent<PlayerArmies>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     #region Server
@@ -314,22 +318,88 @@ public class MyPlayer : NetworkBehaviour
         myBases.Remove(base_);
     }
 
-    private void makeBase(InputAction.CallbackContext input)
+    public void makeBase(InputAction.CallbackContext input)
     {
+        List<Army> armies = new List<Army>();
         foreach (Entity e in SelectionHandler.SelectedEntities)
         {
             if (e is Army army)
             {
-                if (army.ArmyUnits.Count > BaseCreationCost)
+                armies.Add(army);
+            }
+        }
+        if (armies.Count == 0) return;
+        
+        if (input.ReadValue<float>() == 1) // Key pressed
+        {
+            if (!isHoldingKey) // Only start coroutine if not already holding key
+            {
+                isHoldingKey = true;
+                audioSource.Play();
+                setBuildIconOnArmies(true, armies);
+                StartCoroutine(HandleBaseCreation());
+            }
+        }
+        else if (input.ReadValue<float>() == 0) // Key released
+        {
+            isHoldingKey = false;
+            audioSource.Stop();
+            setBuildIconOnArmies(false, armies);
+            StopCoroutine(HandleBaseCreation());
+        }
+    }
+    
+    
+    private IEnumerator HandleBaseCreation()
+    {
+        yield return new WaitForSeconds(holdDuration);
+
+        if (isHoldingKey)
+        {
+            List<Army> armies = new List<Army>();
+            foreach (Entity e in SelectionHandler.SelectedEntities)
+            {
+                if ((e is Army army) && (e != null))
                 {
-                    for (int i = 0; i < BaseCreationCost; i++)
+                    armies.Add(army);
+                    // Check for nearby bases
+                    Collider[] colliders = Physics.OverlapSphere(army.transform.position, 0.5f*army.transform.lossyScale.x);
+                    bool baseNearby = false;
+
+                    foreach (Collider collider in colliders)
                     {
-                        army.ArmyUnits.RemoveAt(0);
+                        if (collider.GetComponent<Base>() != null)
+                        {
+                            baseNearby = true;
+                            break;
+                        }
                     }
-                ((MyNetworkManager)NetworkManager.singleton).MakeBase(this, army.transform.position);
+
+                    if (!baseNearby && army.ArmyUnits.Count > BaseCreationCost)
+                    {
+                        for (int i = 0; i < BaseCreationCost; i++)
+                        {
+                            army.ArmyUnits.RemoveAt(0);
+                        }
+                        ((MyNetworkManager)NetworkManager.singleton).MakeBase(this, army.transform.position);
+                        audioSource.Stop();
+                        setBuildIconOnArmies(false, armies);
+                    }
+                    else
+                    {
+                        army.ShowUnableToBuildIcon();
+                    }
                 }
             }
+        }
+        audioSource.Stop();
+    }
 
+    private void setBuildIconOnArmies(bool active, List<Army> armies)
+    {
+        foreach (Army army in armies)
+        {
+            army.SetBuildingIcon(active);
         }
     }
 

@@ -16,12 +16,12 @@
                 },
                 {
                     "name": "Make Base",
-                    "type": "Button",
+                    "type": "Value",
                     "id": "cef7d8e1-6806-4938-80a3-d4fe523dc1ae",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
+                    "interactions": "Press(behavior=2)",
+                    "initialStateCheck": true
                 },
                 {
                     "name": "Zoom",
