@@ -174,9 +174,17 @@ public class MyPlayer : NetworkBehaviour
         mergeMaterial.SetColor("FillColor", new Color(0, 1, 1, 1));
     }
 
+
+    bool has_centered = false;
     [ClientCallback]
     void Update()
     {
+        if (!isOwned) return;
+        if (myBases.Count > 0 && !has_centered)
+        {
+            GetComponent<CameraController>().set_center(myBases[0].transform.position);
+            has_centered = true;
+        }
         if (fogTex == null || mergeTex == null)
         {
             return;
@@ -188,14 +196,17 @@ public class MyPlayer : NetworkBehaviour
             fogVals[i] = 1;
         }
 
+        float fogSizeX = 100;
+        float fogSizeY = 100;
+
         foreach (Army army in myArmies)
         {
             for (int y = 0; y < fogResolutionY; y++)
             {
                 for (int x = 0; x < fogResolutionX; x++)
                 {
-                    float game_x = -(((float)(x + 0.5) / fogResolutionX) * 20 - 10);
-                    float game_y = -(((float)(y + 0.5) / fogResolutionY) * 20 - 10);
+                    float game_x = -(((float)(x + 0.5) / fogResolutionX) * fogSizeX - fogSizeX / 2);
+                    float game_y = -(((float)(y + 0.5) / fogResolutionY) * fogSizeY - fogSizeY / 2);
                     double d_x = army.transform.position.x - game_x;
                     double d_y = army.transform.position.z - game_y;
                     double dist = Math.Sqrt(d_x * d_x + d_y * d_y) / viewDistance / 2;
@@ -209,8 +220,8 @@ public class MyPlayer : NetworkBehaviour
             {
                 for (int x = 0; x < mergeResolutionX; x++)
                 {
-                    float game_x = -(((float)(x + 0.5) / mergeResolutionX) * 20 - 10);
-                    float game_y = -(((float)(y + 0.5) / mergeResolutionY) * 20 - 10);
+                    float game_x = -(((float)(x + 0.5) / mergeResolutionX) * fogSizeX - fogSizeX / 2);
+                    float game_y = -(((float)(y + 0.5) / mergeResolutionY) * fogSizeY - fogSizeY / 2);
                     double d_x = army.transform.position.x - game_x;
                     double d_y = army.transform.position.z - game_y;
                     double dist = Math.Sqrt(d_x * d_x + d_y * d_y);
@@ -228,8 +239,8 @@ public class MyPlayer : NetworkBehaviour
             {
                 for (int x = 0; x < fogResolutionX; x++)
                 {
-                    float game_x = -(((float)x / fogResolutionX) * 20 - 10);
-                    float game_y = -(((float)y / fogResolutionY) * 20 - 10);
+                    float game_x = -(((float)(x + 0.5) / fogResolutionX) * fogSizeX - fogSizeX / 2);
+                    float game_y = -(((float)(y + 0.5) / fogResolutionY) * fogSizeY - fogSizeY / 2);
                     double d_x = b.transform.position.x - game_x;
                     double d_y = b.transform.position.z - game_y;
                     double dist = Math.Sqrt(d_x * d_x + d_y * d_y) / viewDistance / 2;
@@ -329,7 +340,7 @@ public class MyPlayer : NetworkBehaviour
             }
         }
         if (armies.Count == 0) return;
-        
+
         if (input.ReadValue<float>() == 1) // Key pressed
         {
             if (!isHoldingKey) // Only start coroutine if not already holding key
@@ -348,8 +359,8 @@ public class MyPlayer : NetworkBehaviour
             StopCoroutine(HandleBaseCreation());
         }
     }
-    
-    
+
+
     private IEnumerator HandleBaseCreation()
     {
         yield return new WaitForSeconds(holdDuration);
@@ -363,7 +374,7 @@ public class MyPlayer : NetworkBehaviour
                 {
                     armies.Add(army);
                     // Check for nearby bases
-                    Collider[] colliders = Physics.OverlapSphere(army.transform.position, 0.5f*army.transform.lossyScale.x);
+                    Collider[] colliders = Physics.OverlapSphere(army.transform.position, 0.5f * army.transform.lossyScale.x);
                     bool baseNearby = false;
 
                     foreach (Collider collider in colliders)

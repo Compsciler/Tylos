@@ -71,7 +71,7 @@ public class Army : Entity
     // this is updated per frame
     private List<Vector2> _armyComplex;
 
-    private ObjectIdentity _armyIdentity;
+    public ObjectIdentity _armyIdentity;
 
     private float _meanAngle;
 
