@@ -78,7 +78,7 @@ MonoBehaviour:
   fogResolutionY: 8
   mergeResolutionX: 32
   mergeResolutionY: 32
-  viewDistance: 5
+  viewDistance: 9
   holdDuration: 1
 --- !u!114 &616667210013298170
 MonoBehaviour:
