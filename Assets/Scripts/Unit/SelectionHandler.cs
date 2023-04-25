@@ -27,6 +27,13 @@ public class SelectionHandler : NetworkBehaviour
         cameraController = mainCamera.GetComponent<CameraController>();
 
         player = NetworkClient.connection.identity.GetComponent<MyPlayer>();
+
+        GameOverHandler.ClientOnGameOver += ClientHandleGameOver;
+    }
+
+    void OnDestroy()
+    {
+        GameOverHandler.ClientOnGameOver -= ClientHandleGameOver;
     }
 
     void Update()
@@ -46,11 +53,11 @@ public class SelectionHandler : NetworkBehaviour
     }
 
     [Client]
-    public static void AddToSelection(Entity entity) 
+    public static void AddToSelection(Entity entity)
     {
         if (entity == null) { return; }  // Hotfix for null reference exception
         if (SelectedEntities.Contains(entity)) { return; }
-        
+
         selectedEntities.Add(entity);
         entity.Select();
     }
@@ -95,7 +102,8 @@ public class SelectionHandler : NetworkBehaviour
 
             if (!Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, layerMask)) { return; }
 
-            if (hit.collider.TryGetComponent<Entity>(out Entity entity)){// Entity is clicked
+            if (hit.collider.TryGetComponent<Entity>(out Entity entity))
+            {// Entity is clicked
                 if (!entity.isOwned) { return; }  // Change for dev mode
 
                 SelectedEntities.Add(entity);
@@ -129,7 +137,7 @@ public class SelectionHandler : NetworkBehaviour
         }
 
         // Selects all the bases in the selection area if it is player's base
-        foreach(Base myBase in player.MyBases)  // Change for dev mode
+        foreach (Base myBase in player.MyBases)  // Change for dev mode
         {
             if (SelectedEntities.Contains((Entity)myBase)) { continue; }
 
@@ -149,5 +157,11 @@ public class SelectionHandler : NetworkBehaviour
         {
             cameraController.follow(selectedEntities);
         }
+    }
+
+    [Client]
+    private void ClientHandleGameOver(string winnerName)
+    {
+        enabled = false;
     }
 }

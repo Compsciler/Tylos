@@ -1,9 +1,23 @@
+using System;
 using Mirror;
 using UnityEngine;
 using UnityEngine.AI;
 public class ArmyMovement : EntityMovement
 {
     #region Server
+
+    public override void OnStartServer()
+    {
+        GameOverHandler.TargetClientOnPlayerLost += TargetClientHandlePlayerLost;
+        GameOverHandler.ServerOnGameOver += ServerHandleGameOver;
+    }
+
+    public override void OnStopServer()
+    {
+        GameOverHandler.TargetClientOnPlayerLost -= TargetClientHandlePlayerLost;
+        GameOverHandler.ServerOnGameOver -= ServerHandleGameOver;
+    }
+
     [Server]
     public override void Move(Vector3 position) // This function can be directly called from the server without going through the client
     {
@@ -17,10 +31,34 @@ public class ArmyMovement : EntityMovement
         Move(position);
     }
 
+
+    [Command]
+    private void CmdStop2()  // Not overriding CmdStop for fear of breaking something
+    {
+        Stop();
+    }
+
     [Server]
     public override void Stop()
     {
         agent.ResetPath();
+    }
+
+
+    [Server]
+    private void ServerHandleGameOver()
+    {
+        Stop();
+    }
+
+    #endregion
+
+    #region Client
+
+    [Server]
+    private void TargetClientHandlePlayerLost()
+    {
+        CmdStop2();
     }
 
     #endregion

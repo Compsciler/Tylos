@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -8,6 +9,7 @@ using UnityEngine.Events;
 using Mirror;
 
 [RequireComponent(typeof(ArmyMovement), typeof(ArmyHealth), typeof(ArmyVisuals))]
+[RequireComponent(typeof(ArmyAudio))]
 public class Army : Entity
 {
     # region variables
@@ -41,11 +43,16 @@ public class Army : Entity
     ArmyVisuals armyVisuals;
     ArmyHealth armyHealth;
     ArmyConversion armyConversion;
+    ArmyAudio armyAudio;
     public ArmyConversion ArmyConversion => armyConversion;
     #endregion
 
     private const float ConversionRateAbsorb = 0.3f;
     private const float ConversionRateIdle = 0.02f;
+    [SerializeField] private GameObject unableToBuildIcon;
+    [SerializeField] private GameObject buildingIcon;
+    [SerializeField] private float iconDisplayDuration = 0.5f;
+    
     #region Events
     public static event Action<Army> ServerOnArmySpawned;
     public static event Action<Army> ServerOnArmyDespawned;
@@ -88,6 +95,7 @@ public class Army : Entity
         armyVisuals = GetComponent<ArmyVisuals>();
         _armyIdentity = GetComponent<ObjectIdentity>();
         armyConversion = GetComponent<ArmyConversion>();
+        armyAudio = GetComponent<ArmyAudio>();
     }
 
     void Update()
@@ -112,18 +120,28 @@ public class Army : Entity
             switch (state)
             {
                 case ArmyState.Attacking:
-                    if (attackTarget != null && Vector3.Distance(transform.position, attackTarget.transform.position) <= attackRange)
+                    if (attackTarget != null && IsInRange(attackTarget.gameObject, attackRange))
+                    {
                         armyVisuals.DrawDeathRay(attackTarget.transform.position);
+                        armyAudio.PlayAttackAudio();
+
+                    }
+                    else
+                    {
+                        armyAudio.StopAttackAudio();
+                    }
                     break;
                 case ArmyState.Converting:
-                    if (convertTarget != null && Vector3.Distance(transform.position, convertTarget.transform.position) <= attackRange)
+                    if (convertTarget != null && IsInRange(convertTarget.gameObject, attackRange))
                         // TODO: Draw convert ray
                         armyVisuals.DrawDeathRay(convertTarget.transform.position);
+                    break;
+                default:
+                    armyAudio.StopAudio();
                     break;
             }
         }
     }
-
     private void FixedUpdate()
     {
         _armyUnitsLocal.Clear();
@@ -468,7 +486,7 @@ public class Army : Entity
         }
         else
         {
-            if (Vector3.Distance(transform.position, attackTarget.transform.position) <= attackRange)
+            if (IsInRange(attackTarget.gameObject, attackRange))
             {
                 entityMovement.Stop();
                 attackTarget.EntityHealth.TakeDamage(attackDamage * Time.deltaTime);
@@ -503,7 +521,7 @@ public class Army : Entity
         }
         else
         {
-            if (Vector3.Distance(transform.position, convertTarget.transform.position) <= attackRange)
+            if (IsInRange(convertTarget.gameObject, attackRange))
             {
                 entityMovement.Stop();
                 if (convertArmy == null)
@@ -608,13 +626,45 @@ public class Army : Entity
             AuthorityOnArmyDeselected?.Invoke(this);
         }
     }
-    #endregion
-}
 
-public enum ArmyState
-{
-    Idle,
-    Moving,
-    Attacking,
-    Converting
+    private bool IsInRange(GameObject target, float range)
+    {
+        Vector3 offset = target.transform.position - transform.position;
+        float distance = offset.magnitude;
+        float trueAttackRange = attackRange + transform.lossyScale.x + target.transform.lossyScale.x; // Takes into account the size of the army and the target
+
+        return (distance <= trueAttackRange);
+    }
+    
+    public void ShowUnableToBuildIcon()
+    {
+        if (!unableToBuildIcon.activeInHierarchy)
+        {
+            unableToBuildIcon.SetActive(true);
+            StartCoroutine(HideUnableToBuildIconAfterDelay(iconDisplayDuration));
+        }
+    }
+
+    public void SetBuildingIcon(bool active)
+    {
+        if (buildingIcon != null)
+        {
+            buildingIcon.SetActive(active);
+        }
+    }
+
+    private IEnumerator HideUnableToBuildIconAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        unableToBuildIcon.SetActive(false);
+    }
+    #endregion
+
+    public enum ArmyState
+    {
+        Idle,
+        Moving,
+        Attacking,
+        Converting
+    }
 }

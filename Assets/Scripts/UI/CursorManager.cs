@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
-public class CursorManager : MonoBehaviour
+public class CursorManager : MonoBehaviour, Controls.IPlayerActions
 {
     [System.Serializable]
     public class CursorType
@@ -15,69 +16,75 @@ public class CursorManager : MonoBehaviour
     public CursorType defaultCursor;
     public CursorType defaultPointer;
     public List<CursorType> cursorTypes;
+    private float edgePanCursorTimer = 0f;
+    private float zoomCursorTimer = 0f;
+    private Controls _controls;
+    private CameraController cameraController;
+    private bool isMouseOverUI = false;
 
-    private bool isCursorOverUI;
+    void Awake()
+    {
+        _controls = new Controls();
+        _controls.Player.SetCallbacks(this);
+    }
 
+    void OnEnable()
+    {
+        _controls.Enable();
+    }
+
+    void OnDisable()
+    {
+        _controls.Disable();
+    }
     void Start()
     {
         SetCursor(defaultCursor);
+        StartCoroutine(WaitForCameraController());
     }
 
     void Update()
     {
-        UpdateCursor();
-    }
+        if (zoomCursorTimer > 0)
+        {
+            zoomCursorTimer -= Time.deltaTime;
+            if (zoomCursorTimer <= 0)
+            {
+                isMouseOverUI = false;
+            }
+        }
+        if (edgePanCursorTimer > 0)
+        {
+            edgePanCursorTimer -= Time.deltaTime;
+            if (edgePanCursorTimer <= 0)
+            {
+                isMouseOverUI = false;
+            }
+        }
 
+        if (!isMouseOverUI)
+        {
+            if (IsMouseOverInteractable())
+            {
+                SetInteractableCursor();
+            }
+            else
+            {
+                SetCursor(defaultCursor);
+            }
+        }
+    }
+    
     public void OnMouseEnterUI()
     {
-        isCursorOverUI = true;
+        isMouseOverUI = true;
         SetCursor(defaultPointer);
     }
 
     public void OnMouseExitUI()
     {
-        isCursorOverUI = false;
-        UpdateCursor();
-    }
-
-    void UpdateCursor()
-    {
-        //Do not update if cursor is over a UI element
-        if (!Application.isFocused)
-        {
-            SetCursor(null);
-            return;
-        }
-
-        if (isCursorOverUI) return;
-
-        /*
-        
-        //Perform raycast
-        RaycastHit hit;
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (!Physics.Raycast(ray, out hit)) return;
-        
-        //Store reference to the hit object
-        GameObject hitObject = hit.collider.gameObject;
-
-        // Customize these conditions based on the hit object's tags and the user's input
-        if (hitObject.CompareTag("Enemy") && Input.GetKey(KeyCode.A))
-        {
-            SetCursor(FindCursorType("attack"));
-        }
-        else if (hitObject.CompareTag("Resource") && Input.GetKey(KeyCode.G))
-        {
-            SetCursor(FindCursorType("gather"));
-        }
-        
-        */
-
-        //If no conditions are met, set to default cursor
-        else
-        {
-            SetCursor(defaultCursor);
-        }
+        isMouseOverUI = false;
+        SetCursor(defaultCursor);
     }
 
     CursorType FindCursorType(string nameIn)
@@ -95,5 +102,87 @@ public class CursorManager : MonoBehaviour
         {
             Cursor.SetCursor(cursorType.texture, cursorType.hotspot, CursorMode.Auto);
         }
+    }
+
+    public void SetInteractableCursor()
+    {
+        SetCursor(FindCursorType("Interactable"));
+    }
+
+    public void SetDefaultCursor()
+    {
+        SetCursor(defaultCursor);
+    }
+
+    public void OnMoveCamera(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            isMouseOverUI = true;
+            SetCursor(FindCursorType("CameraMove"));
+        }
+        else if (context.canceled)
+        {
+            isMouseOverUI = false;
+            SetCursor(defaultCursor);
+        }
+    }
+
+    public void OnMakeBase(InputAction.CallbackContext context)
+    {
+        return;
+    }
+
+    public void OnZoom(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            isMouseOverUI = true;
+            zoomCursorTimer = 0.2f; // Adjust this value to control how long the zoom cursor stays visible
+            SetCursor(FindCursorType("CameraZoom"));
+        }
+    }
+    
+    private void OnEdgePanning()
+    {
+        isMouseOverUI = true;
+        edgePanCursorTimer = 0.2f;
+        SetCursor(FindCursorType("CameraMove"));
+    }
+    
+    private IEnumerator WaitForCameraController()
+    {
+        while (cameraController == null)
+        {
+            cameraController = FindObjectOfType<CameraController>();
+            yield return null;
+        }
+
+        // Subscribe to the EdgePanning event after the CameraController is found
+        cameraController.EdgePanning += OnEdgePanning;
+    }
+    
+    private bool IsMouseOverInteractable()
+    {
+        if (Camera.main == null) return false;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        return (Physics.Raycast(ray, out hit) && IsOwnedInteractable(hit.collider.gameObject));
+    }
+    private bool IsOwnedInteractable(GameObject hitObject)
+    {
+        Army army = hitObject.GetComponentInParent<Army>();
+        Base baseObj = hitObject.GetComponent<Base>();
+
+        if (army != null && army.isOwned)
+        {
+            return true;
+        }
+        else if (baseObj != null && baseObj.isOwned)
+        {
+            return true;
+        }
+
+        return false;
     }
 }

@@ -7,9 +7,9 @@ using UnityEngine.InputSystem;
 
 public class CameraController : NetworkBehaviour
 {
+    public event Action EdgePanning;
     private List<Entity> following;
     private Controls controls;
-
     private Vector2 lastInput = new Vector2(0, 0);
     [SerializeField] Transform playerCameraTransform;
     [SerializeField] float max_track_speed = 1;
@@ -17,6 +17,11 @@ public class CameraController : NetworkBehaviour
     [SerializeField] float edge_drag_speed = 1;
     [SerializeField] Vector2 board_min_extent = new Vector2(-5, -5);
     [SerializeField] Vector2 board_max_extent = new Vector2(5, 5);
+    [SerializeField] float minOrthographicSize = 5f;
+    [SerializeField] float maxOrthographicSize = 15f;
+    [SerializeField] private float zoomMultiplier = 1f;
+    [SerializeField] private float edgePanZoneProportion = 0.1f;
+    [SerializeField] private float zoomButtonMultiplier = 1f;
 
     public override void OnStartAuthority()
     {
@@ -52,7 +57,7 @@ public class CameraController : NetworkBehaviour
     Vector2 camera_delta(Vector2 relative_mouse_position)
     {
         Vector2 delta = new Vector2(0, 0);
-        float threashold = 0.7f;
+        float threashold = 1f - edgePanZoneProportion;
         if (relative_mouse_position.x > threashold)
         {
             delta.x = relative_mouse_position.x - threashold;
@@ -102,6 +107,20 @@ public class CameraController : NetworkBehaviour
         pos.z = Mathf.Clamp(pos.z, board_min_extent.y, board_max_extent.y);
         playerCameraTransform.SetPositionAndRotation(pos, playerCameraTransform.rotation);
     }
+    
+    public void ZoomIn()
+    {
+        if (Camera.main == null) return;
+        float newOrthographicSize = Camera.main.orthographicSize - (zoomMultiplier*zoomButtonMultiplier);
+        Camera.main.orthographicSize = Mathf.Clamp(newOrthographicSize, minOrthographicSize, maxOrthographicSize);
+    }
+
+    public void ZoomOut()
+    {
+        if (Camera.main == null) return;
+        float newOrthographicSize = Camera.main.orthographicSize + (zoomMultiplier*zoomButtonMultiplier);
+        Camera.main.orthographicSize = Mathf.Clamp(newOrthographicSize, minOrthographicSize, maxOrthographicSize);
+    }
 
 
     bool centered = false;
@@ -128,10 +147,22 @@ public class CameraController : NetworkBehaviour
         else
         {
             Vector2 delta = camera_delta(rel_mouse_pos()) / 10f;
+            if (delta != Vector2.zero)
+            {
+                EdgePanning?.Invoke();
+            }
             playerCameraTransform.Translate(new Vector3(delta.x, delta.y));
             Vector2 keyboard_delta = lastInput * keyboard_scroll_speed;
             playerCameraTransform.Translate(new Vector3(keyboard_delta.x, keyboard_delta.y));
         }
+        
+        float scrollInput = Input.mouseScrollDelta.y;
+        if (scrollInput != 0)
+        {
+            float newOrthographicSize = Camera.main.orthographicSize - (scrollInput * zoomMultiplier); // Adjust the divisor to control zoom speed
+            Camera.main.orthographicSize = Mathf.Clamp(newOrthographicSize, minOrthographicSize, maxOrthographicSize);
+        }
+        
         constrain_to_board();
         if (Camera.main)
         {

@@ -38,12 +38,21 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""Make Base"",
-                    ""type"": ""Button"",
+                    ""type"": ""Value"",
                     ""id"": ""cef7d8e1-6806-4938-80a3-d4fe523dc1ae"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": ""Press(behavior=2)"",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Zoom"",
+                    ""type"": ""Value"",
+                    ""id"": ""d4196a81-4d06-4316-b8d4-ec15bc3f8c37"",
+                    ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """",
-                    ""initialStateCheck"": false
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -112,6 +121,17 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""action"": ""Make Base"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""916da94e-a843-42f5-855e-fb3bf118cf19"",
+                    ""path"": ""Mouse/scroll"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Zoom"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -122,6 +142,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_MoveCamera = m_Player.FindAction("Move Camera", throwIfNotFound: true);
         m_Player_MakeBase = m_Player.FindAction("Make Base", throwIfNotFound: true);
+        m_Player_Zoom = m_Player.FindAction("Zoom", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -183,12 +204,14 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private IPlayerActions m_PlayerActionsCallbackInterface;
     private readonly InputAction m_Player_MoveCamera;
     private readonly InputAction m_Player_MakeBase;
+    private readonly InputAction m_Player_Zoom;
     public struct PlayerActions
     {
         private @Controls m_Wrapper;
         public PlayerActions(@Controls wrapper) { m_Wrapper = wrapper; }
         public InputAction @MoveCamera => m_Wrapper.m_Player_MoveCamera;
         public InputAction @MakeBase => m_Wrapper.m_Player_MakeBase;
+        public InputAction @Zoom => m_Wrapper.m_Player_Zoom;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -204,6 +227,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @MakeBase.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMakeBase;
                 @MakeBase.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMakeBase;
                 @MakeBase.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMakeBase;
+                @Zoom.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnZoom;
+                @Zoom.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnZoom;
+                @Zoom.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnZoom;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -214,6 +240,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @MakeBase.started += instance.OnMakeBase;
                 @MakeBase.performed += instance.OnMakeBase;
                 @MakeBase.canceled += instance.OnMakeBase;
+                @Zoom.started += instance.OnZoom;
+                @Zoom.performed += instance.OnZoom;
+                @Zoom.canceled += instance.OnZoom;
             }
         }
     }
@@ -222,5 +251,6 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     {
         void OnMoveCamera(InputAction.CallbackContext context);
         void OnMakeBase(InputAction.CallbackContext context);
+        void OnZoom(InputAction.CallbackContext context);
     }
 }

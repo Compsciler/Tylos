@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Mirror;
+using Steamworks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -13,6 +14,12 @@ public class MyNetworkManager : NetworkManager
 
     [Scene]
     [SerializeField] string gameScene;
+
+    [Header("Steam")]
+    [SerializeField] bool useSteam = false;
+    public bool UseSteam => useSteam;
+
+    public static ulong LobbyId { get; set; }
 
     [Header("Testing")]
     [SerializeField] bool canStartWith1Player = false;
@@ -34,6 +41,8 @@ public class MyNetworkManager : NetworkManager
     public List<MyPlayer> RemainingPlayers => remainingPlayers;
 
     public static event Action<ObjectIdentity> ServerOnPlayerIdentityUpdated;
+
+    public int MaxConnections => maxConnections;
 
 
     #region Server
@@ -79,8 +88,18 @@ public class MyNetworkManager : NetworkManager
 
         players.Add(player);
 
-        player.SetDisplayName($"Player {players.Count}");
-
+        if (useSteam)
+        {
+            CSteamID steamId = SteamMatchmaking.GetLobbyMemberByIndex(
+                new CSteamID(LobbyId),
+                numPlayers - 1
+            );
+            player.SetDisplayName($"{SteamFriends.GetFriendPersonaName(steamId)}");
+        }
+        else
+        {
+            player.SetDisplayName($"Player {players.Count}");
+        }
 
         if (players.Count == 1)
         {
@@ -111,14 +130,16 @@ public class MyNetworkManager : NetworkManager
             foreach (MyPlayer player in players)
             {
                 SetAndGetPlayerIdentity(player);
-                player.SetSpawnLocation(GetStartPosition().position);
-                MakeBase(player, player.GetComponent<ObjectIdentity>().Identity, player.spawnLocation);
+
+                MakeBase(player, GetStartPosition().position);
             }
         }
     }
 
-    public void MakeBase(MyPlayer player, IdentityInfo color_id, Vector3 position)
+    public void MakeBase(MyPlayer player, Vector3 position)
     {
+        IdentityInfo color_id = player.GetComponent<ObjectIdentity>().Identity;
+
         GameObject baseInstance = Instantiate(
                     basePrefab,
                     position,
@@ -144,6 +165,7 @@ public class MyNetworkManager : NetworkManager
     {
         ObjectIdentity baseObjectIdentity = baseInstance.GetComponent<ObjectIdentity>();
         baseObjectIdentity.SetIdentity(playerIdentity);
+        baseObjectIdentity.SetTeamIdentity(playerIdentity);
     }
 
 
