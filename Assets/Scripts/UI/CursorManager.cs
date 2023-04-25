@@ -74,7 +74,7 @@ public class CursorManager : MonoBehaviour, Controls.IPlayerActions
             }
         }
     }
-    
+
     public void OnMouseEnterUI()
     {
         isMouseOverUI = true;
@@ -142,14 +142,14 @@ public class CursorManager : MonoBehaviour, Controls.IPlayerActions
             SetCursor(FindCursorType("CameraZoom"));
         }
     }
-    
+
     private void OnEdgePanning()
     {
         isMouseOverUI = true;
         edgePanCursorTimer = 0.2f;
         SetCursor(FindCursorType("CameraMove"));
     }
-    
+
     private IEnumerator WaitForCameraController()
     {
         while (cameraController == null)
@@ -161,7 +161,7 @@ public class CursorManager : MonoBehaviour, Controls.IPlayerActions
         // Subscribe to the EdgePanning event after the CameraController is found
         cameraController.EdgePanning += OnEdgePanning;
     }
-    
+
     private bool IsMouseOverInteractable()
     {
         if (Camera.main == null) return false;
@@ -184,5 +184,10 @@ public class CursorManager : MonoBehaviour, Controls.IPlayerActions
         }
 
         return false;
+    }
+
+    public void OnCenterCamera(InputAction.CallbackContext context)
+    {
+        //do nothing, needed to implement interface
     }
 }

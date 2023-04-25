@@ -11,6 +11,8 @@ public class CameraController : NetworkBehaviour
     private List<Entity> following;
     private Controls controls;
     private Vector2 lastInput = new Vector2(0, 0);
+
+    private Vector3 center_position;
     [SerializeField] Transform playerCameraTransform;
     [SerializeField] float max_track_speed = 1;
     [SerializeField] float keyboard_scroll_speed = 0.1f;
@@ -29,12 +31,21 @@ public class CameraController : NetworkBehaviour
         controls = new Controls();
         controls.Player.MoveCamera.performed += setInput;
         controls.Player.MoveCamera.canceled += setInput;
+        controls.Player.CenterCamera.performed += centerCamera;
         controls.Enable();
     }
 
     private void setInput(InputAction.CallbackContext ctx)
     {
         lastInput = ctx.ReadValue<Vector2>();
+    }
+
+    private void centerCamera(InputAction.CallbackContext ctx)
+    {
+        if (center_position != null)
+        {
+            playerCameraTransform.position = new Vector3(center_position.x, 20, center_position.z);
+        }
     }
 
     public void follow(List<Entity> to_follow)
@@ -44,6 +55,7 @@ public class CameraController : NetworkBehaviour
 
     public void set_center(Vector3 center)
     {
+        center_position = center;
         playerCameraTransform.position = new Vector3(center.x, 20, center.z);
     }
 
@@ -107,34 +119,25 @@ public class CameraController : NetworkBehaviour
         pos.z = Mathf.Clamp(pos.z, board_min_extent.y, board_max_extent.y);
         playerCameraTransform.SetPositionAndRotation(pos, playerCameraTransform.rotation);
     }
-    
+
     public void ZoomIn()
     {
         if (Camera.main == null) return;
-        float newOrthographicSize = Camera.main.orthographicSize - (zoomMultiplier*zoomButtonMultiplier);
+        float newOrthographicSize = Camera.main.orthographicSize - (zoomMultiplier * zoomButtonMultiplier);
         Camera.main.orthographicSize = Mathf.Clamp(newOrthographicSize, minOrthographicSize, maxOrthographicSize);
     }
 
     public void ZoomOut()
     {
         if (Camera.main == null) return;
-        float newOrthographicSize = Camera.main.orthographicSize + (zoomMultiplier*zoomButtonMultiplier);
+        float newOrthographicSize = Camera.main.orthographicSize + (zoomMultiplier * zoomButtonMultiplier);
         Camera.main.orthographicSize = Mathf.Clamp(newOrthographicSize, minOrthographicSize, maxOrthographicSize);
     }
 
-
-    bool centered = false;
     // Update is called once per frame
     [ClientCallback]
     void Update()
     {
-        if (!centered)
-        {
-            // if (GetComponent<MyPlayer>().spawnLocation != null)
-            // {
-            // centered = true;
-            // }
-        }
         if (!isOwned || !Application.isFocused) { return; }
 
         if (following != null && following.Count > 0)
@@ -155,14 +158,14 @@ public class CameraController : NetworkBehaviour
             Vector2 keyboard_delta = lastInput * keyboard_scroll_speed;
             playerCameraTransform.Translate(new Vector3(keyboard_delta.x, keyboard_delta.y));
         }
-        
+
         float scrollInput = Input.mouseScrollDelta.y;
         if (scrollInput != 0)
         {
             float newOrthographicSize = Camera.main.orthographicSize - (scrollInput * zoomMultiplier); // Adjust the divisor to control zoom speed
             Camera.main.orthographicSize = Mathf.Clamp(newOrthographicSize, minOrthographicSize, maxOrthographicSize);
         }
-        
+
         constrain_to_board();
         if (Camera.main)
         {
