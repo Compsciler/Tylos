@@ -34,6 +34,16 @@ public class MainMenu : MonoBehaviour
         lobbyEntered = Callback<LobbyEnter_t>.Create(OnLobbyEntered);
     }
 
+    void Update()
+    {
+        if (!useSteam) { return; }
+
+        if (Input.GetButtonDown("Jump"))
+        {
+            ((MyNetworkManager)NetworkManager.singleton).StartGame();
+        }
+    }
+
     public void HostLobby()
     {
         // TODO: Add a loading screen
@@ -84,6 +94,6 @@ public class MainMenu : MonoBehaviour
         NetworkManager.singleton.networkAddress = hostAddress;
         NetworkManager.singleton.StartClient();
 
-        SceneManager.LoadScene(lobbyScene);
+        // SceneManager.LoadScene(lobbyScene);  // Maybe?
     }
 }
