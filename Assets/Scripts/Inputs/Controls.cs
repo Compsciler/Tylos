@@ -53,6 +53,15 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Center Camera"",
+                    ""type"": ""Button"",
+                    ""id"": ""cea128f6-679c-4cab-a9db-944c063c4ba5"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -132,6 +141,17 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""action"": ""Zoom"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d70d4a96-3b06-4c44-b96c-06f5cf23f13a"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Center Camera"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -143,6 +163,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_Player_MoveCamera = m_Player.FindAction("Move Camera", throwIfNotFound: true);
         m_Player_MakeBase = m_Player.FindAction("Make Base", throwIfNotFound: true);
         m_Player_Zoom = m_Player.FindAction("Zoom", throwIfNotFound: true);
+        m_Player_CenterCamera = m_Player.FindAction("Center Camera", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -205,6 +226,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_MoveCamera;
     private readonly InputAction m_Player_MakeBase;
     private readonly InputAction m_Player_Zoom;
+    private readonly InputAction m_Player_CenterCamera;
     public struct PlayerActions
     {
         private @Controls m_Wrapper;
@@ -212,6 +234,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         public InputAction @MoveCamera => m_Wrapper.m_Player_MoveCamera;
         public InputAction @MakeBase => m_Wrapper.m_Player_MakeBase;
         public InputAction @Zoom => m_Wrapper.m_Player_Zoom;
+        public InputAction @CenterCamera => m_Wrapper.m_Player_CenterCamera;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -230,6 +253,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @Zoom.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnZoom;
                 @Zoom.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnZoom;
                 @Zoom.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnZoom;
+                @CenterCamera.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCenterCamera;
+                @CenterCamera.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCenterCamera;
+                @CenterCamera.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCenterCamera;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -243,6 +269,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @Zoom.started += instance.OnZoom;
                 @Zoom.performed += instance.OnZoom;
                 @Zoom.canceled += instance.OnZoom;
+                @CenterCamera.started += instance.OnCenterCamera;
+                @CenterCamera.performed += instance.OnCenterCamera;
+                @CenterCamera.canceled += instance.OnCenterCamera;
             }
         }
     }
@@ -252,5 +281,6 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         void OnMoveCamera(InputAction.CallbackContext context);
         void OnMakeBase(InputAction.CallbackContext context);
         void OnZoom(InputAction.CallbackContext context);
+        void OnCenterCamera(InputAction.CallbackContext context);
     }
 }

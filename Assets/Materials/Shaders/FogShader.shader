@@ -51,8 +51,14 @@ Shader "Unlit/FogShader"
 
             fixed4 frag (v2f i) : SV_Target
             {
-                fixed4 fog = tex2D(FogTex, i.uv);
+                float2 fixed_uv = i.uv*2-0.5;
+                fixed4 fog = tex2D(FogTex, fixed_uv);
                 fixed4 color;
+                if(fixed_uv.x > 1 || fixed_uv.x < 0 || fixed_uv.y > 1 || fixed_uv.y < 0){
+                    color = tex2D(CloudTex, i.uv);
+                    color.w = 1;
+                    return color;
+                }
                 if(fog.x < 0.5){
                     discard;
                     return color;
