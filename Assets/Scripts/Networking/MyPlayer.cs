@@ -37,7 +37,7 @@ public class MyPlayer : NetworkBehaviour
     Color teamColor = new Color();
     public Color TeamColor => teamColor;
     private Controls controls;
-
+    public Vector3 spawnLocation;
 
     [SyncVar(hook = nameof(AuthorityHandlePartyOwnerStateUpdated))]
     bool isPartyOwner = false;
@@ -96,6 +96,11 @@ public class MyPlayer : NetworkBehaviour
     public void SetTeamColor(Color color)
     {
         teamColor = color;
+    }
+    [Server]
+    public void SetSpawnLocation(Vector3 pos)
+    {
+        this.spawnLocation = pos;
     }
 
     [Command]
@@ -170,9 +175,17 @@ public class MyPlayer : NetworkBehaviour
         mergeMaterial.SetColor("FillColor", new Color(0, 1, 1, 1));
     }
 
+
+    bool has_centered = false;
     [ClientCallback]
     void Update()
     {
+        if (!isOwned) return;
+        if (myBases.Count > 0 && !has_centered)
+        {
+            GetComponent<CameraController>().set_center(myBases[0].transform.position);
+            has_centered = true;
+        }
         if (fogTex == null || mergeTex == null)
         {
             return;
@@ -326,7 +339,8 @@ public class MyPlayer : NetworkBehaviour
                     {
                         army.ArmyUnits.RemoveAt(0);
                     }
-                ((MyNetworkManager)NetworkManager.singleton).MakeBase(this, army.transform.position);
+                    IdentityInfo id = army._armyIdentity.Identity;
+                    ((MyNetworkManager)NetworkManager.singleton).MakeBase(this, id, army.transform.position);
                 }
             }
 

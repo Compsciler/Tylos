@@ -25,7 +25,6 @@ public class CameraController : NetworkBehaviour
         controls.Player.MoveCamera.performed += setInput;
         controls.Player.MoveCamera.canceled += setInput;
         controls.Enable();
-        MyNetworkManager.SetCameraCenter += set_center;
     }
 
     private void setInput(InputAction.CallbackContext ctx)
@@ -104,10 +103,19 @@ public class CameraController : NetworkBehaviour
         playerCameraTransform.SetPositionAndRotation(pos, playerCameraTransform.rotation);
     }
 
+
+    bool centered = false;
     // Update is called once per frame
     [ClientCallback]
     void Update()
     {
+        if (!centered)
+        {
+            // if (GetComponent<MyPlayer>().spawnLocation != null)
+            // {
+            // centered = true;
+            // }
+        }
         if (!isOwned || !Application.isFocused) { return; }
 
         if (following != null && following.Count > 0)

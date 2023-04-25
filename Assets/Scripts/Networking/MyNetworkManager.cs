@@ -21,8 +21,6 @@ public class MyNetworkManager : NetworkManager
     public static event Action ClientOnConnected;
     public static event Action ClientOnDisconnected;
 
-    public static event Action<Vector3> SetCameraCenter;
-
     bool isGameInProgress = false;
 
     float lobbyCreatedTime;
@@ -113,22 +111,19 @@ public class MyNetworkManager : NetworkManager
             foreach (MyPlayer player in players)
             {
                 SetAndGetPlayerIdentity(player);
-                Vector3 pos = GetStartPosition().position;
-                SetCameraCenter?.Invoke(pos);
-                MakeBase(player, pos);
+                player.SetSpawnLocation(GetStartPosition().position);
+                MakeBase(player, player.GetComponent<ObjectIdentity>().Identity, player.spawnLocation);
             }
         }
     }
 
-    public void MakeBase(MyPlayer player, Vector3 position)
+    public void MakeBase(MyPlayer player, IdentityInfo color_id, Vector3 position)
     {
-        IdentityInfo playerIdentity = player.GetComponent<ObjectIdentity>().Identity;
-
         GameObject baseInstance = Instantiate(
                     basePrefab,
                     position,
                     Quaternion.identity);
-        SetBaseIdentityToPlayerIdentity(baseInstance, playerIdentity);  // If you move this line to after the Spawn() call, the base will be the wrong color for a few frames somehow
+        SetBaseIdentityToPlayerIdentity(baseInstance, color_id);  // If you move this line to after the Spawn() call, the base will be the wrong color for a few frames somehow
 
         NetworkServer.Spawn(baseInstance, player.connectionToClient);
     }
