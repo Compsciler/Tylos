@@ -131,20 +131,18 @@ public class MyNetworkManager : NetworkManager
             {
                 SetAndGetPlayerIdentity(player);
 
-                MakeBase(player, GetStartPosition().position);
+                MakeBase(player, GetStartPosition().position, player.GetComponent<ObjectIdentity>().Identity);
             }
         }
     }
 
-    public void MakeBase(MyPlayer player, Vector3 position)
+    public void MakeBase(MyPlayer player, Vector3 position, IdentityInfo identity)
     {
-        IdentityInfo color_id = player.GetComponent<ObjectIdentity>().Identity;
-
         GameObject baseInstance = Instantiate(
                     basePrefab,
                     position,
                     Quaternion.identity);
-        SetBaseIdentityToPlayerIdentity(baseInstance, color_id);  // If you move this line to after the Spawn() call, the base will be the wrong color for a few frames somehow
+        SetBaseIdentityToPlayerIdentity(baseInstance, identity, player.GetComponent<ObjectIdentity>().Identity);  // If you move this line to after the Spawn() call, the base will be the wrong color for a few frames somehow
 
         NetworkServer.Spawn(baseInstance, player.connectionToClient);
     }
@@ -161,11 +159,11 @@ public class MyNetworkManager : NetworkManager
         return playerIdentity;
     }
 
-    private void SetBaseIdentityToPlayerIdentity(GameObject baseInstance, IdentityInfo playerIdentity)
+    private void SetBaseIdentityToPlayerIdentity(GameObject baseInstance, IdentityInfo baseIdentity, IdentityInfo  teamIdentity)
     {
         ObjectIdentity baseObjectIdentity = baseInstance.GetComponent<ObjectIdentity>();
-        baseObjectIdentity.SetIdentity(playerIdentity);
-        baseObjectIdentity.SetTeamIdentity(playerIdentity);
+        baseObjectIdentity.SetIdentity(baseIdentity);
+        baseObjectIdentity.SetTeamIdentity(teamIdentity);
     }
 
 
