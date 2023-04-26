@@ -644,7 +644,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "Keybindings:\n\nCamera pan - WASD\n\nCamera zoom - Scroll wheel\n\nUnit
     Select - Left click and drag\n\nIssue Command - Right click\n\nSet army Attack
-    mode - E\n\nSet army Convert mode - R\n\nSet army Build Base - B\n\n\t\n"
+    mode - E\n\nSet army Convert mode - R\n\nSet army Build Base - C\n\n\t\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 2d485a1fa25942e4aaaeb90bfde17eae, type: 2}
   m_sharedMaterial: {fileID: 4444542669254537658, guid: 2d485a1fa25942e4aaaeb90bfde17eae,
@@ -3610,7 +3610,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: B
+  m_text: C
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 2d485a1fa25942e4aaaeb90bfde17eae, type: 2}
   m_sharedMaterial: {fileID: 4444542669254537658, guid: 2d485a1fa25942e4aaaeb90bfde17eae,

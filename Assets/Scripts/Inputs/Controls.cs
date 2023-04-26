@@ -123,7 +123,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""381e326e-4a9f-4058-8be4-7da58947a306"",
-                    ""path"": ""<Keyboard>/b"",
+                    ""path"": ""<Keyboard>/c"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",

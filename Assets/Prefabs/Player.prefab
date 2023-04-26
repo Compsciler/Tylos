@@ -133,8 +133,8 @@ MonoBehaviour:
   syncInterval: 0.1
   playerCameraTransform: {fileID: 8543621414628890487}
   max_track_speed: 1
-  keyboard_scroll_speed: 0.1
-  edge_drag_speed: 1
+  keyboard_scroll_speed: 0.3
+  edge_drag_speed: 3
   board_min_extent: {x: -35, y: -35}
   board_max_extent: {x: 35, y: 35}
   minOrthographicSize: 10
