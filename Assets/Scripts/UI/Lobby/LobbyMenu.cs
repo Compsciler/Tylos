@@ -19,7 +19,7 @@ public class LobbyMenu : MonoBehaviour
 
     [SerializeField] Color queuedPlayerColor;
     [SerializeField] Color waitingForPlayerColor;
-    
+
     [SerializeField] private Animator fadeOutAnimator;
 
     void Awake()
@@ -57,6 +57,8 @@ public class LobbyMenu : MonoBehaviour
     private void HandleClientConnected()
     {
         // lobbyUI.SetActive(true);
+        // STEAM: lobbyUI.SetActive(true);
+        DebugText.Instance.AppendText("L, ");
     }
 
     private void ClientHandleInfoUpdated()
@@ -111,7 +113,7 @@ public class LobbyMenu : MonoBehaviour
             lobbyController.LoadMainMenu();
         }
     }
-    
+
     private IEnumerator LoadMainMenuWithFadeOut()
     {
         fadeOutAnimator.SetBool("FadeOut", true);

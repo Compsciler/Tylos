@@ -34,13 +34,26 @@ public class MainMenu : MonoBehaviour
         lobbyEntered = Callback<LobbyEnter_t>.Create(OnLobbyEntered);
     }
 
+    void Update()
+    {
+        if (!useSteam) { return; }
+
+        // if (Input.GetButtonDown("Jump"))
+        // {
+        //     ((MyNetworkManager)NetworkManager.singleton).StartGame();
+        // }
+    }
+
     public void HostLobby()
     {
         // TODO: Add a loading screen
+        // STEAM: landingPagePanel.SetActive(false);
+        DebugText.Instance.AppendText("H, ");
 
         if (useSteam)
         {
             SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypeFriendsOnly, maxConnections);
+            SceneManager.LoadScene(lobbyScene);  // STEAM: trying this
             return;
         }
 
@@ -84,6 +97,7 @@ public class MainMenu : MonoBehaviour
         NetworkManager.singleton.networkAddress = hostAddress;
         NetworkManager.singleton.StartClient();
 
-        SceneManager.LoadScene(lobbyScene);
+        SceneManager.LoadScene(lobbyScene);  // STEAM: landingPagePanel.SetActive(false);
+        DebugText.Instance.AppendText("C, ");
     }
 }

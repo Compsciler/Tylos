@@ -27,8 +27,8 @@ public class LoadLobby : MonoBehaviour
 
     public void OnHostButtonClick()
     {
-        StartCoroutine(LoadLobbyWithFade());
-        NetworkManager.singleton.StartHost();
+        // StartCoroutine(LoadLobbyWithFade());
+        // NetworkManager.singleton.StartHost();
     }
 
 
