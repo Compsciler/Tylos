@@ -94,6 +94,6 @@ public class MainMenu : MonoBehaviour
         NetworkManager.singleton.networkAddress = hostAddress;
         NetworkManager.singleton.StartClient();
 
-        // SceneManager.LoadScene(lobbyScene);  // Maybe?
+        SceneManager.LoadScene(lobbyScene);
     }
 }
