@@ -38,10 +38,10 @@ public class MainMenu : MonoBehaviour
     {
         if (!useSteam) { return; }
 
-        if (Input.GetButtonDown("Jump"))
-        {
-            ((MyNetworkManager)NetworkManager.singleton).StartGame();
-        }
+        // if (Input.GetButtonDown("Jump"))
+        // {
+        //     ((MyNetworkManager)NetworkManager.singleton).StartGame();
+        // }
     }
 
     public void HostLobby()
