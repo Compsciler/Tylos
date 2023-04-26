@@ -388,11 +388,13 @@ public class MyPlayer : NetworkBehaviour
 
                     if (!baseNearby && army.ArmyUnits.Count > BaseCreationCost)
                     {
+                        IdentityInfo identityInfo = new IdentityInfo();
+                        identityInfo = army.GetComponent<ObjectIdentity>().Identity;
                         for (int i = 0; i < BaseCreationCost; i++)
                         {
                             army.ArmyUnits.RemoveAt(0);
                         }
-                        ((MyNetworkManager)NetworkManager.singleton).MakeBase(this, army.transform.position);
+                        ((MyNetworkManager)NetworkManager.singleton).MakeBase(this, army.transform.position, identityInfo);
                         audioSource.Stop();
                         setBuildIconOnArmies(false, armies);
                     }
