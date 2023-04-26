@@ -24,10 +24,12 @@ public class Base : Entity
 
     // Internal variables
     [SyncVar] private int _baseUnitCount = 0;
+    public int BaseUnitCount => _baseUnitCount;
     [SyncVar] private IdentityInfo _baseIdentityInfo;
     private BaseSpawner _baseSpawner;
 
-    private void Awake() {
+    private void Awake()
+    {
         entityHealth = GetComponent<BaseHealth>();
     }
 
@@ -90,7 +92,7 @@ public class Base : Entity
     public override void TryMove(Vector3 position) // When move command is issued to the base, spawn an army and move it to the position
     {
         if (!isOwned || _baseUnitCount == 0) { return; } // If there are no units in the base, don't do anything
-        
+
         _baseSpawner.CmdSpawnMoveArmy(_baseIdentityInfo, _baseUnitCount, position);
         CmdClearBaseUnits();
     }

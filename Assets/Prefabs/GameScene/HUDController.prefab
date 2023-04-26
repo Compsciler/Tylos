@@ -49,6 +49,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   selectedUnitsInfoGO: {fileID: 7740113769339389644}
   armyColorText: {fileID: 7740113768188566110}
+  totalUnitCountText: {fileID: 7740113767911976165}
 --- !u!114 &3113140194126406409
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -414,16 +415,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9067413075746347563, guid: 593c2ac6cba12b14a84f79078c46e61a,
         type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9067413075746347563, guid: 593c2ac6cba12b14a84f79078c46e61a,
-        type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9067413075746347563, guid: 593c2ac6cba12b14a84f79078c46e61a,
-        type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -597,6 +588,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1639174269492999873}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7740113767911976165 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9067413075746347556, guid: 593c2ac6cba12b14a84f79078c46e61a,
+    type: 3}
+  m_PrefabInstance: {fileID: 1639174269492999873}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7740113767964521984 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 9067413075798622401, guid: 593c2ac6cba12b14a84f79078c46e61a,

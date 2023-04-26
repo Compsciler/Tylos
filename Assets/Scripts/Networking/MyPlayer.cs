@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Mirror;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -60,6 +61,11 @@ public class MyPlayer : NetworkBehaviour
     {
         myPlayerArmies = GetComponent<PlayerArmies>();
         audioSource = GetComponent<AudioSource>();
+    }
+
+    public int GetTotalUnitCount()
+    {
+        return myArmies.Sum(army => army.ArmyUnits.Count) + myBases.Sum(base_ => base_.BaseUnitCount);
     }
 
     #region Server

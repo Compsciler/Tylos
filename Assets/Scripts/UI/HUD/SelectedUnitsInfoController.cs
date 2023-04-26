@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Mirror;
 
 public class SelectedUnitsInfoController : MonoBehaviour
 {
@@ -14,8 +15,12 @@ public class SelectedUnitsInfoController : MonoBehaviour
     // This should be on a separate script on the selectedUnitsInfoGO GameObject
     [SerializeField] TMP_Text armyColorText;
 
+    [SerializeField] TMP_Text totalUnitCountText;
+
     Army army;
     ObjectIdentity armyObjectIdentity;
+
+    MyPlayer player;
 
     void Awake()
     {
@@ -29,8 +34,16 @@ public class SelectedUnitsInfoController : MonoBehaviour
         Army.AuthorityOnArmyDeselected -= AuthorityHandleArmyDeselected;
     }
 
+    void Start()
+    {
+        player = NetworkClient.connection.identity.GetComponent<MyPlayer>();
+    }
+
     void Update()
     {
+        int totalUnitCount = player.GetTotalUnitCount();
+        totalUnitCountText.text = totalUnitCount.ToString();
+
         if (army == null) { return; }
         IdentityInfo armyIdentity = armyObjectIdentity.Identity;
         Color armyIdentityColor = armyIdentity.GetColor();
