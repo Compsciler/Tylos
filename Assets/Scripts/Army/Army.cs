@@ -22,7 +22,6 @@ public class Army : Entity
     public SyncList<Unit> ArmyUnits => armyUnits;
     // this is our local army units copy
     // the one above will be flushed every single frame
-    public List<Unit> _armyUnitsLocal = new();
 
     const float twoPI = (Mathf.PI * 2);
 
@@ -39,7 +38,7 @@ public class Army : Entity
     [SyncVar] private Entity convertTarget = null; // Only used on the server    
     [SyncVar] private Army convertArmy = null; // Cache the Army component of the convert target
 
-    // MonoBehaviour references
+    // MonoBehaviour dependencies
     ArmyVisuals armyVisuals;
     ArmyHealth armyHealth;
     ArmyConversion armyConversion;
@@ -52,7 +51,7 @@ public class Army : Entity
     [SerializeField] private GameObject unableToBuildIcon;
     [SerializeField] private GameObject buildingIcon;
     [SerializeField] private float iconDisplayDuration = 0.5f;
-    
+
     #region Events
     public static event Action<Army> ServerOnArmySpawned;
     public static event Action<Army> ServerOnArmyDespawned;
@@ -62,7 +61,7 @@ public class Army : Entity
 
     // the mean of the army identity on complex plane
     // this is calculated on on unit add/remove
-    private Vector3 _meanC;
+    [SyncVar] private Vector3 _meanColor;
     private Vector2 _meanZ;
     private float _deviance;
 
@@ -142,26 +141,22 @@ public class Army : Entity
             }
         }
     }
+
+    [Server]
     private void FixedUpdate()
     {
-        _armyUnitsLocal.Clear();
-
-        foreach (var u in armyUnits)
-        {
-            _armyUnitsLocal.Add(u.Clone());
-        }
-
         // recalculate mean
         // there is no point doing this in the setter anymore
         // because all the list flushing already threw efficiency out of the window
         _armyComplex = ArmyUnits.Select(i => i.GetIdentityZ()).ToList();
 
-        _meanC = Vector3.zero;
+        Vector3 meanColor = Vector3.zero;
+        meanColor = Vector3.zero;
         _meanZ = Vector2.zero;
 
-        foreach (var u in _armyUnitsLocal)
+        foreach (var u in armyUnits)
         {
-            _meanC += new Vector3(u.identityInfo.r, u.identityInfo.g, u.identityInfo.b);
+            meanColor += new Vector3(u.identityInfo.r, u.identityInfo.g, u.identityInfo.b);
         }
 
         foreach (var z in _armyComplex)
@@ -169,20 +164,14 @@ public class Army : Entity
             _meanZ += z;
         }
 
-        _meanC /= _armyUnitsLocal.Count;
-        _meanZ /= _armyUnitsLocal.Count;
-
+        meanColor /= armyUnits.Count;
+        _meanColor = meanColor; // Set the SyncVar to the new mean color
+        _meanZ /= armyUnits.Count;
 
         // update the army's visual color
-        _armyIdentity.SetIdentity(_meanC.x, _meanC.y, _meanC.z);
+        _armyIdentity.SetIdentity(_meanColor.x, _meanColor.y, _meanColor.z);
 
-        ProcessMeanIdentityShift(_meanC, ConversionRateIdle * Time.fixedDeltaTime);
-        // flush the synced list
-        armyUnits.Clear();
-        foreach (var u in _armyUnitsLocal)
-        {
-            armyUnits.Add(u);
-        }
+        ProcessMeanIdentityShift(_meanColor, ConversionRateIdle * Time.fixedDeltaTime);
 
         _deviance = CalculateDeviance();
     }
@@ -191,49 +180,26 @@ public class Army : Entity
     #region Unit Operations
     public void AddUnit(Unit unit)
     {
-        _armyUnitsLocal.Add(unit);
+        armyUnits.Add(unit);
     }
 
     public void Absorb(SyncList<Unit> units)
     {
         ArmyUnits.AddRange(units);
-        // I really don't want to calculate this multiple times per frame
-        // ideally this is refactored into IdentityInfo
-        _armyUnitsLocal.Clear();
-
-        foreach (var u in armyUnits)
-        {
-            _armyUnitsLocal.Add(u.Clone());
-        }
-
         // recalculate mean
         // there is no point doing this in the setter anymore
         // because all the list flushing already threw efficiency out of the window
         var meanC = Vector3.zero;
-        foreach (var u in _armyUnitsLocal)
+        foreach (var u in armyUnits)
         {
             meanC += new Vector3(u.identityInfo.r, u.identityInfo.g, u.identityInfo.b);
         }
-        meanC /= _armyUnitsLocal.Count;
-
-        // var mean = Vector2.zero;
-        // foreach (var z in _armyComplex)
-        // {
-        //     mean += z;
-        // }
-        // mean /= _armyComplex.Count;
-        // Debug.Log(mean);
+        meanC /= armyUnits.Count;
 
         // update the army's visual color
         _armyIdentity.SetIdentity(meanC.x, meanC.y, meanC.z);
 
         ProcessMeanIdentityShift(meanC, ConversionRateAbsorb);
-        // flush the synced list
-        armyUnits.Clear();
-        foreach (var u in _armyUnitsLocal)
-        {
-            armyUnits.Add(u);
-        }
     }
     #endregion
 
@@ -241,22 +207,22 @@ public class Army : Entity
 
     private void ProcessMeanIdentityShift(Vector3 meanC, float step)
     {
-        for (int i = 0; i < _armyUnitsLocal.Count; i++)
+        for (int i = 0; i < armyUnits.Count; i++)
         {
             // this is the hsv identity of the unit we are currently dealing with
-            var identity = _armyUnitsLocal[i].identityInfo;
+            var identity = armyUnits[i].identityInfo;
             var originalColor = new Vector3(identity.r, identity.g, identity.b);
 
             var deltaNewColor = (meanC - originalColor) * step;
             var newColor = originalColor + deltaNewColor;
 
-            var newUnit = _armyUnitsLocal[i].Clone();
+            var newUnit = armyUnits[i].Clone();
 
             newUnit.identityInfo.r = newColor.x;
             newUnit.identityInfo.g = newColor.y;
             newUnit.identityInfo.b = newColor.z;
 
-            _armyUnitsLocal[i] = newUnit;
+            armyUnits[i] = newUnit;
         }
     }
 
@@ -264,13 +230,13 @@ public class Army : Entity
 
     private float CalculateDeviance()
     {
-        var armyIdentityColors = _armyUnitsLocal.Select
+        var armyIdentityColors = armyUnits.Select
             (i => new Vector3(i.identityInfo.r, i.identityInfo.g, i.identityInfo.b)).ToList();
         if (armyIdentityColors.Count == 0)
         {
             return 0f;
         }
-        var mean = _meanC;
+        var mean = _meanColor;
         // using squared magnitude because it's like a standard
         // PCA uses another three stdev metric
         // is there a way to unify them to reduce problems?
@@ -327,7 +293,7 @@ public class Army : Entity
     private List<Vector2> IdentityComplex()
     {
         var armyComplex = new List<Vector2>();
-        foreach (var u in _armyUnitsLocal)
+        foreach (var u in armyUnits)
         {
             var identity = u.identityInfo;
             var rgbIdentity = new Color(identity.r, identity.g, identity.b);
@@ -552,7 +518,7 @@ public class Army : Entity
         }
 
         armyUnits.Callback += OnArmyUnitsUpdated;
-        armyVisuals.SetColor(ArmyUnits); // Initialize the color of the army
+        // armyVisuals.SetColor(ArmyUnits); // Initialize the color of the army
     }
 
     public override void OnStartAuthority()
@@ -608,10 +574,10 @@ public class Army : Entity
             }
             armyConversion.SetResistance(ArmyUnits.Count);
         }
-        else if (isClient)
-        {
-            armyVisuals.SetColor(ArmyUnits); // TODO: Optimize this so the entire list doesn't have to be passed
-        }
+        // else if (isClient)
+        // {
+        //     armyVisuals.SetColor(ArmyUnits); // TODO: Optimize this so the entire list doesn't have to be passed
+        // }
     }
 
     [Client]
@@ -635,7 +601,7 @@ public class Army : Entity
 
         return (distance <= trueAttackRange);
     }
-    
+
     public void ShowUnableToBuildIcon()
     {
         if (!unableToBuildIcon.activeInHierarchy)

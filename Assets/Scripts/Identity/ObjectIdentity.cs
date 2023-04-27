@@ -14,12 +14,14 @@ public class ObjectIdentity : NetworkBehaviour
 
     [SyncVar(hook = nameof(HandleTeamIdentityUpdated))]
     [SerializeField]
-    IdentityInfo teamIdentity; 
+    IdentityInfo teamIdentity;
     public IdentityInfo TeamIdentity => teamIdentity;
 
     public static event Action<ObjectIdentity> ServerOnTeamIdentityUpdated;
 
     public event Action<ObjectIdentity> ServerOnIdentityUpdated;
+
+    public event Action<ObjectIdentity> ClientOnIdentityUpdated;
 
 
     public Color GetColorFromIdentity()
@@ -60,6 +62,7 @@ public class ObjectIdentity : NetworkBehaviour
     private void HandleIdentityUpdated(IdentityInfo oldIdentity, IdentityInfo newIdentity)
     {
         ServerOnIdentityUpdated?.Invoke(this);
+        ClientOnIdentityUpdated?.Invoke(this);
     }
 
     #endregion
