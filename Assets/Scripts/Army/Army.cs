@@ -62,6 +62,15 @@ public class Army : Entity
     // the mean of the army identity on complex plane
     // this is calculated on on unit add/remove
     [SyncVar] private Vector3 _meanColor;
+    public Vector3 MeanColor
+    {
+        get => _meanColor;
+        set
+        {
+            _meanColor = value;
+            _armyIdentity.SetIdentity(value.x, value.y, value.z);
+        }
+    }
     private Vector2 _meanZ;
     private float _deviance;
 
@@ -145,35 +154,8 @@ public class Army : Entity
     [Server]
     private void FixedUpdate()
     {
-        // recalculate mean
-        // there is no point doing this in the setter anymore
-        // because all the list flushing already threw efficiency out of the window
-        _armyComplex = ArmyUnits.Select(i => i.GetIdentityZ()).ToList();
-
-        Vector3 meanColor = Vector3.zero;
-        meanColor = Vector3.zero;
-        _meanZ = Vector2.zero;
-
-        foreach (var u in armyUnits)
-        {
-            meanColor += new Vector3(u.identityInfo.r, u.identityInfo.g, u.identityInfo.b);
-        }
-
-        foreach (var z in _armyComplex)
-        {
-            _meanZ += z;
-        }
-
-        meanColor /= armyUnits.Count;
-        _meanColor = meanColor; // Set the SyncVar to the new mean color
-        _meanZ /= armyUnits.Count;
-
-        // update the army's visual color
-        _armyIdentity.SetIdentity(_meanColor.x, _meanColor.y, _meanColor.z);
-
+        _meanZ = CalculateMeanZ();
         ProcessMeanIdentityShift(_meanColor, ConversionRateIdle * Time.fixedDeltaTime);
-
-        _deviance = CalculateDeviance();
     }
     #endregion
 
@@ -183,23 +165,18 @@ public class Army : Entity
         armyUnits.Add(unit);
     }
 
-    public void Absorb(SyncList<Unit> units)
+    public void Absorb(List<Unit> units)
     {
         ArmyUnits.AddRange(units);
         // recalculate mean
         // there is no point doing this in the setter anymore
         // because all the list flushing already threw efficiency out of the window
-        var meanC = Vector3.zero;
-        foreach (var u in armyUnits)
-        {
-            meanC += new Vector3(u.identityInfo.r, u.identityInfo.g, u.identityInfo.b);
-        }
-        meanC /= armyUnits.Count;
+        _meanColor = CalculateMeanColor();
 
         // update the army's visual color
-        _armyIdentity.SetIdentity(meanC.x, meanC.y, meanC.z);
+        _armyIdentity.SetIdentity(_meanColor.x, _meanColor.y, _meanColor.z);
 
-        ProcessMeanIdentityShift(meanC, ConversionRateAbsorb);
+        ProcessMeanIdentityShift(_meanColor, ConversionRateAbsorb);
     }
     #endregion
 
@@ -224,9 +201,23 @@ public class Army : Entity
 
             armyUnits[i] = newUnit;
         }
+
+        _meanColor = CalculateMeanColor();
+        _deviance = CalculateDeviance();
     }
 
-
+    private Vector3 CalculateMeanColor()
+    {
+        // Calculate and set the new mean color
+        Vector3 meanColor = Vector3.zero;
+        meanColor = Vector3.zero;
+        foreach (var u in armyUnits)
+        {
+            meanColor += new Vector3(u.identityInfo.r, u.identityInfo.g, u.identityInfo.b);
+        }
+        meanColor /= armyUnits.Count;
+        return meanColor;
+    }
 
     private float CalculateDeviance()
     {
@@ -243,6 +234,18 @@ public class Army : Entity
         var stdev = armyIdentityColors.Sum(c => (c - mean).sqrMagnitude);
         stdev /= armyIdentityColors.Count;
         return stdev;
+    }
+
+    private Vector2 CalculateMeanZ()
+    {
+        Vector2 meanZ = Vector2.zero;
+        _armyComplex = ArmyUnits.Select(i => i.GetIdentityZ()).ToList();
+        foreach (var z in _armyComplex)
+        {
+            meanZ += z;
+        }
+        meanZ /= armyUnits.Count;
+        return meanZ;
     }
 
     public float GetDeviance()
@@ -389,7 +392,7 @@ public class Army : Entity
     }
 
     [Server]
-    public SyncList<Unit> GetArmyUnits()
+    public List<Unit> GetArmyUnits()
     {
         return armyUnits;
     }
@@ -506,6 +509,15 @@ public class Army : Entity
             }
         }
     }
+
+    IEnumerator ArmyUnitsUpdate()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(0.1f);
+
+        }
+    }
     #endregion
 
     #region Client
@@ -516,9 +528,6 @@ public class Army : Entity
         {
             return;
         }
-
-        armyUnits.Callback += OnArmyUnitsUpdated;
-        // armyVisuals.SetColor(ArmyUnits); // Initialize the color of the army
     }
 
     public override void OnStartAuthority()
@@ -556,29 +565,25 @@ public class Army : Entity
         CmdConvert(entity);
     }
 
-    private void OnArmyUnitsUpdated(SyncList<Unit>.Operation op, int index, Unit oldUnit, Unit newUnit)
-    {
-        if (isServer)
-        {
-            if (armyVisuals == null)
-            {
-                return;
-            }
-            else
-            {
-                if (armyVisuals.Count != armyUnits.Count)
-                { // If the army visuals count doesn't match the army units count, update the count and visuals
-                    armyVisuals.SetScale(armyUnits.Count);
-                    attackDamage = ArmyUtils.CalculateAttackPower(ArmyUnits, minUnitAttackDamage, maxUnitAttackDamage);
-                }
-            }
-            armyConversion.SetResistance(ArmyUnits.Count);
-        }
-        // else if (isClient)
-        // {
-        //     armyVisuals.SetColor(ArmyUnits); // TODO: Optimize this so the entire list doesn't have to be passed
-        // }
-    }
+    // private void OnArmyUnitsUpdated(List<Unit>.Operation op, int index, Unit oldUnit, Unit newUnit)
+    // {
+    //     if (isServer)
+    //     {
+    //         if (armyVisuals == null)
+    //         {
+    //             return;
+    //         }
+    //         else
+    //         {
+    //             if (armyVisuals.Count != armyUnits.Count)
+    //             { // If the army visuals count doesn't match the army units count, update the count and visuals
+    //                 armyVisuals.SetScale(armyUnits.Count);
+    //                 attackDamage = ArmyUtils.CalculateAttackPower(ArmyUnits, minUnitAttackDamage, maxUnitAttackDamage);
+    //             }
+    //         }
+    //         armyConversion.SetResistance(ArmyUnits.Count);
+    //     }
+    // }
 
     [Client]
     public void InvokeArmySelectEvents(bool selected)

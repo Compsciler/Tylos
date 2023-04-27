@@ -7,8 +7,8 @@ public class ArmyUtils : MonoBehaviour
 {
     const float MIN_COLOR_VALUE = 0f;
     const float MAX_COLOR_VALUE = 255f;
-    
-    public static float CalculateAttackPower(SyncList<Unit> units, float minUnitAttackDamage, float maxUnitAttackDamage)
+
+    public static float CalculateAttackPower(List<Unit> units, float minUnitAttackDamage, float maxUnitAttackDamage)
     {
         float attackPower = 0f;
         foreach (Unit unit in units)
@@ -19,7 +19,7 @@ public class ArmyUtils : MonoBehaviour
         return attackPower;
     }
 
-    public static float CalculateHealth(SyncList<Unit> units)
+    public static float CalculateHealth(List<Unit> units)
     {
         float health = 0f;
         foreach (Unit unit in units)
