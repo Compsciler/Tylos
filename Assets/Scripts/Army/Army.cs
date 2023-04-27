@@ -235,6 +235,16 @@ public class Army : Entity
         ServerHandleArmyUnitsUpdated();
     }
 
+    [Server]
+    public void KillUnits(List<Unit> units)
+    {
+        foreach (var unit in units)
+        {
+            armyUnits.Remove(unit);
+        }
+        ServerHandleArmyUnitsUpdated();
+    }
+
     /// <summary>
     /// Makes sure attackTarget is set to null when it dies
     /// </summary>
@@ -399,7 +409,7 @@ public class Army : Entity
     /// Updates all the SyncVars on the client
     /// </summary>
     [Server]
-    private void ServerHandleArmyUnitsUpdated()
+    public void ServerHandleArmyUnitsUpdated()
     {
         deviance = ArmyUtils.CalculateDeviance(ArmyUnits, _armyIdentity.IdentityVec3);
         size = armyUnits.Count;
