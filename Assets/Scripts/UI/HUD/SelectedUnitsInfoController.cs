@@ -14,6 +14,8 @@ public class SelectedUnitsInfoController : MonoBehaviour
 
     // This should be on a separate script on the selectedUnitsInfoGO GameObject
     [SerializeField] TMP_Text armyColorText;
+    [SerializeField] TMP_Text unitCountText;
+    [SerializeField] TMP_Text devianceText;
 
     [SerializeField] TMP_Text totalUnitCountText;
 
@@ -48,6 +50,11 @@ public class SelectedUnitsInfoController : MonoBehaviour
         IdentityInfo armyIdentity = armyObjectIdentity.Identity;
         Color armyIdentityColor = armyIdentity.GetColor();
         armyColorText.text = $"#{ColorUtility.ToHtmlStringRGB(armyIdentityColor)}";
+
+        int unitCount = army.ArmyUnits.Count;
+        unitCountText.text = $"Unit count: {unitCount}";
+        float deviance = army.Deviance;
+        devianceText.text = $"Deviance: {deviance.ToString("F3")}";
     }
 
     private void AuthorityHandleArmySelected(Army army)

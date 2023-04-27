@@ -23,13 +23,17 @@ public class TeamColorRendererSetter : ColorRendererSetter
     private void ServerHandlePlayerIdentityUpdated(ObjectIdentity identity)
     {
         if (identity.connectionToClient != connectionToClient) { return; }
-        
+
         color = identity.GetColorFromIdentity();
     }
-    
+
     [Server]
     protected override Color GetColorToSet()
     {
+        if (connectionToClient == null)
+        {
+            return Color.gray;
+        }
         MyPlayer player = connectionToClient.identity.GetComponent<MyPlayer>();
 
         return player.TeamColor;
