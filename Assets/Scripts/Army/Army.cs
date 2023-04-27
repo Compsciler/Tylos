@@ -18,8 +18,8 @@ public class Army : Entity
     public ArmyState State => state;
 
     // Unit variables
-    readonly SyncList<Unit> armyUnits = new SyncList<Unit>(); // Change to set if necessary
-    public SyncList<Unit> ArmyUnits => armyUnits;
+    readonly List<Unit> armyUnits = new(); // Change to set if necessary
+    public List<Unit> ArmyUnits => armyUnits;
     // this is our local army units copy
     // the one above will be flushed every single frame
 
