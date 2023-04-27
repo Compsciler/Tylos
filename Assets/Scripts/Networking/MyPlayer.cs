@@ -380,27 +380,10 @@ public class MyPlayer : NetworkBehaviour
                 {
                     armies.Add(army);
                     // Check for nearby bases
-                    Collider[] colliders = Physics.OverlapSphere(army.transform.position, 0.5f * army.transform.lossyScale.x);
-                    bool baseNearby = false;
 
-                    foreach (Collider collider in colliders)
+                    if (CanBuildBase(army))
                     {
-                        if (collider.GetComponent<Base>() != null)
-                        {
-                            baseNearby = true;
-                            break;
-                        }
-                    }
-
-                    if (!baseNearby && army.ArmyUnits.Count > BaseCreationCost)
-                    {
-                        IdentityInfo identityInfo = new IdentityInfo();
-                        identityInfo = army.GetComponent<ObjectIdentity>().Identity;
-                        for (int i = 0; i < BaseCreationCost; i++)
-                        {
-                            army.ArmyUnits.RemoveAt(0);
-                        }
-                        ((MyNetworkManager)NetworkManager.singleton).MakeBase(this, army.transform.position, identityInfo);
+                        CmdMakeBase(this, army, BaseCreationCost);
                         audioSource.Stop();
                         setBuildIconOnArmies(false, armies);
                     }
@@ -414,12 +397,51 @@ public class MyPlayer : NetworkBehaviour
         audioSource.Stop();
     }
 
+    private bool CanBuildBase(Army army)
+    {
+        // Check for nearby bases
+        Collider[] colliders = Physics.OverlapSphere(army.transform.position, 0.5f * army.transform.lossyScale.x);
+        bool baseNearby = false;
+
+        foreach (Collider collider in colliders)
+        {
+            if (collider.GetComponent<Base>() != null)
+            {
+                baseNearby = true;
+                break;
+            }
+        }
+
+        if (!baseNearby && army.Size > BaseCreationCost)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     private void setBuildIconOnArmies(bool active, List<Army> armies)
     {
         foreach (Army army in armies)
         {
             army.SetBuildingIcon(active);
         }
+    }
+
+
+    /// <summary>
+    /// Command to let the server handle the actual base creation on NetworkManager
+    /// Directly calling a command on MyNetWorkManager does not work since MyNetworkManager is not owned by the client
+    /// </summary>
+    /// <param name="player"></param>
+    /// <param name="army"></param>
+    /// <param name="BaseCreationCost"></param>
+    [Command]
+    private void CmdMakeBase(MyPlayer player, Army army, int BaseCreationCost)
+    {
+        ((MyNetworkManager)NetworkManager.singleton).MakeBase(player, army, BaseCreationCost);
     }
 
     #endregion
