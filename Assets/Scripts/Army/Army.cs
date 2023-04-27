@@ -73,6 +73,7 @@ public class Army : Entity
     }
     private Vector2 _meanZ;
     private float _deviance;
+    public float Deviance => _deviance;
 
     // the complex version of the armies
     // TODO: please refactor this to be a part of identity info
@@ -156,7 +157,7 @@ public class Army : Entity
     {
         _armyComplex = ArmyUtils.GetArmyComplex(armyUnits);
         _meanZ = ArmyUtils.CalculateMeanZ(_armyComplex);
-        ProcessMeanIdentityShift(_meanColor, ConversionRateIdle * Time.fixedDeltaTime);
+        ProcessMeanIdentityShift(MeanColor, ConversionRateIdle * Time.fixedDeltaTime);
     }
     #endregion
 
@@ -172,12 +173,9 @@ public class Army : Entity
         // recalculate mean
         // there is no point doing this in the setter anymore
         // because all the list flushing already threw efficiency out of the window
-        _meanColor = ArmyUtils.CalculateMeanColor(armyUnits);
+        MeanColor = ArmyUtils.CalculateMeanColor(armyUnits);
 
-        // update the army's visual color
-        _armyIdentity.SetIdentity(_meanColor.x, _meanColor.y, _meanColor.z);
-
-        ProcessMeanIdentityShift(_meanColor, ConversionRateAbsorb);
+        ProcessMeanIdentityShift(MeanColor, ConversionRateAbsorb);
     }
     #endregion
 
@@ -203,118 +201,8 @@ public class Army : Entity
             armyUnits[i] = newUnit;
         }
 
-        _meanColor = ArmyUtils.CalculateMeanColor(armyUnits);
+        MeanColor = ArmyUtils.CalculateMeanColor(armyUnits);
         _deviance = ArmyUtils.CalculateDeviance(armyUnits, _meanColor);
-    }
-
-    public float GetDeviance()
-    {
-        return _deviance;
-    }
-
-    // this function does a PCA on the units identites
-    // and splits the army along the principle axis
-    // the split is returned as a tuple of lists
-    public (List<Unit>, List<Unit>) CalculateSplit()
-    {
-        var armyComplex = _armyComplex;
-
-        // GetEigenCentroid returns (eigenvector, centroid) of the dataset
-        var (eigenVector, centroid) = GetEigenCentroid(armyComplex, _meanZ);
-
-        // if we get a perfectly circular set it is possible for eigen to be 0
-        // just randomly pick an axis if so
-        if (eigenVector == Vector2.zero)
-        {
-            var angle = UnityEngine.Random.Range(0, Mathf.PI * 2);
-            eigenVector = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
-        }
-
-        // project the centroid onto the eigen
-        var centroidProj = Vector2.Dot(centroid, eigenVector);
-
-        var retSplit1 = new List<Unit>();
-        var retSplit2 = new List<Unit>();
-
-        for (int i = 0; i < armyComplex.Count; i++)
-        {
-
-            if (Vector2.Dot(armyComplex[i], eigenVector) < centroidProj)
-            {
-                retSplit1.Add(armyUnits[i]);
-            }
-            else
-            {
-                retSplit2.Add(armyUnits[i]);
-            }
-        }
-
-        return (retSplit1, retSplit2);
-    }
-
-    private List<Vector2> IdentityComplex()
-    {
-        var armyComplex = new List<Vector2>();
-        foreach (var u in armyUnits)
-        {
-            var identity = u.identityInfo;
-            var rgbIdentity = new Color(identity.r, identity.g, identity.b);
-            float h;
-            Color.RGBToHSV(rgbIdentity, out h, out _, out _);
-            //0->0, 1->2pi
-            var angle = 2 * Mathf.PI * h;
-            var complex = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
-            armyComplex.Add(u.GetIdentityZ());
-        }
-
-        return armyComplex;
-    }
-
-
-
-    // this function calculates the eigenvector as well as the centroid
-    private (Vector2, Vector2) GetEigenCentroid(List<Vector2> data, Vector2 meanZ)
-    {
-        var xMean = meanZ.x;
-        var yMean = meanZ.y;
-
-        var varX = 0f;
-        varX = data.Aggregate(varX,
-            (current, c) =>
-            {
-                return current + (c.x - xMean) * (c.x - xMean);
-            }) / (data.Count - 1);
-
-        var varY = 0f;
-        varY = data.Aggregate(varY,
-            (current, c) =>
-            {
-                return current + (c.y - yMean) * (c.y - yMean);
-            }) / (data.Count - 1);
-
-        var covXY = 0f;
-        covXY = data.Aggregate(covXY,
-            (current, c) =>
-            {
-                return current + (c.y - yMean) * (c.x - xMean);
-            }) / (data.Count - 1);
-
-        // the cov matrix is [varX, covXY; covXY, varY]
-        // now we calculate the eigenvectors and eigenvalues
-
-        var delta = math.sqrt((varX + varY) * (varX + varY) - 4 * (varX * varY - covXY * covXY));
-        var l1 = (varX + varY + delta) / 2;
-        var l2 = Mathf.Abs(varX + varY - delta) / 2;
-
-        var l = Mathf.Max(l1, l2);
-        // the new thing to solve is then
-        // [varX - l, covXY; covXY, varY - l][a; b] = 0
-
-        var aFactor = varX - l + covXY;
-        var bFactor = covXY + varY - l;
-
-        var eigenVector = new Vector2(bFactor, -aFactor).normalized;
-        return (eigenVector, new Vector2(xMean, yMean));
     }
 
     #endregion

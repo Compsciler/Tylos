@@ -69,7 +69,7 @@ public class ArmyVisuals : NetworkBehaviour
         // update wrinkle shader
         armyShaderMat.SetColor("_ArmyColor", armyRenderer.color);
         armyShaderMat.SetColor("_HighlightColor", highlightRenderer.color);
-        var deviance = army.GetDeviance();
+        var deviance = army.Deviance;
         // max amplitude 0.15 (look already kinda bumpy)
         // also note that max deviance is 1 (when literally the entire army is split across the ring
         // 0.2 makes it so that a cell that is about to split look kinda bumpy
