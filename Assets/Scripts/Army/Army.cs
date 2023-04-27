@@ -39,6 +39,13 @@ public class Army : Entity
     [Range(0.01f, 1f)]
     [SerializeField] private float colorShiftIntervalSeconds = 0.1f;
 
+    // Visual Variables
+    private Vector2 _meanZ;
+    [SyncVar] private float deviance;
+    public float Deviance => deviance;
+    [SyncVar] private int size;
+    public int Size => size;
+
     // Dependencies
     ArmyVisuals armyVisuals;
     ArmyHealth armyHealth;
@@ -59,10 +66,6 @@ public class Army : Entity
 
     public static event Action<Army> AuthorityOnArmySpawned;
     public static event Action<Army> AuthorityOnArmyDespawned;
-
-    private Vector2 _meanZ;
-    private float deviance;
-    public float Deviance => deviance;
 
     // the complex version of the armies
     // TODO: please refactor this to be a part of identity info
@@ -399,7 +402,8 @@ public class Army : Entity
     private void ServerHandleArmyUnitsUpdated()
     {
         deviance = ArmyUtils.CalculateDeviance(ArmyUnits, _armyIdentity.IdentityVec3);
-        armyVisuals.SetScale(armyUnits.Count);
+        size = armyUnits.Count;
+        armyVisuals.SetScale(size);
         attackDamage = ArmyUtils.CalculateAttackPower(ArmyUnits, minUnitAttackDamage, maxUnitAttackDamage);
         armyConversion.SetResistance(ArmyUnits.Count);
     }
