@@ -20,10 +20,6 @@ public class Army : Entity
     // Unit variables
     readonly List<Unit> armyUnits = new(); // Change to set if necessary
     public List<Unit> ArmyUnits => armyUnits;
-    // this is our local army units copy
-    // the one above will be flushed every single frame
-
-    const float twoPI = (Mathf.PI * 2);
 
     // Attack variables
     [Header("Attack settings")]
@@ -38,7 +34,12 @@ public class Army : Entity
     [SyncVar] private Entity convertTarget = null; // Only used on the server    
     [SyncVar] private Army convertArmy = null; // Cache the Army component of the convert target
 
-    // MonoBehaviour dependencies
+    [Header("Update settings")]
+    [Tooltip("The interval in seconds between each color shift")]
+    [Range(0.01f, 1f)]
+    [SerializeField] private float colorShiftIntervalSeconds = 0.1f;
+
+    // Dependencies
     ArmyVisuals armyVisuals;
     ArmyHealth armyHealth;
     ArmyConversion armyConversion;
@@ -72,8 +73,8 @@ public class Army : Entity
         }
     }
     private Vector2 _meanZ;
-    private float _deviance;
-    public float Deviance => _deviance;
+    private float deviance;
+    public float Deviance => deviance;
 
     // the complex version of the armies
     // TODO: please refactor this to be a part of identity info
@@ -109,7 +110,6 @@ public class Army : Entity
 
     void Update()
     {
-        if (isServer) // Handle game logic
         {
             switch (state)
             {
@@ -129,7 +129,7 @@ public class Army : Entity
             switch (state)
             {
                 case ArmyState.Attacking:
-                    if (attackTarget != null && IsInRange(attackTarget.gameObject, attackRange))
+                    if (attackTarget != null && ArmyUtils.IsInRange(transform, attackTarget.transform, attackRange))
                     {
                         armyVisuals.DrawDeathRay(attackTarget.transform.position);
                         armyAudio.PlayAttackAudio();
@@ -141,7 +141,7 @@ public class Army : Entity
                     }
                     break;
                 case ArmyState.Converting:
-                    if (convertTarget != null && IsInRange(convertTarget.gameObject, attackRange))
+                    if (convertTarget != null && ArmyUtils.IsInRange(transform, convertTarget.transform, attackRange))
                         // TODO: Draw convert ray
                         armyVisuals.DrawDeathRay(convertTarget.transform.position);
                     break;
@@ -152,30 +152,20 @@ public class Army : Entity
         }
     }
 
-    [Server]
-    private void FixedUpdate()
-    {
-        _armyComplex = ArmyUtils.GetArmyComplex(armyUnits);
-        _meanZ = ArmyUtils.CalculateMeanZ(_armyComplex);
-        ProcessMeanIdentityShift(MeanColor, ConversionRateIdle * Time.fixedDeltaTime);
-    }
     #endregion
 
     #region Unit Operations
-    public void AddUnit(Unit unit)
-    {
-        armyUnits.Add(unit);
-    }
+    [Server]
 
     public void Absorb(List<Unit> units)
     {
         ArmyUnits.AddRange(units);
         // recalculate mean
-        // there is no point doing this in the setter anymore
-        // because all the list flushing already threw efficiency out of the window
         MeanColor = ArmyUtils.CalculateMeanColor(armyUnits);
 
-        ProcessMeanIdentityShift(MeanColor, ConversionRateAbsorb);
+        // Not sure why this is here, so I commented it out for now 
+        // ProcessMeanIdentityShift(MeanColor, ConversionRateAbsorb); 
+        ServerHandleArmyUnitsUpdated();
     }
     #endregion
 
@@ -201,8 +191,7 @@ public class Army : Entity
             armyUnits[i] = newUnit;
         }
 
-        MeanColor = ArmyUtils.CalculateMeanColor(armyUnits);
-        _deviance = ArmyUtils.CalculateDeviance(armyUnits, _meanColor);
+        ServerHandleArmyUnitsUpdated();
     }
 
     #endregion
@@ -212,7 +201,22 @@ public class Army : Entity
     public override void OnStartServer()
     {
         ServerOnArmySpawned?.Invoke(this);
-        InitializeArmyStats();
+        StartCoroutine(UnitsColorUpdate());
+    }
+
+    /// <summary>
+    /// The main logic loop for the army's continuos color update
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator UnitsColorUpdate()
+    {
+        while (true)
+        {
+            _armyComplex = ArmyUtils.GetArmyComplex(armyUnits);
+            _meanZ = ArmyUtils.CalculateMeanZ(_armyComplex);
+            ProcessMeanIdentityShift(MeanColor, ConversionRateIdle * colorShiftIntervalSeconds);
+            yield return new WaitForSeconds(colorShiftIntervalSeconds);
+        }
     }
 
     public override void OnStopServer()
@@ -229,21 +233,16 @@ public class Army : Entity
         {
             armyUnits.Add(new Unit(identity));
         }
-        armyVisuals.SetScale(armyUnits.Count);
+
+        ServerHandleArmyUnitsUpdated();
     }
 
     [Server]
-    private void InitializeArmyStats()
+    public void KillUnit(Unit unit)
     {
-        attackDamage = ArmyUtils.CalculateAttackPower(ArmyUnits, minUnitAttackDamage, maxUnitAttackDamage);
+        armyUnits.Remove(unit);
+        ServerHandleArmyUnitsUpdated();
     }
-
-    [Server]
-    public List<Unit> GetArmyUnits()
-    {
-        return armyUnits;
-    }
-
 
     /// <summary>
     /// Makes sure attackTarget is set to null when it dies
@@ -302,7 +301,7 @@ public class Army : Entity
         }
         else
         {
-            if (IsInRange(attackTarget.gameObject, attackRange))
+            if (ArmyUtils.IsInRange(transform, attackTarget.transform, attackRange))
             {
                 entityMovement.Stop();
                 attackTarget.EntityHealth.TakeDamage(attackDamage * Time.deltaTime);
@@ -337,7 +336,7 @@ public class Army : Entity
         }
         else
         {
-            if (IsInRange(convertTarget.gameObject, attackRange))
+            if (ArmyUtils.IsInRange(transform, convertTarget.transform, attackRange))
             {
                 entityMovement.Stop();
                 if (convertArmy == null)
@@ -357,14 +356,7 @@ public class Army : Entity
         }
     }
 
-    IEnumerator ArmyUnitsUpdate()
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(0.1f);
 
-        }
-    }
     #endregion
 
     #region Client
@@ -412,25 +404,18 @@ public class Army : Entity
         CmdConvert(entity);
     }
 
-    // private void OnArmyUnitsUpdated(List<Unit>.Operation op, int index, Unit oldUnit, Unit newUnit)
-    // {
-    //     if (isServer)
-    //     {
-    //         if (armyVisuals == null)
-    //         {
-    //             return;
-    //         }
-    //         else
-    //         {
-    //             if (armyVisuals.Count != armyUnits.Count)
-    //             { // If the army visuals count doesn't match the army units count, update the count and visuals
-    //                 armyVisuals.SetScale(armyUnits.Count);
-    //                 attackDamage = ArmyUtils.CalculateAttackPower(ArmyUnits, minUnitAttackDamage, maxUnitAttackDamage);
-    //             }
-    //         }
-    //         armyConversion.SetResistance(ArmyUnits.Count);
-    //     }
-    // }
+    /// <summary>
+    /// Updates all the SyncVars on the client
+    /// </summary>
+    [Server]
+    private void ServerHandleArmyUnitsUpdated()
+    {
+        MeanColor = ArmyUtils.CalculateMeanColor(ArmyUnits);
+        deviance = ArmyUtils.CalculateDeviance(ArmyUnits, MeanColor);
+        armyVisuals.SetScale(armyUnits.Count);
+        attackDamage = ArmyUtils.CalculateAttackPower(ArmyUnits, minUnitAttackDamage, maxUnitAttackDamage);
+        armyConversion.SetResistance(ArmyUnits.Count);
+    }
 
     [Client]
     public void InvokeArmySelectEvents(bool selected)
@@ -443,15 +428,6 @@ public class Army : Entity
         {
             AuthorityOnArmyDeselected?.Invoke(this);
         }
-    }
-
-    private bool IsInRange(GameObject target, float range)
-    {
-        Vector3 offset = target.transform.position - transform.position;
-        float distance = offset.magnitude;
-        float trueAttackRange = attackRange + transform.lossyScale.x + target.transform.lossyScale.x; // Takes into account the size of the army and the target
-
-        return (distance <= trueAttackRange);
     }
 
     public void ShowUnableToBuildIcon()

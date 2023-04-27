@@ -177,6 +177,15 @@ public class ArmyUtils : MonoBehaviour
         return (retSplit1, retSplit2);
     }
 
+    public static bool IsInRange(Transform self, Transform target, float range)
+    {
+        Vector3 offset = target.position - self.position;
+        float distance = offset.magnitude;
+        float trueAttackRange = range + self.lossyScale.x + target.lossyScale.x; // Takes into account the size of the army and the target
+
+        return (distance <= trueAttackRange);
+    }
+
     // This is a function that maps a value from one range to another
     public static float Map(float value, float oldMin, float oldMax, float newMin, float newMax)
     {
