@@ -49,6 +49,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   selectedUnitsInfoGO: {fileID: 7740113769339389644}
   armyColorText: {fileID: 7740113768188566110}
+  unitCountText: {fileID: 7740113768107396633}
+  devianceText: {fileID: 7740113768780535825}
   totalUnitCountText: {fileID: 7740113767911976165}
 --- !u!114 &3113140194126406409
 MonoBehaviour:
@@ -630,6 +632,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7740113768107396633 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9067413075672561880, guid: 593c2ac6cba12b14a84f79078c46e61a,
+    type: 3}
+  m_PrefabInstance: {fileID: 1639174269492999873}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &7740113768188566110 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 9067413075483323551, guid: 593c2ac6cba12b14a84f79078c46e61a,
@@ -652,6 +666,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7740113768780535825 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9067413075003518672, guid: 593c2ac6cba12b14a84f79078c46e61a,
+    type: 3}
+  m_PrefabInstance: {fileID: 1639174269492999873}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!224 &7740113769277149176 stripped

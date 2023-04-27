@@ -11,9 +11,11 @@ using Mirror;
 public class ArmyHealth : EntityHealth
 {
     Army army;
-    private void Awake() {
+    private void Awake()
+    {
         army = GetComponent<Army>();
-        if(army == null) {
+        if (army == null)
+        {
             Debug.LogError("ArmyHealth requires an Army component");
         }
     }
@@ -28,15 +30,19 @@ public class ArmyHealth : EntityHealth
         health -= damage;
         // Debug.Log("Unit took " + damage + " damage. Health is now " + health);
 
-        if(health < 0) {
-            army.ArmyUnits.RemoveAt(army.ArmyUnits.Count - 1);
-            if(army.ArmyUnits.Count == 0) {
+        if (health < 0)
+        {
+            army.KillUnit(army.ArmyUnits[army.ArmyUnits.Count - 1]);
+            if (army.ArmyUnits.Count == 0)
+            {
                 Die();
             }
-        } else {
+        }
+        else
+        {
             army.ArmyUnits[army.ArmyUnits.Count - 1] = new Unit(unit.identityInfo, health);
         }
     }
-    
+
     #endregion
 }

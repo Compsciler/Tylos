@@ -1,5 +1,6 @@
 using UnityEngine;
 using Mirror;
+using System.Collections.Generic;
 /// <summary>
 /// Handles attack visuals for an army
 /// This component is run entirely on the client
@@ -7,7 +8,7 @@ using Mirror;
 [RequireComponent(typeof(LineRenderer))]
 public class ArmyVisuals : NetworkBehaviour
 {
-    
+
     [Header("Army visual settings")]
     [SerializeField]
     [Range(0.1f, 10f)]
@@ -19,7 +20,7 @@ public class ArmyVisuals : NetworkBehaviour
 
     [SerializeField]
     [Range(2f, 10f)]
-    private float maxScale = 10f; 
+    private float maxScale = 10f;
 
     [Header("Death ray settings")]
     [SerializeField] private float lineDuration = 0.1f;
@@ -34,13 +35,13 @@ public class ArmyVisuals : NetworkBehaviour
     float durationRemaining = 0f; // Line is drawn if this is greater than 0
     Vector3 targetPosition;
     public int Count { get; private set; } = 0;  // The number of units in the army at last SetScale() call
-    
+
     // a bit inelegant, bonk me when this becomes a problem - rj
-    
+
     [SerializeField] private SpriteRenderer armyRenderer;
     private Material armyShaderMat;
     [SerializeField] private SpriteRenderer highlightRenderer;
-    
+
     private Army army;
 
     void Awake()
@@ -64,16 +65,16 @@ public class ArmyVisuals : NetworkBehaviour
                 ClearDeathRay();
             }
         }
-        
+
         // update wrinkle shader
         armyShaderMat.SetColor("_ArmyColor", armyRenderer.color);
         armyShaderMat.SetColor("_HighlightColor", highlightRenderer.color);
-        var deviance = army.GetDeviance();
+        var deviance = army.Deviance;
         // max amplitude 0.15 (look already kinda bumpy)
         // also note that max deviance is 1 (when literally the entire army is split across the ring
         // 0.2 makes it so that a cell that is about to split look kinda bumpy
         armyShaderMat.SetFloat("_Amplitude", deviance * 0.2f);
-        
+
     }
 
     #region Server
@@ -82,8 +83,9 @@ public class ArmyVisuals : NetworkBehaviour
     /// Sets the scale of the army based on the number of units in the army
     /// </summary>
     /// <param name="count">The number of units in the army</param>
-    [Server] 
-    public void SetScale(int count) {
+    [Server]
+    public void SetScale(int count)
+    {
         Count = count;
         Vector3 start = gameObject.transform.localScale;
         Vector3 end = (Vector3.one * defaultScale) + (Vector3.one * scaleIncrementPerUnit * count);
@@ -93,7 +95,7 @@ public class ArmyVisuals : NetworkBehaviour
 
     #endregion
     #region Client
-    
+
     /// <summary>
     /// Sets the color of the army based on the units in the army
     /// </summary>
@@ -101,7 +103,7 @@ public class ArmyVisuals : NetworkBehaviour
     /// Reference to the army's SyncList of units 
     /// </param>
     [Client]
-    public void SetColor(SyncList<Unit> armyUnits)
+    public void SetColor(List<Unit> armyUnits)
     {
         if (armyUnits == null)
         {

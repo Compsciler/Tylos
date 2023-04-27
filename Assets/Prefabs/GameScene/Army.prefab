@@ -646,7 +646,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncDirection: 0
   syncMode: 0
-  syncInterval: 0.1
+  syncInterval: 1
   onSelected:
     m_PersistentCalls:
       m_Calls:
@@ -701,11 +701,12 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  _armyUnitsLocal: []
   attackRange: 5
+  colorShiftIntervalSeconds: 0.1
   unableToBuildIcon: {fileID: 4936927884777102360}
   buildingIcon: {fileID: 8682958488171330878}
   iconDisplayDuration: 0.5
+  _armyIdentity: {fileID: 0}
 --- !u!114 &487852467032575918
 MonoBehaviour:
   m_ObjectHideFlags: 0
