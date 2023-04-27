@@ -11,6 +11,7 @@ public class ObjectIdentity : NetworkBehaviour
     [SerializeField]
     IdentityInfo identity;
     public IdentityInfo Identity => identity;
+    public Vector3 IdentityVec3 => new Vector3(identity.r, identity.g, identity.b);
 
     [SyncVar(hook = nameof(HandleTeamIdentityUpdated))]
     [SerializeField]
@@ -38,16 +39,28 @@ public class ObjectIdentity : NetworkBehaviour
     }
 
     [Server]
+    public void SetIdentity(float r, float g, float b)
+    {
+        SetIdentity(new IdentityInfo(r, g, b));
+    }
+
+    [Server]
+    public void SetIdentity(Vector3 color)
+    {
+        SetIdentity(new IdentityInfo(color.x, color.y, color.z));
+    }
+
+    [Server]
     public void SetTeamIdentity(IdentityInfo identity)
     {
         teamIdentity = identity;
     }
 
-    [Server]
-    public void SetIdentity(float r, float g, float b)
+    public Vector3 GetIdentityVector3()
     {
-        SetIdentity(new IdentityInfo(r, g, b));
+        return new Vector3(identity.r, identity.g, identity.b);
     }
+
 
     #endregion
 

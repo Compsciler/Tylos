@@ -60,18 +60,6 @@ public class Army : Entity
     public static event Action<Army> AuthorityOnArmySpawned;
     public static event Action<Army> AuthorityOnArmyDespawned;
 
-    // the mean of the army identity on complex plane
-    // this is calculated on on unit add/remove
-    [SyncVar] private Vector3 _meanColor;
-    public Vector3 MeanColor
-    {
-        get => _meanColor;
-        set
-        {
-            _meanColor = value;
-            _armyIdentity.SetIdentity(value.x, value.y, value.z);
-        }
-    }
     private Vector2 _meanZ;
     private float deviance;
     public float Deviance => deviance;
@@ -161,7 +149,7 @@ public class Army : Entity
     {
         ArmyUnits.AddRange(units);
         // recalculate mean
-        MeanColor = ArmyUtils.CalculateMeanColor(armyUnits);
+        _armyIdentity.SetIdentity(ArmyUtils.CalculateMeanColor(armyUnits));
 
         // Not sure why this is here, so I commented it out for now 
         // ProcessMeanIdentityShift(MeanColor, ConversionRateAbsorb); 
@@ -214,7 +202,7 @@ public class Army : Entity
         {
             _armyComplex = ArmyUtils.GetArmyComplex(armyUnits);
             _meanZ = ArmyUtils.CalculateMeanZ(_armyComplex);
-            ProcessMeanIdentityShift(MeanColor, ConversionRateIdle * colorShiftIntervalSeconds);
+            ProcessMeanIdentityShift(_armyIdentity.IdentityVec3, ConversionRateIdle * colorShiftIntervalSeconds);
             yield return new WaitForSeconds(colorShiftIntervalSeconds);
         }
     }
@@ -410,8 +398,7 @@ public class Army : Entity
     [Server]
     private void ServerHandleArmyUnitsUpdated()
     {
-        MeanColor = ArmyUtils.CalculateMeanColor(ArmyUnits);
-        deviance = ArmyUtils.CalculateDeviance(ArmyUnits, MeanColor);
+        deviance = ArmyUtils.CalculateDeviance(ArmyUnits, _armyIdentity.IdentityVec3);
         armyVisuals.SetScale(armyUnits.Count);
         attackDamage = ArmyUtils.CalculateAttackPower(ArmyUnits, minUnitAttackDamage, maxUnitAttackDamage);
         armyConversion.SetResistance(ArmyUnits.Count);
