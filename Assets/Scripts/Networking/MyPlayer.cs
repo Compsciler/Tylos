@@ -118,7 +118,7 @@ public class MyPlayer : NetworkBehaviour
 
     private void ServerHandleArmySpawned(Army army)
     {
-        if (army.connectionToClient.connectionId != connectionToClient.connectionId) { return; }
+        if (army.connectionToClient == null || army.connectionToClient.connectionId != connectionToClient.connectionId) { return; }
 
         myArmies.Add(army);
         stats.AddUnitsCreated(connectionToClient.connectionId, army.ArmyUnits.Count);
