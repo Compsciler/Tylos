@@ -4,13 +4,19 @@ using System.Collections.Generic;
 using Mirror;
 using Steamworks;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 public class MyNetworkManager : NetworkManager
 {
     [Header("MyNetworkManager")]
     [SerializeField] GameObject basePrefab;
+    [SerializeField] GameObject armyPrefab;
     [SerializeField] GameOverHandler gameOverHandler;
+    [SerializeField] private int numWildArmyGenerationAttempts = 60;
+    private const float HexExtentZ = 36f;
+    private const float HexExtentX = 40f;
 
     [Scene]
     [SerializeField] string gameScene;
@@ -133,7 +139,36 @@ public class MyNetworkManager : NetworkManager
 
                 MakeBase(player, GetStartPosition().position, player.GetComponent<ObjectIdentity>().Identity);
             }
+
+            for (int i = 0; i < numWildArmyGenerationAttempts; i++)
+            {
+                var pos = new Vector3(Random.Range(-HexExtentX, HexExtentX), 1, Random.Range(-HexExtentZ, HexExtentZ));
+                if (Physics.Raycast(pos, Vector3.down, 10f))
+                {
+                    pos.y = 0;
+                    SpawnArmy(new IdentityInfo(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f)),
+                        Random.Range(1, 3), pos);
+                }
+            }
         }
+    }
+    
+    // duplicated code from spawners
+    // refactor later but this shouldn't be too bad
+    private GameObject SpawnArmy(IdentityInfo identity, int count, Vector3 spawnPos)
+    {
+        GameObject armyInstance = Instantiate(
+            armyPrefab,
+            spawnPos,
+            Quaternion.identity);
+        ObjectIdentity objectIdentity = armyInstance.GetComponent<ObjectIdentity>();
+        objectIdentity.SetIdentity(identity);
+        objectIdentity.SetTeamIdentity(identity);
+
+        Army army = armyInstance.GetComponent<Army>();
+        army.SetUnits(identity, count);
+        NetworkServer.Spawn(armyInstance);
+        return armyInstance;
     }
 
     public void MakeBase(MyPlayer player, Vector3 position, IdentityInfo identity)
