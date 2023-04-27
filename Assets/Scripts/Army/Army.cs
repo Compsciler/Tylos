@@ -154,7 +154,8 @@ public class Army : Entity
     [Server]
     private void FixedUpdate()
     {
-        _meanZ = CalculateMeanZ();
+        _armyComplex = ArmyUtils.GetArmyComplex(armyUnits);
+        _meanZ = ArmyUtils.CalculateMeanZ(_armyComplex);
         ProcessMeanIdentityShift(_meanColor, ConversionRateIdle * Time.fixedDeltaTime);
     }
     #endregion
@@ -171,7 +172,7 @@ public class Army : Entity
         // recalculate mean
         // there is no point doing this in the setter anymore
         // because all the list flushing already threw efficiency out of the window
-        _meanColor = CalculateMeanColor();
+        _meanColor = ArmyUtils.CalculateMeanColor(armyUnits);
 
         // update the army's visual color
         _armyIdentity.SetIdentity(_meanColor.x, _meanColor.y, _meanColor.z);
@@ -202,50 +203,8 @@ public class Army : Entity
             armyUnits[i] = newUnit;
         }
 
-        _meanColor = CalculateMeanColor();
-        _deviance = CalculateDeviance();
-    }
-
-    private Vector3 CalculateMeanColor()
-    {
-        // Calculate and set the new mean color
-        Vector3 meanColor = Vector3.zero;
-        meanColor = Vector3.zero;
-        foreach (var u in armyUnits)
-        {
-            meanColor += new Vector3(u.identityInfo.r, u.identityInfo.g, u.identityInfo.b);
-        }
-        meanColor /= armyUnits.Count;
-        return meanColor;
-    }
-
-    private float CalculateDeviance()
-    {
-        var armyIdentityColors = armyUnits.Select
-            (i => new Vector3(i.identityInfo.r, i.identityInfo.g, i.identityInfo.b)).ToList();
-        if (armyIdentityColors.Count == 0)
-        {
-            return 0f;
-        }
-        var mean = _meanColor;
-        // using squared magnitude because it's like a standard
-        // PCA uses another three stdev metric
-        // is there a way to unify them to reduce problems?
-        var stdev = armyIdentityColors.Sum(c => (c - mean).sqrMagnitude);
-        stdev /= armyIdentityColors.Count;
-        return stdev;
-    }
-
-    private Vector2 CalculateMeanZ()
-    {
-        Vector2 meanZ = Vector2.zero;
-        _armyComplex = ArmyUnits.Select(i => i.GetIdentityZ()).ToList();
-        foreach (var z in _armyComplex)
-        {
-            meanZ += z;
-        }
-        meanZ /= armyUnits.Count;
-        return meanZ;
+        _meanColor = ArmyUtils.CalculateMeanColor(armyUnits);
+        _deviance = ArmyUtils.CalculateDeviance(armyUnits, _meanColor);
     }
 
     public float GetDeviance()
