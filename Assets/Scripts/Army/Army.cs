@@ -429,28 +429,29 @@ public class Army : Entity
 
     private void ArmySplitProcedure()
     {
-        var armies = CalculateSplit();
-        armyUnits.Clear();
-        foreach (var u in armies.Item1)
-        {
-            armyUnits.Add(u);
-        }
+        armyHealth.Die(); 
+        // var armies = CalculateSplit();
+        // armyUnits.Clear();
+        // foreach (var u in armies.Item1)
+        // {
+        //     armyUnits.Add(u);
+        // }
 
-        var newArmyMean = Vector3.zero;
-        foreach (var u in armies.Item2)
-        {
-            newArmyMean += new Vector3(u.identityInfo.r, u.identityInfo.g, u.identityInfo.b);
-        }
+        // var newArmyMean = Vector3.zero;
+        // foreach (var u in armies.Item2)
+        // {
+        //     newArmyMean += new Vector3(u.identityInfo.r, u.identityInfo.g, u.identityInfo.b);
+        // }
 
-        newArmyMean /= armies.Item2.Count;
+        // newArmyMean /= armies.Item2.Count;
 
-        var spawnCenter = transform.position;
+        // var spawnCenter = transform.position;
         
-        //float random = Random.Range(0f, 260f);
-        //spawnCenter +=  new Vector3(Mathf.Cos(random), 0, Mathf.Sin(random)) * armyVisuals.transform.localScale.x;
+        // //float random = Random.Range(0f, 260f);
+        // //spawnCenter +=  new Vector3(Mathf.Cos(random), 0, Mathf.Sin(random)) * armyVisuals.transform.localScale.x;
 
-        SpawnArmy(
-            new IdentityInfo(newArmyMean.x, newArmyMean.y, newArmyMean.z), armies.Item2.Count, spawnCenter);
+        // SpawnArmy(
+        //     new IdentityInfo(newArmyMean.x, newArmyMean.y, newArmyMean.z), armies.Item2.Count, spawnCenter);
 
     }
     

@@ -41,7 +41,7 @@ public class EntityHealth : NetworkBehaviour
     }
 
     [Server]
-    protected virtual void Die()
+    public virtual void Die()
     {
         // Debug.Log(gameObject.name + " died");
         OnDie.Invoke();
