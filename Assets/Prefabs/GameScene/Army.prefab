@@ -703,6 +703,7 @@ MonoBehaviour:
         m_CallState: 2
   attackRange: 5
   colorShiftIntervalSeconds: 0.1
+  armyPrefab: {fileID: 6339527542047456646}
   unableToBuildIcon: {fileID: 4936927884777102360}
   buildingIcon: {fileID: 8682958488171330878}
   iconDisplayDuration: 0.5

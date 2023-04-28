@@ -7,6 +7,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Events;
 using Mirror;
+using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(ArmyMovement), typeof(ArmyHealth), typeof(ArmyVisuals))]
 [RequireComponent(typeof(ArmyAudio))]
@@ -45,6 +46,8 @@ public class Army : Entity
     public float Deviance => deviance;
     [SyncVar] private int size;
     public int Size => size;
+
+    private float armySplitThreshold = 0.2f;
 
     // Dependencies
     ArmyVisuals armyVisuals;
@@ -416,6 +419,149 @@ public class Army : Entity
         armyVisuals.SetScale(size);
         attackDamage = ArmyUtils.CalculateAttackPower(ArmyUnits, minUnitAttackDamage, maxUnitAttackDamage);
         armyConversion.SetResistance(ArmyUnits.Count);
+        
+        // 
+        if (deviance > armySplitThreshold)
+        {
+            ArmySplitProcedure();
+        }
+    }
+
+    private void ArmySplitProcedure()
+    {
+        var armies = CalculateSplit();
+        armyUnits.Clear();
+        foreach (var u in armies.Item1)
+        {
+            armyUnits.Add(u);
+        }
+
+        var newArmyMean = Vector3.zero;
+        foreach (var u in armies.Item2)
+        {
+            newArmyMean += new Vector3(u.identityInfo.r, u.identityInfo.g, u.identityInfo.b);
+        }
+
+        newArmyMean /= armies.Item2.Count;
+
+        var spawnCenter = transform.position;
+        
+        //float random = Random.Range(0f, 260f);
+        //spawnCenter +=  new Vector3(Mathf.Cos(random), 0, Mathf.Sin(random)) * armyVisuals.transform.localScale.x;
+
+        SpawnArmy(
+            new IdentityInfo(newArmyMean.x, newArmyMean.y, newArmyMean.z), armies.Item2.Count, spawnCenter);
+
+    }
+    
+    public GameObject SpawnArmy(IdentityInfo identity, int count, Vector3 spawnPos)
+    {
+        return ((MyNetworkManager)NetworkManager.singleton).SpawnArmy(identity, count, spawnPos);
+    }
+    // this function does a PCA on the units identites
+    // and splits the army along the principle axis
+    // the split is returned as a tuple of lists
+    public (List<Unit>, List<Unit>) CalculateSplit()
+    {
+        var armyComplex = IdentityComplex();
+        
+        // GetEigenCentroid returns (eigenvector, centroid) of the dataset
+        var (eigenVector, centroid) = GetEigenCentroid(armyComplex);
+        
+        // if we get a perfectly circular set it is possible for eigen to be 0
+        // just randomly pick an axis if so
+        if (eigenVector == Vector2.zero)
+        {
+            var angle = UnityEngine.Random.Range(0, Mathf.PI * 2);
+            eigenVector = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+        }
+        
+        // project the centroid onto the eigen
+        var centroidProj = Vector2.Dot(centroid, eigenVector);
+
+        var retSplit1 = new List<Unit>();
+        var retSplit2 = new List<Unit>();
+
+        for (int i = 0; i < armyComplex.Count; i++){
+           
+            if (Vector2.Dot(armyComplex[i], eigenVector) < centroidProj)
+            {
+                retSplit1.Add(armyUnits[i]);
+            }
+            else
+            {
+                retSplit2.Add(armyUnits[i]);
+            }
+        }
+        
+        // cheat a little bit. if one of them is zero the split is trivial
+        // return split 2 in place of split 1 since split1 is used for original army
+        return retSplit1.Count == 0 ? (retSplit2, retSplit1) : (retSplit1, retSplit2);
+    }
+    
+    // this function calculates the eigenvector as well as the centroid
+    private (Vector2, Vector2) GetEigenCentroid(List<Vector2> data)
+    {
+        var xMean = 0f;
+        xMean = data.Aggregate(xMean, (current, c) => current + c.x) / data.Count;
+        var yMean = 0f;
+        yMean = data.Aggregate(yMean, (current, c) => current + c.y) / data.Count;
+        
+        var varX = 0f;
+        varX = data.Aggregate(varX, 
+            (current, c) =>
+            {
+                return current + (c.x - xMean) * (c.x - xMean);
+            }) / (data.Count - 1);
+        
+        var varY = 0f;
+        varY = data.Aggregate(varY, 
+            (current, c) =>
+            {
+                return current + (c.y - yMean) * (c.y - yMean);
+            }) / (data.Count - 1);
+        
+        var covXY = 0f;
+        covXY = data.Aggregate(covXY, 
+            (current, c) =>
+            {
+                return current + (c.y - yMean) * (c.x - xMean);
+            }) / (data.Count - 1);
+        
+        // the cov matrix is [varX, covXY; covXY, varY]
+        // now we calculate the eigenvectors and eigenvalues
+        
+        var delta = math.sqrt((varX + varY) * (varX + varY) - 4 * (varX * varY - covXY * covXY));
+        var l1 = (varX + varY + delta)/2;
+        var l2 = Mathf.Abs(varX + varY - delta) / 2;
+
+        var l = Mathf.Max(l1, l2);
+        // the new thing to solve is then
+        // [varX - l, covXY; covXY, varY - l][a; b] = 0
+
+        var aFactor = varX - l + covXY;
+        var bFactor = covXY + varY - l;
+
+        var eigenVector = new Vector2(bFactor, -aFactor).normalized;
+        return (eigenVector, new Vector2(xMean, yMean));
+    }
+    
+    private List<Vector2> IdentityComplex()
+    {
+        var armyComplex = new List<Vector2>();
+        foreach (var u in armyUnits)
+        {
+            var identity = u.identityInfo;
+            var rgbIdentity = new Color(identity.r, identity.g, identity.b);
+            float h;
+            Color.RGBToHSV(rgbIdentity, out h, out _, out _);
+            //0->0, 1->2pi
+            var angle = 2 * Mathf.PI * h;
+            var complex = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+            armyComplex.Add(complex);
+        }
+
+        return armyComplex;
     }
 
     [Client]
@@ -453,7 +599,7 @@ public class Army : Entity
         yield return new WaitForSeconds(delay);
         unableToBuildIcon.SetActive(false);
     }
-    #endregion
+      #endregion
 
     public enum ArmyState
     {

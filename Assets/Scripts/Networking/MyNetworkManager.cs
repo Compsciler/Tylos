@@ -155,7 +155,8 @@ public class MyNetworkManager : NetworkManager
 
     // duplicated code from spawners
     // refactor later but this shouldn't be too bad
-    private GameObject SpawnArmy(IdentityInfo identity, int count, Vector3 spawnPos)
+    [Server]
+    public GameObject SpawnArmy(IdentityInfo identity, int count, Vector3 spawnPos)
     {
         GameObject armyInstance = Instantiate(
             armyPrefab,
@@ -192,6 +193,7 @@ public class MyNetworkManager : NetworkManager
 
         NetworkServer.Spawn(baseInstance, player.connectionToClient);
     }
+    
 
     [Server]
     public void MakeBase(MyPlayer player, Vector3 position)
