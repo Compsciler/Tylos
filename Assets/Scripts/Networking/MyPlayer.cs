@@ -128,6 +128,8 @@ public class MyPlayer : NetworkBehaviour
 
     private void ServerHandleArmyDespawned(Army army)
     {
+        if (army.connectionToClient == null) { return; }  // Null for unallied armies
+
         if (army.connectionToClient.connectionId != connectionToClient.connectionId) { return; }
 
         myArmies.Remove(army);
