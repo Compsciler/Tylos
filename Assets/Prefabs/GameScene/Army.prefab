@@ -970,6 +970,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   maxUnitCount: 30
   resetTime: 0.5
+  resistanceMultiplier: 2.5
 --- !u!114 &4916758896097024490
 MonoBehaviour:
   m_ObjectHideFlags: 0

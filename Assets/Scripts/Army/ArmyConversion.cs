@@ -27,6 +27,11 @@ public class ArmyConversion : NetworkBehaviour
     [Tooltip("Time it takes for the conversion progress to reset after being interrupted")]
     private float resetTime = 1f;
 
+    [SerializeField]
+    [Tooltip("Multiplier for resistance")]
+    [Range(0f, 10f)]
+    private float resistanceMultiplier = 1f;
+
     Coroutine conversionCoroutine = null;
     private float resetTimer = 0f;
     private bool isConverted = false;
@@ -39,7 +44,7 @@ public class ArmyConversion : NetworkBehaviour
     [Server]
     public void SetResistance(int unitCount)
     {
-        resistance = resistanceCurve.Evaluate(unitCount / maxUnitCount);
+        resistance = resistanceCurve.Evaluate(unitCount / maxUnitCount)*resistanceMultiplier;
     }
 
     /// <summary>
