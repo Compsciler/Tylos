@@ -137,7 +137,7 @@ public class MyNetworkManager : NetworkManager
             {
                 SetAndGetPlayerIdentity(player);
 
-                MakeBase(player, GetStartPosition().position, player.GetComponent<ObjectIdentity>().Identity);
+                MakeBase(player, GetStartPosition().position);
             }
 
             for (int i = 0; i < numWildArmyGenerationAttempts; i++)
@@ -152,7 +152,7 @@ public class MyNetworkManager : NetworkManager
             }
         }
     }
-    
+
     // duplicated code from spawners
     // refactor later but this shouldn't be too bad
     private GameObject SpawnArmy(IdentityInfo identity, int count, Vector3 spawnPos)
@@ -171,13 +171,38 @@ public class MyNetworkManager : NetworkManager
         return armyInstance;
     }
 
-    public void MakeBase(MyPlayer player, Vector3 position, IdentityInfo identity)
+    [Server]
+    public void MakeBase(MyPlayer player, Army army, int BaseCreationCost)
     {
+        IdentityInfo armyIdentity = new IdentityInfo();
+        armyIdentity = army.GetComponent<ObjectIdentity>().Identity;
         GameObject baseInstance = Instantiate(
                     basePrefab,
-                    position,
+                    army.transform.position,
                     Quaternion.identity);
-        SetBaseIdentityToPlayerIdentity(baseInstance, identity, player.GetComponent<ObjectIdentity>().Identity);  // If you move this line to after the Spawn() call, the base will be the wrong color for a few frames somehow
+
+        List<Unit> unitsToKill = new List<Unit>();
+        for (int i = 0; i < BaseCreationCost; i++)
+        {
+            unitsToKill.Add(army.ArmyUnits[i]);
+        }
+        army.KillUnits(unitsToKill);
+        IdentityInfo playerIdentity = player.GetComponent<ObjectIdentity>().Identity;
+        SetBaseIdentityToPlayerIdentity(baseInstance, armyIdentity, playerIdentity);  // If you move this line to after the Spawn() call, the base will be the wrong color for a few frames somehow
+
+        NetworkServer.Spawn(baseInstance, player.connectionToClient);
+    }
+
+    [Server]
+    public void MakeBase(MyPlayer player, Vector3 position)
+    {
+        GameObject baseInstance = Instantiate(
+            basePrefab,
+            position,
+            Quaternion.identity);
+
+        IdentityInfo playerIdentity = player.GetComponent<ObjectIdentity>().Identity;
+        SetBaseIdentityToPlayerIdentity(baseInstance, playerIdentity, playerIdentity);  // If you move this line to after the Spawn() call, the base will be the wrong color for a few frames somehow
 
         NetworkServer.Spawn(baseInstance, player.connectionToClient);
     }
@@ -194,7 +219,7 @@ public class MyNetworkManager : NetworkManager
         return playerIdentity;
     }
 
-    private void SetBaseIdentityToPlayerIdentity(GameObject baseInstance, IdentityInfo baseIdentity, IdentityInfo  teamIdentity)
+    private void SetBaseIdentityToPlayerIdentity(GameObject baseInstance, IdentityInfo baseIdentity, IdentityInfo teamIdentity)
     {
         ObjectIdentity baseObjectIdentity = baseInstance.GetComponent<ObjectIdentity>();
         baseObjectIdentity.SetIdentity(baseIdentity);
