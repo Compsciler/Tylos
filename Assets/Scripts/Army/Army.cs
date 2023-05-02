@@ -47,7 +47,7 @@ public class Army : Entity
     [SyncVar] private int size;
     public int Size => size;
 
-    private float armySplitThreshold = 0.3f;
+    private float armySplitThreshold = 0.25f;
 
     // Dependencies
     ArmyVisuals armyVisuals;
@@ -419,7 +419,7 @@ public class Army : Entity
         armyVisuals.SetScale(size);
         attackDamage = ArmyUtils.CalculateAttackPower(ArmyUnits, minUnitAttackDamage, maxUnitAttackDamage);
         armyConversion.SetResistance(ArmyUnits.Count);
-        
+
         // 
         if (deviance > armySplitThreshold)
         {
@@ -439,13 +439,13 @@ public class Army : Entity
         }
         newMean /= armyUnits.Count;
         deviance = ArmyUtils.CalculateDeviance(armyUnits, newMean);
-            
+
         // don't fucking spawn 0 sized armies
         if (armies.Item2.Count == 0)
         {
             return;
         }
-        
+
         var newArmyMean = Vector3.zero;
         foreach (var u in armies.Item2)
         {
@@ -455,7 +455,7 @@ public class Army : Entity
         newArmyMean /= armies.Item2.Count;
 
         var spawnCenter = transform.position;
-        
+
         //float random = Random.Range(0f, 260f);
         //spawnCenter +=  new Vector3(Mathf.Cos(random), 0, Mathf.Sin(random)) * armyVisuals.transform.localScale.x;
 
@@ -464,7 +464,7 @@ public class Army : Entity
 
     }
 
-    
+
     public GameObject SpawnArmy(IdentityInfo identity, int count, Vector3 spawnPos)
     {
         return ((MyNetworkManager)NetworkManager.singleton).SpawnArmy(identity, count, spawnPos);
@@ -474,7 +474,7 @@ public class Army : Entity
     // the split is returned as a tuple of lists
     public (List<Unit>, List<Unit>) CalculateSplit()
     {
-        var identities = 
+        var identities =
             armyUnits.Select(
                     x => new Vector3(
                         x.identityInfo.r,
@@ -483,7 +483,7 @@ public class Army : Entity
                 .ToList();
         // GetEigenCentroid returns (eigenvector, centroid) of the dataset
         var (eigenVector, centroid) = GetEigenCentroid(identities);
-        
+
         // if we get a perfectly circular set it is possible for eigen to be 0
         // just randomly pick an axis if so
         if (eigenVector == Vector3.zero)
@@ -491,7 +491,7 @@ public class Army : Entity
             var angle = UnityEngine.Random.Range(0, Mathf.PI * 2);
             eigenVector = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
         }
-        
+
         // project the centroid onto the eigen
         // var centroidProj = Vector2.Dot(centroid, eigenVector);
 
@@ -520,20 +520,20 @@ public class Army : Entity
             }
             Debug.Log(output);
         }
-        
+
         return (retSplit1, retSplit2);
     }
 
-    
-   
+
+
     // this function calculates the eigenvector as well as the centroid
     private (Vector3, Vector3) GetEigenCentroid(List<Vector3> data)
     {
         var mean = Vector3.zero;
         mean = data.Aggregate(mean, (current, c) => current + c) / data.Count;
- 
+
         var varXYZ = Vector3.zero;
-        varXYZ = data.Aggregate(varXYZ, 
+        varXYZ = data.Aggregate(varXYZ,
             (current, c) =>
             {
                 var diff = c - mean;
@@ -543,10 +543,10 @@ public class Army : Entity
                     diff.z * diff.z
                 );
             }) / (data.Count - 1);
-        
-        
+
+
         var covXYZ = Vector3.zero;
-        covXYZ = data.Aggregate(covXYZ, 
+        covXYZ = data.Aggregate(covXYZ,
             (current, c) =>
             {
                 var diff = c - mean;
@@ -556,11 +556,11 @@ public class Army : Entity
                     diff.z * diff.x
                 );
             }) / (data.Count - 1);
-        
+
         // the cov matrix is [varX, covXY; covXY varY]
         // now we calculate the eigenvectors and eigenvalues
         var iter = new Vector3(
-            UnityEngine.Random.Range(0.1f, 1f), 
+            UnityEngine.Random.Range(0.1f, 1f),
             UnityEngine.Random.Range(0.1f, 1f),
             UnityEngine.Random.Range(0.1f, 1f));
         iter = iter.normalized;
@@ -571,7 +571,7 @@ public class Army : Entity
             var newIterZ = covXYZ.z * iter.x + covXYZ.y * iter.y + varXYZ.z * iter.z;
             iter = new Vector3(newIterX, newIterY, newIterZ).normalized;
         }
-        
+
         return (iter.normalized, mean);
     }
 
@@ -610,7 +610,7 @@ public class Army : Entity
         yield return new WaitForSeconds(delay);
         unableToBuildIcon.SetActive(false);
     }
-      #endregion
+    #endregion
 
     public enum ArmyState
     {
