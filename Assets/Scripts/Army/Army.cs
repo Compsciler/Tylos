@@ -47,7 +47,7 @@ public class Army : Entity
     [SyncVar] private int size;
     public int Size => size;
 
-    private float armySplitThreshold = 0.2f;
+    private float armySplitThreshold = 0.3f;
 
     // Dependencies
     ArmyVisuals armyVisuals;
@@ -429,31 +429,41 @@ public class Army : Entity
 
     private void ArmySplitProcedure()
     {
-        armyHealth.Die(); 
-        // var armies = CalculateSplit();
-        // armyUnits.Clear();
-        // foreach (var u in armies.Item1)
-        // {
-        //     armyUnits.Add(u);
-        // }
-
-        // var newArmyMean = Vector3.zero;
-        // foreach (var u in armies.Item2)
-        // {
-        //     newArmyMean += new Vector3(u.identityInfo.r, u.identityInfo.g, u.identityInfo.b);
-        // }
-
-        // newArmyMean /= armies.Item2.Count;
-
-        // var spawnCenter = transform.position;
+        var armies = CalculateSplit();
+        armyUnits.Clear();
+        var newMean = Vector3.zero;
+        foreach (var u in armies.Item1)
+        {
+            armyUnits.Add(u);
+            newMean += new Vector3(u.identityInfo.r, u.identityInfo.g, u.identityInfo.b);
+        }
+        newMean /= armyUnits.Count;
+        deviance = ArmyUtils.CalculateDeviance(armyUnits, newMean);
+            
+        // don't fucking spawn 0 sized armies
+        if (armies.Item2.Count == 0)
+        {
+            return;
+        }
         
-        // //float random = Random.Range(0f, 260f);
-        // //spawnCenter +=  new Vector3(Mathf.Cos(random), 0, Mathf.Sin(random)) * armyVisuals.transform.localScale.x;
+        var newArmyMean = Vector3.zero;
+        foreach (var u in armies.Item2)
+        {
+            newArmyMean += new Vector3(u.identityInfo.r, u.identityInfo.g, u.identityInfo.b);
+        }
 
-        // SpawnArmy(
-        //     new IdentityInfo(newArmyMean.x, newArmyMean.y, newArmyMean.z), armies.Item2.Count, spawnCenter);
+        newArmyMean /= armies.Item2.Count;
+
+        var spawnCenter = transform.position;
+        
+        //float random = Random.Range(0f, 260f);
+        //spawnCenter +=  new Vector3(Mathf.Cos(random), 0, Mathf.Sin(random)) * armyVisuals.transform.localScale.x;
+
+        SpawnArmy(
+            new IdentityInfo(newArmyMean.x, newArmyMean.y, newArmyMean.z), armies.Item2.Count, spawnCenter);
 
     }
+
     
     public GameObject SpawnArmy(IdentityInfo identity, int count, Vector3 spawnPos)
     {
@@ -464,28 +474,32 @@ public class Army : Entity
     // the split is returned as a tuple of lists
     public (List<Unit>, List<Unit>) CalculateSplit()
     {
-        var armyComplex = IdentityComplex();
-        
+        var identities = 
+            armyUnits.Select(
+                    x => new Vector3(
+                        x.identityInfo.r,
+                        x.identityInfo.g,
+                        x.identityInfo.b))
+                .ToList();
         // GetEigenCentroid returns (eigenvector, centroid) of the dataset
-        var (eigenVector, centroid) = GetEigenCentroid(armyComplex);
+        var (eigenVector, centroid) = GetEigenCentroid(identities);
         
         // if we get a perfectly circular set it is possible for eigen to be 0
         // just randomly pick an axis if so
-        if (eigenVector == Vector2.zero)
+        if (eigenVector == Vector3.zero)
         {
             var angle = UnityEngine.Random.Range(0, Mathf.PI * 2);
             eigenVector = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
         }
         
         // project the centroid onto the eigen
-        var centroidProj = Vector2.Dot(centroid, eigenVector);
+        // var centroidProj = Vector2.Dot(centroid, eigenVector);
 
         var retSplit1 = new List<Unit>();
         var retSplit2 = new List<Unit>();
-
-        for (int i = 0; i < armyComplex.Count; i++){
-           
-            if (Vector2.Dot(armyComplex[i], eigenVector) < centroidProj)
+        for (int i = 0; i < identities.Count; i++)
+        {
+            if (Vector2.Dot(identities[i] - centroid, eigenVector) <= 0)
             {
                 retSplit1.Add(armyUnits[i]);
             }
@@ -494,75 +508,71 @@ public class Army : Entity
                 retSplit2.Add(armyUnits[i]);
             }
         }
-        
         // cheat a little bit. if one of them is zero the split is trivial
         // return split 2 in place of split 1 since split1 is used for original army
-        return retSplit1.Count == 0 ? (retSplit2, retSplit1) : (retSplit1, retSplit2);
-    }
-    
-    // this function calculates the eigenvector as well as the centroid
-    private (Vector2, Vector2) GetEigenCentroid(List<Vector2> data)
-    {
-        var xMean = 0f;
-        xMean = data.Aggregate(xMean, (current, c) => current + c.x) / data.Count;
-        var yMean = 0f;
-        yMean = data.Aggregate(yMean, (current, c) => current + c.y) / data.Count;
-        
-        var varX = 0f;
-        varX = data.Aggregate(varX, 
-            (current, c) =>
-            {
-                return current + (c.x - xMean) * (c.x - xMean);
-            }) / (data.Count - 1);
-        
-        var varY = 0f;
-        varY = data.Aggregate(varY, 
-            (current, c) =>
-            {
-                return current + (c.y - yMean) * (c.y - yMean);
-            }) / (data.Count - 1);
-        
-        var covXY = 0f;
-        covXY = data.Aggregate(covXY, 
-            (current, c) =>
-            {
-                return current + (c.y - yMean) * (c.x - xMean);
-            }) / (data.Count - 1);
-        
-        // the cov matrix is [varX, covXY; covXY, varY]
-        // now we calculate the eigenvectors and eigenvalues
-        
-        var delta = math.sqrt((varX + varY) * (varX + varY) - 4 * (varX * varY - covXY * covXY));
-        var l1 = (varX + varY + delta)/2;
-        var l2 = Mathf.Abs(varX + varY - delta) / 2;
-
-        var l = Mathf.Max(l1, l2);
-        // the new thing to solve is then
-        // [varX - l, covXY; covXY, varY - l][a; b] = 0
-
-        var aFactor = varX - l + covXY;
-        var bFactor = covXY + varY - l;
-
-        var eigenVector = new Vector2(bFactor, -aFactor).normalized;
-        return (eigenVector, new Vector2(xMean, yMean));
-    }
-    
-    private List<Vector2> IdentityComplex()
-    {
-        var armyComplex = new List<Vector2>();
-        foreach (var u in armyUnits)
+        if (retSplit1.Count == 0 || retSplit2.Count == 0)
         {
-            var identity = u.identityInfo;
-            var rgbIdentity = new Color(identity.r, identity.g, identity.b);
-            float h;
-            Color.RGBToHSV(rgbIdentity, out h, out _, out _);
-            //0->0, 1->2pi
-            var angle = 2 * Mathf.PI * h;
-            var complex = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
-            armyComplex.Add(complex);
+            var output = "0 size split detected, eigenVector is " + eigenVector + " centroid is " + centroid + " data is ";
+            foreach (var u in identities)
+            {
+                output += u;
+                output += " ";
+            }
+            Debug.Log(output);
         }
+        
+        return (retSplit1, retSplit2);
+    }
 
-        return armyComplex;
+    
+   
+    // this function calculates the eigenvector as well as the centroid
+    private (Vector3, Vector3) GetEigenCentroid(List<Vector3> data)
+    {
+        var mean = Vector3.zero;
+        mean = data.Aggregate(mean, (current, c) => current + c) / data.Count;
+ 
+        var varXYZ = Vector3.zero;
+        varXYZ = data.Aggregate(varXYZ, 
+            (current, c) =>
+            {
+                var diff = c - mean;
+                return current + new Vector3(
+                    diff.x * diff.x,
+                    diff.y * diff.y,
+                    diff.z * diff.z
+                );
+            }) / (data.Count - 1);
+        
+        
+        var covXYZ = Vector3.zero;
+        covXYZ = data.Aggregate(covXYZ, 
+            (current, c) =>
+            {
+                var diff = c - mean;
+                return current + new Vector3(
+                    diff.x * diff.y,
+                    diff.y * diff.z,
+                    diff.z * diff.x
+                );
+            }) / (data.Count - 1);
+        
+        // the cov matrix is [varX, covXY; covXY varY]
+        // now we calculate the eigenvectors and eigenvalues
+        var iter = new Vector3(
+            UnityEngine.Random.Range(0.1f, 1f), 
+            UnityEngine.Random.Range(0.1f, 1f),
+            UnityEngine.Random.Range(0.1f, 1f));
+        iter = iter.normalized;
+        for (int i = 0; i < 100; i++)
+        {
+            var newIterX = varXYZ.x * iter.x + covXYZ.x * iter.y + covXYZ.z * iter.z;
+            var newIterY = covXYZ.x * iter.x + varXYZ.y * iter.y + covXYZ.y * iter.z;
+            var newIterZ = covXYZ.z * iter.x + covXYZ.y * iter.y + varXYZ.z * iter.z;
+            iter = new Vector3(newIterX, newIterY, newIterZ).normalized;
+        }
+        
+        return (iter.normalized, mean);
     }
 
     [Client]
