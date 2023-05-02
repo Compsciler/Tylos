@@ -14,7 +14,7 @@ public class MyNetworkManager : NetworkManager
     [SerializeField] GameObject basePrefab;
     [SerializeField] GameObject armyPrefab;
     [SerializeField] GameOverHandler gameOverHandler;
-    [SerializeField] private int numWildArmyGenerationAttempts = 60;
+    [SerializeField] private int numWildArmyGenerationAttempts = 24;
     private const float HexExtentZ = 36f;
     private const float HexExtentX = 40f;
 
@@ -193,7 +193,7 @@ public class MyNetworkManager : NetworkManager
 
         NetworkServer.Spawn(baseInstance, player.connectionToClient);
     }
-    
+
 
     [Server]
     public void MakeBase(MyPlayer player, Vector3 position)
